@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_2020_10</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Input.txt" />
+    <None Remove="Sample1.txt" />
+    <None Remove="Sample2.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Input.txt" />
+    <EmbeddedResource Include="Sample1.txt" />
+    <EmbeddedResource Include="Sample2.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdventHelper\AdventHelper.csproj" />
+  </ItemGroup>
+
+</Project>

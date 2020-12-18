@@ -1,0 +1,96 @@
+﻿using AdventHelper;
+using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace _2020_10
+{
+    class Program : ProgramBase
+    {
+        static void Main(string[] args) => new Program().Run();
+
+        private class ChainCache
+        {
+            private readonly Dictionary<string, long> fData = new Dictionary<string, long>();
+            private string Key(ReadOnlySpan<long> span)
+            {
+                var sb = new StringBuilder(span.Length * 4);
+                for (int i = 0; i < span.Length; i++)
+                    sb.Append("|").Append(span[i]);
+                return sb.ToString();
+            }
+            public long GetOrAdd(ReadOnlySpan<long> part, Func<long> calc)
+            {
+                var key = Key(part);
+                if (fData.TryGetValue(key, out long val))
+                    return val;
+                return fData[key] = calc();
+            }
+        }
+
+        private long[] GetDifferences(string inputFile)
+        {
+            var adapterChain = ReadLines(inputFile).Select(long.Parse).OrderBy(x => x);
+            var result = new long[4] { 0, 0, 0, 1 }; // Add last adapter to device
+            long lastJoltage = 0;
+            foreach(var adapter in adapterChain)
+            {
+                var dj = adapter - lastJoltage;
+                lastJoltage = adapter;
+                if (dj > 3)
+                    throw new Exception("Invalid Adapter Chain");
+                result[dj] = result[dj] + 1;
+            }
+            return result;
+        }
+
+        private long CoundValidAdapterChains(string inputFile)
+        {
+            var adapterChain = ReadLines(inputFile).Select(long.Parse).OrderBy(x => x).ToArray();
+            return CoundValidAdapterChains(adapterChain, 0, adapterChain.Length, new ChainCache());
+        }
+
+
+        private long CoundValidAdapterChains(long[] chain, int idx, int len, ChainCache cache)
+        {
+            long Value(int idx) => idx < 0 ? 0 : chain[idx];
+
+            if (idx != len - 1) // keep last adapter
+            {
+                var ck = chain.AsSpan().Slice(idx + 1, len - idx - 1);
+                long result = cache.GetOrAdd(ck, () => CoundValidAdapterChains(chain, idx + 1, len, cache));
+                
+                if (Value(idx + 1) - Value(idx - 1) < 4)
+                {
+                    var subLen = len - 1;
+                    var arr = ArrayPool<long>.Shared.Rent(subLen);
+                    Array.Copy(chain, arr, idx);
+                    Array.Copy(chain, idx + 1, arr, idx, subLen - idx);
+                    result += CoundValidAdapterChains(arr, idx, subLen, cache);
+                    ArrayPool<long>.Shared.Return(arr);
+                }
+                
+                return result;
+            }
+            
+            return 1;
+        }
+
+        protected override long? Part1()
+        {
+            Assert(string.Join(",", GetDifferences("Sample1.txt")), "0,7,0,5"); 
+            Assert(string.Join(",", GetDifferences("Sample2.txt")), "0,22,0,10");
+            var diff = GetDifferences("Input.txt");
+            return diff[1] * diff[3];
+        }
+
+        protected override long? Part2()
+        {
+            Assert(CoundValidAdapterChains("Sample1.txt"), 8);
+            Assert(CoundValidAdapterChains("Sample2.txt"), 19208);
+            return CoundValidAdapterChains("Input.txt");
+        }
+    }
+}
