@@ -51,7 +51,8 @@ namespace AdventHelper
             WriteLn<DefaultOut>("-- Part 2 --");
 
             p = Part2();
-            WriteLn<DefaultOut>(string.Format("              Solution : {0}", p));
+            if (!Equals(p, default(TSolution)))
+                WriteLn<DefaultOut>(string.Format("              Solution : {0}", p));
             System.Console.ReadLine();
         }
 
