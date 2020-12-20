@@ -55,13 +55,13 @@ namespace _2015_13
 
         protected override long? Part1()
         {
-            Assert(CheckBestSeatOrder("Sample.txt"), 330);
-            return CheckBestSeatOrder("Input.txt");
+            Assert(CheckBestSeatOrder("Sample"), 330);
+            return CheckBestSeatOrder("Input");
         }
 
         protected override long? Part2()
         {
-            return CheckBestSeatOrder("Input.txt", "Me");
+            return CheckBestSeatOrder("Input", "Me");
         }
     }
 }

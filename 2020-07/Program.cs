@@ -75,13 +75,13 @@ namespace _2020_07
 
         protected override long? Part1()
         {
-            Assert(CountParentBags("SampleInput.txt"), 4);
-            return CountParentBags("Input.txt");
+            Assert(CountParentBags("SampleInput"), 4);
+            return CountParentBags("Input");
         }
         protected override long? Part2()
         {
-            Assert(CountChildBags("SampleInput2.txt"), 126);
-            return CountChildBags("Input.txt");
+            Assert(CountChildBags("SampleInput2"), 126);
+            return CountChildBags("Input");
         }
     }
 }

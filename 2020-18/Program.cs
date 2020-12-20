@@ -61,7 +61,7 @@ namespace _2020_18
             Assert(SolveWeirdMath("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false), 12240);
             Assert(SolveWeirdMath("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false), 13632);
 
-            return ReadLines().Select(n => SolveWeirdMath(n, false)).Sum();
+            return ReadLines("Input").Select(n => SolveWeirdMath(n, false)).Sum();
         }
 
         protected override long? Part2()
@@ -73,7 +73,7 @@ namespace _2020_18
             Assert(SolveWeirdMath("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true), 669060);
             Assert(SolveWeirdMath("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true), 23340);
 
-            return ReadLines().Select(n => SolveWeirdMath(n, true)).Sum();
+            return ReadLines("Input").Select(n => SolveWeirdMath(n, true)).Sum();
         }
     }
 }

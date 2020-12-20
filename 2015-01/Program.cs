@@ -24,13 +24,13 @@ namespace _2015_01
 
         protected override long? Part1()
         {
-            var input = ReadLines().First();
+            var input = ReadLines("Input").First();
             return WalkLevels(input).Last();
         }
 
         protected override long? Part2()
         {
-            var input = ReadLines().First();
+            var input = ReadLines("Input").First();
             return WalkLevels(input)
                 .Zip(Enumerable.Range(1, input.Length), (l, i) => new { Level = l, Index = i })
                 .Where(itm => itm.Level < 0)

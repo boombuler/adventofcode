@@ -64,7 +64,7 @@ namespace _2015_06
                 => Math.Max(0, oldValue + (command switch { true => 1, false => -1, _ => 2 }));
         }
 
-        protected override long? Part1() => new BoolGrid().Handle(ReadLines());
-        protected override long? Part2() => new IntGrid().Handle(ReadLines());
+        protected override long? Part1() => new BoolGrid().Handle(ReadLines("Input"));
+        protected override long? Part2() => new IntGrid().Handle(ReadLines("Input"));
     }
 }

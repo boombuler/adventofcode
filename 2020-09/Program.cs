@@ -65,13 +65,13 @@ namespace _2020_09
 
         protected override long? Part1()
         {
-            Assert(FindFirstInvalidNumber("SampleInput.txt", 5), 127);
-            return FindFirstInvalidNumber("Input.txt", 25);
+            Assert(FindFirstInvalidNumber("SampleInput", 5), 127);
+            return FindFirstInvalidNumber("Input", 25);
         }
         protected override long? Part2()
         {
-            Assert(FindWeakness("SampleInput.txt", 5), 62);
-            return FindWeakness("Input.txt", 25);
+            Assert(FindWeakness("SampleInput", 5), 62);
+            return FindWeakness("Input", 25);
         }
     }
 }

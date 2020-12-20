@@ -47,8 +47,8 @@ namespace _2016_04
 
         protected override long? Part1()
         {
-            Assert(SumValidRoomIDs("Sample.txt"), 1514);
-            return SumValidRoomIDs("Input.txt");
+            Assert(SumValidRoomIDs("Sample"), 1514);
+            return SumValidRoomIDs("Input");
         }
 
 
@@ -56,7 +56,7 @@ namespace _2016_04
         {
             Assert((new Room() { Name = "qzmt-zixmtkozy-ivhz", Id = 343 }).DecodeName(), "very encrypted name");
 
-            return ReadLines()
+            return ReadLines("Input")
                 .Select(RoomFactory)
                 .Where(r => r.ValidCheckSum())
                 .Where(r => r.DecodeName() == "northpole object storage")

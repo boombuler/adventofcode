@@ -84,14 +84,14 @@ namespace _2015_15
 
         protected override long? Part1()
         {
-            Assert(GetBestScore("Sample.txt"), 62842880);
-            return GetBestScore("Input.txt");
+            Assert(GetBestScore("Sample"), 62842880);
+            return GetBestScore("Input");
         }
         protected override long? Part2()
         {
             Func<Score, bool> validate = s => s.Calories == 500;
-            Assert(GetBestScore("Sample.txt", validate), 57600000);
-            return GetBestScore("Input.txt", validate);
+            Assert(GetBestScore("Sample", validate), 57600000);
+            return GetBestScore("Input", validate);
         }
     }
 }

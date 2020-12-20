@@ -84,14 +84,14 @@ namespace _2020_12
 
         protected override long? Part1()
         {
-            Assert(NavigateShip("Sample.txt"), 25);
-            return NavigateShip("Input.txt");
+            Assert(NavigateShip("Sample"), 25);
+            return NavigateShip("Input");
         }
 
         protected override long? Part2()
         {
-            Assert(NavigateWP("Sample.txt"), 286);
-            return NavigateWP("Input.txt");
+            Assert(NavigateWP("Sample"), 286);
+            return NavigateWP("Input");
         }
     }
 }

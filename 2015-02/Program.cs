@@ -40,7 +40,7 @@ namespace _2015_02
         static void Main(string[] args) => new Program().Run();
 
         private long GetTotal(Func<Package, long> selector)
-            => ReadLines().Select(l => selector(new Package(l))).Sum();
+            => ReadLines("Input").Select(l => selector(new Package(l))).Sum();
         protected override long? Part1()
         {
             Assert(new Package("2x3x4").GetPaperSize(), 58);

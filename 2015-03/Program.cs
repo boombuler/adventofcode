@@ -37,7 +37,7 @@ namespace _2015_03
             Assert(CountUniquePlaces(">"), 2);
             Assert(CountUniquePlaces("^>v<"), 4);
             Assert(CountUniquePlaces("^v^v^v^v^v"), 2);
-            return CountUniquePlaces(ReadLines().First());
+            return CountUniquePlaces(ReadLines("Input").First());
         }
 
         protected override long? Part2()
@@ -45,7 +45,7 @@ namespace _2015_03
             Assert(CountUniquePlaces("^v", 2), 3);
             Assert(CountUniquePlaces("^>v<", 2), 3);
             Assert(CountUniquePlaces("^v^v^v^v^v", 2), 11);
-            return CountUniquePlaces(ReadLines().First(), 2);
+            return CountUniquePlaces(ReadLines("Input").First(), 2);
         }
     }
 }

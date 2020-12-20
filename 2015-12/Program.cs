@@ -35,7 +35,7 @@ namespace _2015_12
         }
 
         private long GetSum(Func<JsonElement, bool> filter)
-            => Walk(JsonDocument.Parse(string.Join(string.Empty, ReadLines())).RootElement, filter).Sum();
+            => Walk(JsonDocument.Parse(string.Join(string.Empty, ReadLines("Input"))).RootElement, filter).Sum();
 
         protected override long? Part1() 
             => GetSum(_ => true);

@@ -82,14 +82,14 @@ namespace _2020_08
 
         protected override long? Part1()
         {
-            Assert(RunCode("SampleInput.txt"), 5);
-            return RunCode("Input.txt");
+            Assert(RunCode("SampleInput"), 5);
+            return RunCode("Input");
         }
 
         protected override long? Part2()
         {
-            Assert(FixCode("SampleInput.txt"), 8);
-            return FixCode("Input.txt");
+            Assert(FixCode("SampleInput"), 8);
+            return FixCode("Input");
         }
     }
 }

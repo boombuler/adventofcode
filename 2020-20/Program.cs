@@ -187,14 +187,14 @@ namespace _2020_20
 
         protected override long? Part1()
         {
-            Assert(GetCornersValue("Sample.txt"), 20899048083289);
-            return GetCornersValue("Input.txt");
+            Assert(GetCornersValue("Sample"), 20899048083289);
+            return GetCornersValue("Input");
         }
 
         protected override long? Part2()
         {
-            Assert(GetRoughness("Sample.txt"), 273);
-            return GetRoughness("Input.txt");
+            Assert(GetRoughness("Sample"), 273);
+            return GetRoughness("Input");
         }
     }
 }

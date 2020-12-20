@@ -8,8 +8,8 @@ namespace _2015_08
 {
     class Program : ProgramBase
     {
-        private const string SAMPLE = "Sample.txt";
-        private const string INPUT = "Input.txt";
+        private const string SAMPLE = "Sample";
+        private const string INPUT = "Input";
         static void Main(string[] args) => new Program().Run();
 
         private long CountChars(string file)

@@ -54,7 +54,7 @@ namespace _2016_09
             Assert(DecompressV1("(6x1)(1x3)A"), 6);
             Assert(DecompressV1("X(8x2)(3x3)ABCY"), 18);
 
-            return DecompressV1(ReadLines().First());
+            return DecompressV1(ReadLines("Input").First());
         }
     
         protected override long? Part2()
@@ -63,7 +63,7 @@ namespace _2016_09
             Assert(DecompressV2("X(8x2)(3x3)ABCY"), 20);
             Assert(DecompressV2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920);
             Assert(DecompressV2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"), 445);
-            return DecompressV2(ReadLines().First());
+            return DecompressV2(ReadLines("Input").First());
         }
     }
 }

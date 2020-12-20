@@ -14,7 +14,7 @@ namespace _2016_03
         private bool TriangleValid(long A, long B, long C) => (A + B) > C && (A + C) > B && (B + C) > A;
 
         private IEnumerable<long> Numbers()
-            => ReadLines().SelectMany(l => l.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(long.Parse);
+            => ReadLines("Input").SelectMany(l => l.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(long.Parse);
 
         private IEnumerable<long> Transpose(IEnumerable<long> nums)
             => nums.Select((n, i) => new { n, i }).GroupBy(e => e.i % 3).SelectMany(grp => grp).Select(e => e.n);

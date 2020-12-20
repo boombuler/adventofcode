@@ -41,14 +41,14 @@ namespace _2020_06
 
         protected override long? Part1()
         {
-            Assert(CollectUniqueResults("SampleInput.txt"), 11);
-            return CollectUniqueResults("Input.txt");
+            Assert(CollectUniqueResults("SampleInput"), 11);
+            return CollectUniqueResults("Input");
         }
 
         protected override long? Part2()
         {
-            Assert(CollectGroupResults("SampleInput.txt"), 6);
-            return CollectGroupResults("Input.txt");
+            Assert(CollectGroupResults("SampleInput"), 6);
+            return CollectGroupResults("Input");
         }
     }
 }

@@ -93,13 +93,13 @@ namespace _2020_11
 
         protected override long? Part1()
         {
-            Assert(CountStableSeats("Sample.txt", Neighbours, 4), 37);
-            return CountStableSeats("Input.txt", Neighbours, 4);
+            Assert(CountStableSeats("Sample", Neighbours, 4), 37);
+            return CountStableSeats("Input", Neighbours, 4);
         }
         protected override long? Part2()
         {
-            Assert(CountStableSeats("Sample.txt", LineOfSight, 5), 26);
-            return CountStableSeats("Input.txt", LineOfSight, 5);
+            Assert(CountStableSeats("Sample", LineOfSight, 5), 26);
+            return CountStableSeats("Input", LineOfSight, 5);
         }
     }
 }

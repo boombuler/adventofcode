@@ -43,14 +43,14 @@ namespace _2015_17
 
         protected override long? Part1()
         {
-            Assert(GetPossibilities("Sample.txt", 25).Count(), 4);
-            return GetPossibilities("Input.txt", 150).Count();
+            Assert(GetPossibilities("Sample", 25).Count(), 4);
+            return GetPossibilities("Input", 150).Count();
         }
 
         protected override long? Part2()
         {
-            Assert(FindMinimumPossibilities("Sample.txt", 25), 3);
-            return FindMinimumPossibilities("Input.txt", 150);
+            Assert(FindMinimumPossibilities("Sample", 25), 3);
+            return FindMinimumPossibilities("Input", 150);
         }
     }
 }

@@ -31,15 +31,15 @@ namespace _2016_06
         protected override string Part1()
         {
             Func<string, string> decode = (file) => DecodeMessage(file, MostCommon);
-            Assert(decode("Sample.txt"), "easter");
-            return decode("Input.txt");
+            Assert(decode("Sample"), "easter");
+            return decode("Input");
         }
 
         protected override string Part2()
         {
             Func<string, string> decode = (file) => DecodeMessage(file, LeastCommon);
-            Assert(decode("Sample.txt"), "advent");
-            return decode("Input.txt");
+            Assert(decode("Sample"), "advent");
+            return decode("Input");
         }
     }
 }

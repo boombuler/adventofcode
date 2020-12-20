@@ -45,9 +45,9 @@ namespace _2015_14
 
         protected override long? Part1()
         {
-            Assert(WinningDistance("Sample.txt", 10), 160);
-            Assert(WinningDistance("Sample.txt", 1000), 1120);
-            return WinningDistance("Input.txt", 2503);
+            Assert(WinningDistance("Sample", 10), 160);
+            Assert(WinningDistance("Sample", 1000), 1120);
+            return WinningDistance("Input", 2503);
         }
 
         private long Race(string inputFile, int rounds)
@@ -65,8 +65,8 @@ namespace _2015_14
 
         protected override long? Part2()
         {
-            Assert(Race("Sample.txt", 1000), 689);
-            return Race("Input.txt", 2503);
+            Assert(Race("Sample", 1000), 689);
+            return Race("Input", 2503);
         }
     }
 }

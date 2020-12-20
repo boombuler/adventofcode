@@ -81,13 +81,13 @@ namespace _2020_14
         static void Main(string[] args) => new Program().Run();
         protected override long? Part1()
         {
-            Assert(RunProgram("Sample.txt"), 165);
-            return RunProgram("Input.txt");
+            Assert(RunProgram("Sample"), 165);
+            return RunProgram("Input");
         }
 
         protected override long? Part2()
         {
-            return RunProgram2("Input.txt");
+            return RunProgram2("Input");
         }
     }
 }

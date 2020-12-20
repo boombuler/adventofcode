@@ -24,7 +24,7 @@ namespace _2020_05
             return -1;
         }
 
-        private List<int> SortedSeats => ReadLines().Select(ToSeatId).OrderBy(x => x).ToList();
+        private List<int> SortedSeats => ReadLines("Input").Select(ToSeatId).OrderBy(x => x).ToList();
         protected override long? Part1() => SortedSeats.Last();
         protected override long? Part2() => FindOwnSeat(SortedSeats);
     }

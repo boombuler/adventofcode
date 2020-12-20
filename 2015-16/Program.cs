@@ -13,7 +13,7 @@ namespace _2015_16
         private static Regex LinePattern = new Regex(@"^Sue (?<n>\d+):\W(?<values>.*)$", RegexOptions.Compiled);
         private IEnumerable<int> CheckSues(Dictionary<string, Func<int, bool>> facts)
         {
-            foreach(var line in ReadLines())
+            foreach(var line in ReadLines("Input"))
             {
                 var m = LinePattern.Match(line);
                 int sue = int.Parse(m.Groups["n"].Value);

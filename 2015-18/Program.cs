@@ -74,14 +74,14 @@ namespace _2015_18
 
         protected override long? Part1()
         {
-            Assert(Generate("Sample.txt", 4), 4);
-            return Generate("Input.txt", 100);
+            Assert(Generate("Sample", 4), 4);
+            return Generate("Input", 100);
         }
 
         protected override long? Part2()
         {
-            Assert(Generate("Sample.txt", 5, true), 17);
-            return Generate("Input.txt", 100, true);
+            Assert(Generate("Sample", 5, true), 17);
+            return Generate("Input", 100, true);
         }
     }
 }
