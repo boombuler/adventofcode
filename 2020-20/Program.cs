@@ -10,16 +10,18 @@ namespace _2020_20
     {
         static void Main(string[] args) => new Program().Run();
 
-        enum Edge { Top, Bottom, Left, Right}
-
         class Tile
         {
-            public string[] Rows { get; }
-            private string fLeft;
-            private string fRight;
             private List<Tile> fRotations;
             public long ID { get; }
+            public int Size => Rows.Length;
+            public string[] Rows { get; }
+            public string Left { get; private set; }
+            public string Right { get; private set; }
+            public string Top => Rows.First();
+            public string Bottom => Rows.Last();
 
+            
             public Tile(long id, string[] rows)
                 : this(id, rows, null)
             {
@@ -28,8 +30,8 @@ namespace _2020_20
             {
                 (ID, Rows) = (id, rows);
                 Rows.Select((r) => r[0]).ToArray();
-                fLeft = new string(Rows.Select((r) => r[0]).ToArray());
-                fRight = new string(Rows.Select((r) => r[9]).ToArray());
+                Left = new string(Rows.Select((r) => r[0]).ToArray());
+                Right = new string(Rows.Select((r) => r[Size - 1]).ToArray());
                 if (rotations != null)
                 {
                     fRotations = rotations;
@@ -39,13 +41,14 @@ namespace _2020_20
                     BuildRotations();
             }
 
-            private Tile VFlip() => new Tile(ID, Rows.Reverse().ToArray(), fRotations);
+            private Tile VFlip() 
+                => new Tile(ID, Rows.Reverse().ToArray(), fRotations);
 
             private Tile Rotate()
             {
-                var w = Rows[0].Length;
-                var newRows = Enumerable.Range(0, w).Select(y =>
-                    new string(Enumerable.Range(0, w).Select(x => Rows[x][w - 1 - y]).ToArray())
+                var size = Size;
+                var newRows = Enumerable.Range(0, size).Select(y =>
+                    new string(Enumerable.Range(0, size).Select(x => Rows[x][size - 1 - y]).ToArray())
                 ).ToArray();
                 return new Tile(ID, newRows, fRotations);
             }
@@ -56,57 +59,51 @@ namespace _2020_20
                 fRotations.Add(this);
                 Rotate().Rotate().Rotate().VFlip().Rotate().Rotate().Rotate();
             }
-            public override string ToString() => ID.ToString();
-            public string GetEdge(Edge e)
+
+            public Tile WithoutBorder()
             {
-                switch(e)
-                {
-                    case Edge.Top: return Rows[0];
-                    case Edge.Bottom: return Rows[9];
-                    case Edge.Left: return fLeft;
-                    case Edge.Right: return fRight;
-                }
-                throw new InvalidOperationException();
+                var len = Size - 2;
+                return new Tile(ID, Rows.Skip(1).Take(len).Select(r => r.Substring(1, len)).ToArray());
             }
         }
 
         private IEnumerable<Tile> ReadTiles(string input)
         {
-            var data = ReadLines(input).Select((line, idx) => new { line, idx }).GroupBy(e => e.idx / 12);
+            var data = ReadLines(input).Select((line, idx) => new { line, idx }).GroupBy(e => e.idx / 12, e => e.line);
             foreach(var g in data)
             {
-                var titleLine = g.First().line;
+                var titleLine = g.First();
                 var id = long.Parse(titleLine.Substring(5).TrimEnd(':'));
-                var rows = g.Skip(1).Take(10).Select(e => e.line).ToArray();
+                var rows = g.Skip(1).TakeWhile(l => !string.IsNullOrEmpty(l)).ToArray();
                 yield return new Tile(id, rows);
             }
         }
 
-        private Tile[,] Solve(string inputFile)
+        private Tile[][] Solve(string inputFile)
         {
             var items = ReadTiles(inputFile).ToList();
             var size = (int)Math.Sqrt(items.Count);
-            Tile[,] grid = new Tile[size, size];
+            Tile[][] grid = Enumerable.Range(0, size).Select(_ => new Tile[size]).ToArray();
 
             bool FindSolutions(int idx)
             {
                 int row = idx / size;
                 int col = idx % size;
-                var topEdge = row > 0 ? grid[row - 1, col].GetEdge(Edge.Bottom) : null;
-                var leftEdge = col > 0 ? grid[row, col - 1].GetEdge(Edge.Right) : null;
+                var topEdge = row > 0 ? grid[row - 1][col].Bottom : null;
+                var leftEdge = col > 0 ? grid[row][col - 1].Right : null;
 
                 for (int i = 0; i < items.Count; i++)
                 {
-                    var ua = items[i];
+                    var unassigned = items[i];
                     items.RemoveAt(i);
-                    foreach (var rot in ua.GetRotations())
+                    foreach (var rotated in unassigned.GetRotations())
                     {
-                        if (topEdge != null && (topEdge != rot.GetEdge(Edge.Top)))
+                        if (topEdge != null && (topEdge != rotated.Top))
                             continue;
-                        if (leftEdge != null && (leftEdge != rot.GetEdge(Edge.Left)))
+                        if (leftEdge != null && (leftEdge != rotated.Left))
                             continue;
 
-                        grid[row, col] = rot;
+                        grid[row][col] = rotated;
                         if (items.Count == 0)
                             return true;
 
@@ -114,9 +111,9 @@ namespace _2020_20
                             return true;
                     }
 
-                    items.Insert(i, ua);
+                    items.Insert(i, unassigned);
                 }
-                grid[row, col] = null;
+                grid[row][col] = null;
                 return false;
             }
             if (!FindSolutions(0))
@@ -130,11 +127,13 @@ namespace _2020_20
         private long GetCornersValue(string inputFile)
         {
             var grid = Solve(inputFile);
-            var size = grid.GetLength(0);
-            return grid[0, 0].ID * grid[0, size - 1].ID * grid[size - 1, 0].ID * grid[size - 1, size - 1].ID;
+            return grid.First().First().ID * 
+                grid.First().Last().ID * 
+                grid.Last().First().ID * 
+                grid.Last().Last().ID;
         }
 
-        private long CountMonsters(Tile image)
+        private long CountMonsterPixels(Tile image)
         {
             var pattern = new string[]
             {
@@ -142,53 +141,48 @@ namespace _2020_20
                 "#    ##    ##    ###",
                 " #  #  #  #  #  #   ",
             };
+            int pRows = pattern.Length;
+            int pCols = pattern[0].Length;
 
-            long monsters = 0;
+            long matches = 0;
 
-            for (int line = 0; line < image.Rows.Length - (pattern.Length - 1); line++)
+            int size = image.Size;
+
+            for (int imgRow = 0; imgRow < size - pRows; imgRow++)
             {
-                for (int i = 0; i < image.Rows[line].Length - (pattern[0].Length - 1); i++)
+                for (int imgCol = 0; imgCol < size - pCols; imgCol++)
                 {
                     bool match = true;
-                    for (int ml = 0; ml < pattern.Length; ml++)
+                    for (int patRow = 0; match && patRow < pRows; patRow++)
                     {
-                        for (int mi = 0; match && mi < pattern[ml].Length; mi++)
+                        for (int patCol = 0; match && patCol < pCols; patCol++)
                         {
-                            if (pattern[ml][mi] == '#' && image.Rows[line + ml][i + mi] != '#')
-                            {
+                            if (pattern[patRow][patCol] == '#' && image.Rows[imgRow + patRow][imgCol + patCol] != '#')
                                 match = false;
-                            }
                         }
                     }
                     if (match)
-                        monsters++;
+                        matches++;
                 }
             }
-            return monsters;
+            return matches * pattern.Sum(r => r.Count(c => c == '#'));
         }
 
         private long GetRoughness(string inputFile)
         {
-            var grid = Solve(inputFile);
-            
-            var merged = Enumerable.Range(0, grid.GetLength(0) * 10)
-                .Where(r =>
-                {
-                    var rowIdx = r % 10;
-                    return rowIdx != 0 && rowIdx != 9;
-                })
-                .Select(r => string.Join(string.Empty, Enumerable.Range(0, grid.GetLength(0))
-                        .Select(c => grid[r / 10, c])
-                        .Select(t => t.Rows[r % 10].Substring(1, 8)))
-                ).ToArray();
+            // Solve input and merge to single tile.
+            var result = Solve(inputFile).SelectMany(tileRow => {
+                var tiles = tileRow.Select(tr => tr.WithoutBorder()).ToList();
+                return Enumerable.Range(0, tiles[0].Size)
+                    .Select(i => tiles.Select(t => t.Rows[i]).Aggregate(string.Concat));
+            }).ToArray();
+            var image = new Tile(0, result);
 
-            var image = new Tile(0, merged);
+            var monsters = image.GetRotations().Select(CountMonsterPixels).OrderByDescending(mc => mc).FirstOrDefault();
 
-            var monsters = image.GetRotations().Select(CountMonsters).OrderByDescending(mc => mc).FirstOrDefault();
+            var waves = image.Rows.Sum(r => r.Count(c => c == '#'));
 
-            var waves = image.Rows.Select(r => r.Where(c => c == '#').Count()).Sum();
-
-            return waves - (15 * monsters);
+            return waves - monsters;
         }
 
         protected override long? Part1()
