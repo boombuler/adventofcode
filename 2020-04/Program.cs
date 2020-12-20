@@ -110,16 +110,16 @@ namespace _2020_04
         }
         protected override long? Part1()
         {
-            Assert(CountPassports("TestInput.txt", HasRequiredFields), 2);
-            return CountPassports("Input.txt", HasRequiredFields);
+            Assert(CountPassports("TestInput", HasRequiredFields), 2);
+            return CountPassports("Input", HasRequiredFields);
         }
 
         protected override long? Part2()
         {
-            Assert(CountPassports("Invalid.txt", IsPassportValid), 0, "Invalid");
-            Assert(CountPassports("Valid.txt", IsPassportValid), 4, "Valid");
-            Assert(CountPassports("TestInput.txt", IsPassportValid), 2);
-            return CountPassports("Input.txt", IsPassportValid);
+            Assert(CountPassports("Invalid", IsPassportValid), 0, "Invalid");
+            Assert(CountPassports("Valid", IsPassportValid), 4, "Valid");
+            Assert(CountPassports("TestInput", IsPassportValid), 2);
+            return CountPassports("Input", IsPassportValid);
         }
     }
 }

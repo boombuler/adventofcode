@@ -34,9 +34,9 @@ namespace _2015_19
 
         protected override long? Part1()
         {
-            Assert(GetUniqueReactions("Sample.txt", "HOH"), 4);
-            Assert(GetUniqueReactions("Sample.txt", "HOHOHO"), 7);
-            return GetUniqueReactions("Input.txt", INPUT_MOLECULE);
+            Assert(GetUniqueReactions("Sample", "HOH"), 4);
+            Assert(GetUniqueReactions("Sample", "HOHOHO"), 7);
+            return GetUniqueReactions("Input", INPUT_MOLECULE);
         }
 
         protected override long? Part2()

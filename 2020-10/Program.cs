@@ -80,17 +80,17 @@ namespace _2020_10
 
         protected override long? Part1()
         {
-            Assert(string.Join(",", GetDifferences("Sample1.txt")), "0,7,0,5"); 
-            Assert(string.Join(",", GetDifferences("Sample2.txt")), "0,22,0,10");
-            var diff = GetDifferences("Input.txt");
+            Assert(string.Join(",", GetDifferences("Sample1")), "0,7,0,5"); 
+            Assert(string.Join(",", GetDifferences("Sample2")), "0,22,0,10");
+            var diff = GetDifferences("Input");
             return diff[1] * diff[3];
         }
 
         protected override long? Part2()
         {
-            Assert(CoundValidAdapterChains("Sample1.txt"), 8);
-            Assert(CoundValidAdapterChains("Sample2.txt"), 19208);
-            return CoundValidAdapterChains("Input.txt");
+            Assert(CoundValidAdapterChains("Sample1"), 8);
+            Assert(CoundValidAdapterChains("Sample2"), 19208);
+            return CoundValidAdapterChains("Input");
         }
     }
 }

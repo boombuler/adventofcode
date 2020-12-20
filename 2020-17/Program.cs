@@ -80,14 +80,14 @@ namespace _2020_17
 
         protected override long? Part1()
         {
-            Assert(GoL3D("Sample.txt", 6), 112);
-            return GoL3D("Input.txt", 6);
+            Assert(GoL3D("Sample", 6), 112);
+            return GoL3D("Input", 6);
         }
 
         protected override long? Part2()
         {
-            Assert(GoL4D("Sample.txt", 6), 848);
-            return GoL4D("Input.txt", 6);
+            Assert(GoL4D("Sample", 6), 848);
+            return GoL4D("Input", 6);
         }
     }
 }

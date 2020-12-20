@@ -36,8 +36,8 @@ namespace _2020_02
             bool checkIndex(int i) => test[i - 1] == c;
             return checkIndex(i1) ^ checkIndex(i2);
         }
-        protected override long? Part1() => ReadLines().Where(IsPasswordValidPart1).Count();
-        protected override long? Part2() => ReadLines().Where(IsPasswordValidPart2).Count();
+        protected override long? Part1() => ReadLines("Input").Where(IsPasswordValidPart1).Count();
+        protected override long? Part2() => ReadLines("Input").Where(IsPasswordValidPart2).Count();
     
         static void Main(string[] args) => new Program().Run();
     }

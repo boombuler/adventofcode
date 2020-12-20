@@ -86,20 +86,20 @@ namespace _2015_07
 
         protected override long? Part1()
         {
-            Assert(TestWire("SampleInput.txt", "d"), 72, "d");
-            Assert(TestWire("SampleInput.txt", "e"), 507, "e");
-            Assert(TestWire("SampleInput.txt", "f"), 492, "f");
-            Assert(TestWire("SampleInput.txt", "g"), 114, "g");
-            Assert(TestWire("SampleInput.txt", "h"), 65412, "h");
-            Assert(TestWire("SampleInput.txt", "i"), 65079, "i");
-            Assert(TestWire("SampleInput.txt", "x"), 123, "x");
-            Assert(TestWire("SampleInput.txt", "y"), 456, "y");
-            return TestWire("Input.txt", "a");
+            Assert(TestWire("Sample", "d"), 72, "d");
+            Assert(TestWire("Sample", "e"), 507, "e");
+            Assert(TestWire("Sample", "f"), 492, "f");
+            Assert(TestWire("Sample", "g"), 114, "g");
+            Assert(TestWire("Sample", "h"), 65412, "h");
+            Assert(TestWire("Sample", "i"), 65079, "i");
+            Assert(TestWire("Sample", "x"), 123, "x");
+            Assert(TestWire("Sample", "y"), 456, "y");
+            return TestWire("Input", "a");
         }
         protected override long? Part2()
         {
-            var oldA = TestWire("Input.txt", "a");
-            return TestWire("Input.txt", "a", ("b", oldA));
+            var oldA = TestWire("Input", "a");
+            return TestWire("Input", "a", ("b", oldA));
         }
     }
 }

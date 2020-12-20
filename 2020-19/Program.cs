@@ -70,18 +70,18 @@ namespace _2020_19
 
         protected override long? Part1()
         {
-            Assert(CheckRule("Sample.txt"), 2);
-            return CheckRule("Input.txt");
+            Assert(CheckRule("Sample"), 2);
+            return CheckRule("Input");
         }
 
         protected override long? Part2()
         {
-            Assert(CheckRule("OwnSample.txt"),2);
+            Assert(CheckRule("OwnSample"),2);
 
             var overrides = @"
 8: 42 | 42 8
 11: 42 31 | 42 11 31";
-            return CheckRule("Input.txt", overrides);
+            return CheckRule("Input", overrides);
         }
     }
 }

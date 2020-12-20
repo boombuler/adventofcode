@@ -11,9 +11,7 @@ namespace AdventHelper
         private OutputMode fTextMode = new DefaultOut();
 
         #region Puzzle Input
-        private const string DEFAULT_INPUT_FILE = "Input.txt";
-        
-        protected Stream OpenResource(string fileName = DEFAULT_INPUT_FILE)
+        protected Stream OpenResource(string fileName)
         {
             var type = GetType();
             var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.{fileName}");
@@ -22,9 +20,9 @@ namespace AdventHelper
             return stream;
         }
 
-        protected IEnumerable<string> ReadLines(string fileName = DEFAULT_INPUT_FILE)
+        protected IEnumerable<string> ReadLines(string fileName)
         {
-            using (var file = OpenResource(fileName))
+            using (var file = OpenResource(fileName + ".txt"))
             {
                 using (var sr = new StreamReader(file))
                 {

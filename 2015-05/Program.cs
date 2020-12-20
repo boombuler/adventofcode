@@ -28,7 +28,7 @@ namespace _2015_05
             Assert(!IsNice("jchzalrnumimnmhp"));
             Assert(!IsNice("haegwjzuvuyypxyu"));
             Assert(!IsNice("dvszwmarrgswjxmb"));
-            return ReadLines().Where(IsNice).Count();
+            return ReadLines("Input").Where(IsNice).Count();
         }
         protected override long? Part2()
         {
@@ -38,7 +38,7 @@ namespace _2015_05
             Assert(IsNice2("xxyxx"));
             Assert(!IsNice2("uurcxstgmygtbstg"));
             Assert(!IsNice2("ieodomkazucvgmuy"));
-            return ReadLines().Where(IsNice2).Count();
+            return ReadLines("Input").Where(IsNice2).Count();
         }
     }
 }

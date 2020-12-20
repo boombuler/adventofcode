@@ -65,14 +65,14 @@ namespace _2016_08
         protected override long? Part1()
         {
             Func<bool[,], long> Count = s => s.Cast<bool>().Where(b => b).Count();
-            Assert(Count(RunCode("Sample.txt", 7, 3)), 6);
+            Assert(Count(RunCode("Sample", 7, 3)), 6);
 
-            return Count(RunCode("Input.txt", 50, 6));
+            return Count(RunCode("Input", 50, 6));
         }
 
         protected override long? Part2()
         {
-            PrintScreen(RunCode("Input.txt", 50, 6));
+            PrintScreen(RunCode("Input", 50, 6));
             return base.Part2();
         }
     }

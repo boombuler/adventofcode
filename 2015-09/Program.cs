@@ -59,14 +59,14 @@ namespace _2015_09
 
         protected override long? Part1()
         {
-            Assert(PermutateRoutes("Sample.txt").Min(), 605);
-            return PermutateRoutes("Input.txt").Min();
+            Assert(PermutateRoutes("Sample").Min(), 605);
+            return PermutateRoutes("Input").Min();
         }
 
         protected override long? Part2()
         {
-            Assert(PermutateRoutes("Sample.txt").Max(), 982);
-            return PermutateRoutes("Input.txt").Max();
+            Assert(PermutateRoutes("Sample").Max(), 982);
+            return PermutateRoutes("Input").Max();
         }
     }
 }

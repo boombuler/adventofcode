@@ -58,13 +58,13 @@ namespace _2020_16
 
         protected override long? Part1()
         {
-            Assert(GetErrorRate("Sample.txt"), 71);
-            return GetErrorRate("Input.txt");
+            Assert(GetErrorRate("Sample"), 71);
+            return GetErrorRate("Input");
         }
 
         protected override long? Part2()
         {
-            var file = "Input.txt";
+            var file = "Input";
             var rules = GetRules(file).ToList();
             var validTickets = OtherTickets(file).Where(t => ErrorRate(rules, t) == 0).ToList();
 

@@ -49,13 +49,13 @@ namespace _2015_24
 
         protected override long? Part1()
         {
-            Assert(GetP1QE("Sample.txt", 3), 99);
-            return GetP1QE("Input.txt", 3);
+            Assert(GetP1QE("Sample", 3), 99);
+            return GetP1QE("Input", 3);
         }
         protected override long? Part2()
         {
-            Assert(GetP1QE("Sample.txt", 4), 44);
-            return GetP1QE("Input.txt", 4);
+            Assert(GetP1QE("Sample", 4), 44);
+            return GetP1QE("Input", 4);
         }
     }
 }

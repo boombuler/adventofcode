@@ -73,15 +73,15 @@ namespace _2020_13
         }
         protected override long? Part1()
         {
-            Assert(GetNextDepatureId("Sample.txt"), 295);
-            return GetNextDepatureId("Input.txt");
+            Assert(GetNextDepatureId("Sample"), 295);
+            return GetNextDepatureId("Input");
         }
 
         protected override long? Part2()
         {
             Assert(ChineseRemainder((2, 8), (4, 5)).a, 34);
-            Assert(GetContestWinningMinute("Sample.txt"), 1068781);
-            return GetContestWinningMinute("Input.txt");
+            Assert(GetContestWinningMinute("Sample"), 1068781);
+            return GetContestWinningMinute("Input");
         }
     }
 }

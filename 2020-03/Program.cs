@@ -9,9 +9,6 @@ namespace _2020_03
     {
         static void Main(string[] args) => new Program().Run();
 
-        const string SampleMap = "TestInput.txt";
-        const string RealMap = "Input.txt";
-
         class Slope
         {
             public static readonly Slope Default = new Slope(1,3);
@@ -55,14 +52,14 @@ namespace _2020_03
 
         protected override long? Part1()
         {
-            Assert(CheckSlopes(SampleMap, Slope.Default), 7);
-            return CheckSlopes(RealMap, Slope.Default);
+            Assert(CheckSlopes("Sample", Slope.Default), 7);
+            return CheckSlopes("Input", Slope.Default);
         }
 
         protected override long? Part2()
         {
-            Assert(CheckSlopes(SampleMap, Slope.All), 336);
-            return CheckSlopes(RealMap, Slope.All);
+            Assert(CheckSlopes("Sample", Slope.All), 336);
+            return CheckSlopes("Input", Slope.All);
         }
     }
 }

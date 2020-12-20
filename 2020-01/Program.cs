@@ -33,8 +33,8 @@ namespace _2020_01
             return TrySolve(0, factorCount, 0);
         }
 
-        protected override long? Part1() => Solve(ReadLines().Select(int.Parse).ToArray(), 2);
-        protected override long? Part2() => Solve(ReadLines().Select(int.Parse).ToArray(), 3);
+        protected override long? Part1() => Solve(ReadLines("Input").Select(int.Parse).ToArray(), 2);
+        protected override long? Part2() => Solve(ReadLines("Input").Select(int.Parse).ToArray(), 3);
        
         static void Main(string[] args) => new Program().Run();
     }

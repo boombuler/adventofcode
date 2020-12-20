@@ -8,12 +8,12 @@
 
   <ItemGroup>
     <None Remove="Input.txt" />
-    <None Remove="TestInput.txt" />
+    <None Remove="Sample.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Input.txt" />
-    <EmbeddedResource Include="TestInput.txt" />
+    <EmbeddedResource Include="Sample.txt" />
   </ItemGroup>
 
   <ItemGroup>

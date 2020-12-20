@@ -58,8 +58,8 @@ namespace _2016_02
                 " 789 ",
                 "     "
             };
-            Assert(ReadInstructions("Sample.txt", kp), "1985");
-            return ReadInstructions("Input.txt", kp);
+            Assert(ReadInstructions("Sample", kp), "1985");
+            return ReadInstructions("Input", kp);
         }
 
         protected override string Part2()
@@ -74,8 +74,8 @@ namespace _2016_02
                "   D   ",
                "       ",
             };
-            Assert(ReadInstructions("Sample.txt", kp), "5DB3");
-            return ReadInstructions("Input.txt", kp);
+            Assert(ReadInstructions("Sample", kp), "5DB3");
+            return ReadInstructions("Input", kp);
         }
     }
 }

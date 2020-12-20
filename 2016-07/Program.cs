@@ -26,7 +26,7 @@ namespace _2016_07
             Assert(SupportsTLS("abcd[bddb]xyyx"), false);
             Assert(SupportsTLS("aaaa[qwer]tyui"), false);
             Assert(SupportsTLS("ioxxoj[asdfgh]zxcvbn"), true);
-            return ReadLines().Where(SupportsTLS).Count();
+            return ReadLines("Input").Where(SupportsTLS).Count();
         }
 
         public bool SupportsSSL(string ipv7Addr)
@@ -50,7 +50,7 @@ namespace _2016_07
             Assert(SupportsSSL("xyx[xyx]xyx"), false);
             Assert(SupportsSSL("aaa[kek]eke"), true);
             Assert(SupportsSSL("zazbz[bzb]cdb"), true);
-            return ReadLines().Where(SupportsSSL).Count();
+            return ReadLines("Input").Where(SupportsSSL).Count();
         }
     }
 }

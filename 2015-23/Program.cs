@@ -77,10 +77,10 @@ namespace _2015_23
 
         protected override long? Part1()
         {
-            Assert(RunProgram("Sample.txt", Register.a), 2);
-            return RunProgram("Input.txt", Register.b);
+            Assert(RunProgram("Sample", Register.a), 2);
+            return RunProgram("Input", Register.b);
         }
 
-        protected override long? Part2() => RunProgram("Input.txt", Register.b, 1);
+        protected override long? Part2() => RunProgram("Input", Register.b, 1);
     }
 }
