@@ -8,27 +8,9 @@ namespace _2020_17
 {
     class Program : ProgramBase
     {
-        private long Emulate<T>(HashSet<T> activeCells, int rounds, Func<T, IEnumerable<T>> getNeighbours)
-        {
-            var nextGen = new HashSet<T>();
-            for (int gen = 0; gen < rounds; gen++)
-            {
-                var lookAt = activeCells.SelectMany(getNeighbours).Union(activeCells).Distinct().ToList();
-                foreach (var cell in lookAt)
-                {
-                    var active = getNeighbours(cell).Where(activeCells.Contains).Count();
-                    bool wasActive = activeCells.Contains(cell);
-
-                    if (active == 3 || (wasActive && active == 2))
-                        nextGen.Add(cell);
-                }
-
-                (activeCells, nextGen) = (nextGen, activeCells);
-                nextGen.Clear();
-            }
-            return activeCells.Count();
-        }
-
+        private long Emulate<T>(HashSet<T> activeCells, int rounds, GameOfLife.GetNeighbours<T> getNeighbours)
+            => GameOfLife.Emulate<T>(activeCells, rounds, getNeighbours, (wasActive, active) => active == 3 || (wasActive && active == 2));
+        
         private IEnumerable<(int x, int y)> ReadActive(string initialFile)
         {
             int y = 0;
