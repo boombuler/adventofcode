@@ -2,72 +2,60 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace _2020_24
 {
     class Program : ProgramBase
     {
         static void Main(string[] args) => new Program().Run();
-        /*
-            [NW][NE]
-            [ W][__][ E]
-                [SW][SE]
-         */
-        private IEnumerable<(int r, int c)> GetNeighbours((int r, int c) i)
-        {
-            yield return (i.r - 1, i.c - 1); // NW
-            yield return (i.r - 1, i.c);     // NE
-            yield return (i.r, i.c - 1);     // W
-            yield return (i.r, i.c + 1);     // E
-            yield return (i.r + 1, i.c);     // SW
-            yield return (i.r + 1, i.c + 1); // SE
-        }
 
+        /*
+           [NW][NE]
+           [ W][__][ E]
+               [SW][SE]
+        */
+        enum Direction : uint
+        {     // Row  Col
+            nw = 0xFF_FF, // -1, -1
+            ne = 0xFF_00, // -1,  0
+            w  = 0x00_FF, //  0, -1
+            e  = 0x00_01, //  0,  1
+            sw = 0x01_00, //  1,  0
+            se = 0x01_01, //  1,  1
+        }
+        private static (int r, int c) Apply((int r, int c) pt, Direction d)
+            => (
+                pt.r + ((sbyte)((int)d >> 8)), // Add the upper signed byte to the row
+                pt.c + (sbyte)(int)d           // Add the lower signed byte to the column
+            );
+
+       
         private long CountBlackTiles(string input) => ReadPattern(input).Count;
 
+        private static readonly Regex ParseLine = new Regex("(nw|ne|sw|se|e|w)", RegexOptions.Compiled);
         private HashSet<(int r, int c)> ReadPattern(string input)
         {
             var blackTiles = new HashSet<(int r, int c)>();
             foreach(var line in ReadLines(input))
             {
                 var pos = (r: 0, c: 0);
-
-                using (var sr = new StringReader(line))
-                {
-                    while(sr.Peek() > 0)
-                    {
-                        var c = (char)sr.Read();
-                        switch(c)
-                        {
-                            case 'w': pos = (pos.r, pos.c - 1); break;
-                            case 'e': pos = (pos.r, pos.c + 1); break;
-                            case 'n':
-                                if ((char)sr.Read() == 'w')
-                                    pos = (pos.r - 1, pos.c - 1); 
-                                else
-                                    pos = (pos.r - 1, pos.c);
-                                break;
-                            case 's':
-                                if ((char)sr.Read() == 'w')
-                                    pos = (pos.r + 1, pos.c);
-                                else
-                                    pos = (pos.r + 1, pos.c + 1);
-                                break;
-                        }
-                    }
-
-                    if (!blackTiles.Remove(pos))
-                        blackTiles.Add(pos);
-                }
+                foreach(var direction in ParseLine.Matches(line).Select(m => Enum.Parse<Direction>(m.Value)))
+                    pos = Apply(pos, direction);
+                if (!blackTiles.Remove(pos))
+                    blackTiles.Add(pos);
             }
             return blackTiles;
         }
 
-
-        //Any black tile with zero or more than 2 black tiles immediately adjacent to it is flipped to white.
-        // Any white tile with exactly 2 black tiles immediately adjacent to it is flipped to black.
         private long GameOfTiles(string input, int days)
-            => GameOfLife.Emulate(ReadPattern(input), days, GetNeighbours, (wasAlive, n) => (n == 2) || (wasAlive && n == 1));
+        {
+            var allDirections = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
+            return GameOfLife.Emulate(ReadPattern(input), days,
+                i => allDirections.Select(d => Apply(i, d)),
+                (wasAlive, n) => (n == 2) || (wasAlive && n == 1));
+        }
 
         protected override long? Part1()
         {
