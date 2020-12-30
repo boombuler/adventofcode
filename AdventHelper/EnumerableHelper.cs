@@ -5,6 +5,17 @@ namespace AdventHelper
 {
     public static class EnumerableHelper
     {
+        public static IEnumerable<int> Generate(int start = 0, int step = 1)
+        {
+            var value = start;
+
+            while (true)
+            {
+                yield return value;
+                value += step;
+            }
+        }
+
         public static IEnumerable<T[]> Permuatate<T>(this IEnumerable<T> items)
         {
             var arr = items.ToArray();
