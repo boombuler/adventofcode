@@ -13,25 +13,27 @@ namespace _2016_16
 
         private string GenerateDataGetCheckSum(string input, int length)
         {
-            var sb = new StringBuilder(input, length);
-            while (sb.Length < length)
-            {
-                var b = sb.ToString();
-                sb.Append('0');
-                foreach (var c in b.Reverse())
-                    sb.Append(c == '0' ? '1' : '0');
-            }
-            input = sb.ToString();
+            char[] buffer = new char[length];
+            Array.Copy(input.ToCharArray(), buffer, input.Length);
 
-            while (length % 2 == 0)
+            int i = input.Length;
+            while (i < length)
             {
-                sb.Clear();
-                for (int i = 0; i < length; i += 2)
-                    sb.Append(input[i] == input[i + 1] ? '1' : '0');
-                input = sb.ToString();
-                length = input.Length;
+                int aEnd = i-1;
+                buffer[i++] = '0';
+                int stop = aEnd - Math.Min(length - 1 - i, aEnd);
+                
+                for (int bi = aEnd; bi >= stop; bi--)
+                    buffer[i++] = buffer[bi] == '0' ? '1' : '0';
             }
-            return input;
+
+            while ((length & 1) == 0)
+            {
+                for (i = 0; i < length; i += 2)
+                    buffer[i >> 1] = (buffer[i] == buffer[i + 1]) ? '1' : '0';
+                length >>= 1;
+            }
+            return new string(buffer, 0, length);
         }
 
         const string INPUT = "00101000101111010";
