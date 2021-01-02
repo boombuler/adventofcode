@@ -51,6 +51,7 @@ namespace AdventHelper
             p = Part2();
             if (!Equals(p, default(TSolution)))
                 WriteLn<DefaultOut>(string.Format("              Solution : {0}", p));
+            WriteLn<DefaultOut>(string.Empty);
         }
 
         #endregion
