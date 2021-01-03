@@ -47,6 +47,21 @@ namespace AdventHelper
         public static Point2D operator +(Point2D a, Point2D b)
             => new Point2D(a.X + b.X, a.Y + b.Y);
 
+        public IEnumerable<Point2D> Neighbours(bool withDiagonal = false)
+        {
+            yield return this + (1, 0);
+            yield return this + (0, 1);
+            yield return this - (1, 0);
+            yield return this - (0, 1);
+            if (withDiagonal)
+            {
+                yield return this + (+1, +1);
+                yield return this + (-1, +1);
+                yield return this + (+1, -1);
+                yield return this + (-1, -1);
+            }
+        }
+
         public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
     }
 }

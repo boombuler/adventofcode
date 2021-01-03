@@ -8,20 +8,20 @@ namespace _2016_13
     class Program : ProgramBase
     {
         static void Main(string[] args) => new Program().Run();
-        static int NumberOfSetBits(ulong i)
+        private static int NumberOfSetBits(ulong i)
         {
             i = i - ((i >> 1) & 0x5555555555555555UL);
             i = (i & 0x3333333333333333UL) + ((i >> 2) & 0x3333333333333333UL);
             return (int)(unchecked(((i + (i >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
         }
-        private bool IsWall(Point2D pt, int wallPattern)
+        private static bool IsWall(Point2D pt, int wallPattern)
         {
             long tileNo = (pt.X * pt.X) + (3 * pt.X) + (2 * pt.X * pt.Y) + pt.Y + (pt.Y * pt.Y);
             tileNo += wallPattern;
             return (NumberOfSetBits((ulong)tileNo) % 2) != 0;
         }
 
-        private IEnumerable<Point2D> Neighbours(Point2D pt, int wallPattern)
+        private static IEnumerable<Point2D> Neighbours(Point2D pt, int wallPattern)
         {
             bool isValid(Point2D p) => p.X >= 0 && p.Y >= 0 && !IsWall(p, wallPattern);
 
@@ -34,58 +34,25 @@ namespace _2016_13
             }.Where(isValid);
         }
 
-        private long ShortestPath(Point2D src, Point2D dest, int wallPattern)
+        class WallAStar : AStar<Point2D>
         {
-            var parents = new Dictionary<Point2D, Point2D>();
-            var costs = new Dictionary<Point2D, int>();
-
-            long GuessedCost(Point2D pt) 
+            private readonly int fWallPattern;
+            public WallAStar(Point2D src, int wallPattern)
+                : base(src)
             {
-                var dist = (dest - pt);
-                var cost = Math.Abs(dist.X) + Math.Abs(dist.Y);
-                if (parents.TryGetValue(pt, out var par))
-                    return costs[par] + cost;
-                return cost;
+                fWallPattern = wallPattern;
             }
-            var comparer = Comparer<Point2D>.Create((a, b) => Math.Sign(GuessedCost(a) - GuessedCost(b)));
-
-
-            var open = new HashSet<Point2D>();
-            var closed = new HashSet<Point2D>();
-            
-            open.Add(src);
-            costs[src] = 0;
-
-            while (open.Count > 0)
+            protected override long Distance(Point2D one, Point2D another)
             {
-                var current = open.OrderBy(x => x, comparer).First();
-                
-                if (Equals(current, dest))
-                    return costs[current];
-                
-                open.Remove(current);
-                closed.Add(current);
-
-                var childCost = costs[current] + 1;
-                foreach (var successor in Neighbours(current, wallPattern))
-                {
-                    if (closed.Contains(successor))
-                        continue;
-                    if (!open.Contains(successor))
-                    {
-                        costs[successor] = childCost;
-                        parents[successor] = current;
-                        open.Add(successor);
-                    }
-                    else if (costs[successor] > childCost)
-                    {
-                        costs[successor] = childCost;
-                        parents[successor] = current;
-                    }
-                }
+                var d = one - another;
+                return Math.Abs(d.X) + Math.Abs(d.Y);
             }
-            return -1;
+
+            protected override IEnumerable<Point2D> NeighboursOf(Point2D node) => Neighbours(node, fWallPattern);
         }
+
+        private long ShortestPath(Point2D src, Point2D dest, int wallPattern)
+            => new WallAStar(src, wallPattern).ShortestPath(dest);
 
         protected override long? Part1()
         {
