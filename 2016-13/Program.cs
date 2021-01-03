@@ -42,11 +42,7 @@ namespace _2016_13
             {
                 fWallPattern = wallPattern;
             }
-            protected override long Distance(Point2D one, Point2D another)
-            {
-                var d = one - another;
-                return Math.Abs(d.X) + Math.Abs(d.Y);
-            }
+            protected override long Distance(Point2D one, Point2D another) => one.ManhattanDistance(another);
 
             protected override IEnumerable<Point2D> NeighboursOf(Point2D node) => Neighbours(node, fWallPattern);
         }
