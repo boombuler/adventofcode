@@ -62,6 +62,8 @@ namespace AdventHelper
             }
         }
 
+        public long ManhattanDistance(Point2D other)
+            => Math.Abs(other.X - X) + Math.Abs(other.Y - Y);
         public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
     }
 }

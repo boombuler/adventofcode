@@ -29,11 +29,7 @@ namespace _2016_24
             {
             }
 
-            protected override long Distance(Node one, Node another)
-            {
-                var d = one.Location - another.Location;
-                return Math.Abs(d.X) + Math.Abs(d.Y);
-            }
+            protected override long Distance(Node one, Node another) => one.Location.ManhattanDistance(another.Location);
 
             protected override IEnumerable<Node> NeighboursOf(Node node) => node.Neigbours;
         }
