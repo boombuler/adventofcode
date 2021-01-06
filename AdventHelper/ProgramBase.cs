@@ -6,51 +6,49 @@ using System.IO;
 namespace AdventHelper
 {
     public abstract class ProgramBase : ProgramBase<long?>{}
-    public abstract class ProgramBase<TSolution>
+    public abstract class ProgramBase<TSolution>: ProgramBase<TSolution, TSolution> { }
+    public abstract class ProgramBase<TSolution1, TSolution2>
     {
         private OutputMode fTextMode = new DefaultOut();
 
         #region Puzzle Input
-        protected Stream OpenResource(string fileName)
+        protected StreamReader OpenResource(string fileName)
         {
             var type = GetType();
-            var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.{fileName}");
+            var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.{fileName}.txt");
             if (stream == null)
                 throw new InvalidDataException();
-            return stream;
+            return new StreamReader(stream);
         }
 
         protected IEnumerable<string> ReadLines(string fileName)
         {
-            using (var file = OpenResource(fileName + ".txt"))
+            using (var sr = OpenResource(fileName))
             {
-                using (var sr = new StreamReader(file))
-                {
-                    while (!sr.EndOfStream)
-                        yield return sr.ReadLine();
-                }
+                while (!sr.EndOfStream)
+                    yield return sr.ReadLine();
             }
         }
 
         #endregion
 
         #region Execution
-        protected abstract TSolution Part1();
-        protected virtual TSolution Part2() => default;
+        protected abstract TSolution1 Part1();
+        protected virtual TSolution2 Part2() => default;
         public void Run()
         {
             WriteLn<DefaultOut>("-- Part 1 --");
-            var p = Part1();
-            WriteLn<DefaultOut>(string.Format("              Solution : {0}", p));
+            var p1 = Part1();
+            WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
             WriteLn<DefaultOut>(null);
             WriteLn<DefaultOut>(null);
 
             fAssertionCounter = 1;
             WriteLn<DefaultOut>("-- Part 2 --");
 
-            p = Part2();
-            if (!Equals(p, default(TSolution)))
-                WriteLn<DefaultOut>(string.Format("              Solution : {0}", p));
+            var p2 = Part2();
+            if (!Equals(p2, default(TSolution2)))
+                WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
             WriteLn<DefaultOut>(string.Empty);
         }
 
