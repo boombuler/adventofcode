@@ -32,7 +32,14 @@ namespace AdventHelper
                 value += step;
             }
         }
-
+        public static IEnumerable<IEnumerable<T>> Chunks<T>(this IEnumerable<T> items, int chunckSize)
+        {
+            if (chunckSize <= 0)
+                throw new ArgumentException();
+            return items.Select((itm, i) => new { Value = itm, ChunkNo = i / chunckSize })
+                .GroupBy(c => c.ChunkNo)
+                .Select(c => c.Select(i => i.Value));
+        }
         public static IEnumerable<T[]> Permuatate<T>(this IEnumerable<T> items)
         {
             var arr = items.ToArray();
