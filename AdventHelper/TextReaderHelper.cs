@@ -8,14 +8,20 @@ namespace AdventHelper
     public static class TextReaderHelper
     {
 
+
+        public static bool TryRead(this TextReader tr, out char c)
+        {
+            int val = tr.Read();
+            c = (char)val;
+            return (val >= 0);
+        }
+
         public static string ReadToTerm(this TextReader tr, char term)
         {
             var result = new StringBuilder();
 
-            int c;
-            while((c = tr.Read()) >= 0)
+            while(tr.TryRead(out char ch))
             {
-                char ch = (char)c;
                 if (ch != term)
                     result.Append(ch);
                 else

@@ -19,10 +19,8 @@ namespace _2016_09
 
             using(var sr = new StringReader(input))
             {
-                int nextInt;
-                while ((nextInt = sr.Read()) >= 0)
+                while (sr.TryRead(out char c))
                 {
-                    char c = (char)nextInt;
                     if (c != '(')
                     {
                         result++;
