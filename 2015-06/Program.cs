@@ -16,19 +16,6 @@ namespace _2015_06
             private const int SIZE = 1000;
             private T[,] Lights = new T[SIZE, SIZE];
 
-            private void Set((int x, int y) p1, (int x, int y) p2, bool? command)
-            {
-                (int min, int max) Order(int i1, int i2) 
-                    => i1 < i2 ? (i1, i2) : (i2, i1);
-
-                (int xMin, int xMax) = Order(p1.x, p2.x);
-                (int yMin, int yMax) = Order(p1.y, p2.y);
-
-                for (int x = xMin; x <= xMax; x++)
-                    for (int y = yMin; y <= yMax; y++)
-                        Lights[x, y] = Apply(Lights[x, y], command);
-            }
-
             protected abstract T Apply(T oldValue, bool? command);
             protected abstract int ValueOf(T val);
 
@@ -43,9 +30,10 @@ namespace _2015_06
                         "turn off" => (bool?)false,
                         _ => (bool?)null
                     };
-                    var min = (int.Parse(m.Groups["xMin"].Value), int.Parse(m.Groups["yMin"].Value));
-                    var max = (int.Parse(m.Groups["xMax"].Value), int.Parse(m.Groups["yMax"].Value));
-                    Set(min, max, action);
+                    var min = new Point2D(long.Parse(m.Groups["xMin"].Value), long.Parse(m.Groups["yMin"].Value));
+                    var max = new Point2D(long.Parse(m.Groups["xMax"].Value), long.Parse(m.Groups["yMax"].Value));
+                    foreach (var p in Point2D.Range(min, max))
+                        Lights[p.X, p.Y] = Apply(Lights[p.X, p.Y], action);
                 }
                 return Lights.Cast<T>().Select(ValueOf).Sum();
             }
