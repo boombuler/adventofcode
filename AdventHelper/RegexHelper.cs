@@ -79,13 +79,15 @@ namespace AdventHelper
 
         private static bool TryCreateConstructorFactory<T>(Regex regex, out Func<string, (bool, T)> factory)
         {
-            var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).ToList();
+            var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).OrderBy(n => n).ToList();
             var constructor =
                 typeof(T).GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance)
-                    .FirstOrDefault(ctor => !ctor.GetParameters()
-                        .Select(p => p.Name)
-                        .Except(groupNames, StringComparer.OrdinalIgnoreCase)
-                        .Any()
+                    .FirstOrDefault(ctor => 
+                        ctor
+                            .GetParameters()
+                            .Select(p => p.Name)
+                            .OrderBy(n => n)
+                            .SequenceEqual(groupNames, StringComparer.OrdinalIgnoreCase)
                     );
             factory = null;
             if (constructor == null)
