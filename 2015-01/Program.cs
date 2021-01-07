@@ -32,9 +32,9 @@ namespace _2015_01
         {
             var input = ReadLines("Input").First();
             return WalkLevels(input)
-                .Zip(Enumerable.Range(1, input.Length), (l, i) => new { Level = l, Index = i })
+                .Select((l, i) => new { Level = l, Index = i })
                 .Where(itm => itm.Level < 0)
-                .Select(itm => itm.Index)
+                .Select(itm => itm.Index+1)
                 .First();
         }
     }
