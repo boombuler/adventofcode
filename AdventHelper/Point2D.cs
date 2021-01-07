@@ -66,5 +66,14 @@ namespace AdventHelper
         public long ManhattanDistance(Point2D other)
             => Math.Abs(other.X - X) + Math.Abs(other.Y - Y);
         public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
+
+        public static IEnumerable<Point2D> Range(Point2D min, Point2D max)
+        {
+            (var minX, var maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
+            (var minY, var maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
+            for (long x = minX; x <= maxX; x++)
+                for (long y = minY; y <= maxY; y++)
+                    yield return new Point2D(x, y);
+        }
     }
 }
