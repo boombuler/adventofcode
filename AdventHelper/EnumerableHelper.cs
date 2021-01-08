@@ -63,6 +63,25 @@ namespace AdventHelper
             permutateIdx(0);
             return result;
         }
+
+        public static IEnumerable<T> Unfold<T>(this T seed, Func<T, T> generator)
+        {
+            while (true)
+            {
+                seed = generator(seed);
+                yield return seed;
+            }
+        }
+
+        public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator)
+        {
+            while(true)
+            {
+                var next = generator(seed);
+                yield return next.Value;
+                seed = next.NextSeed;
+            }
+        }
     }
 
 }
