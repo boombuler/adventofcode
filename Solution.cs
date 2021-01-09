@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -20,20 +21,63 @@ namespace AdventOfCode
 
         public Solution()
         {
-            fInput = new Lazy<string>(() => ReadInput($"Input", $"{Day:d2}.txt"));
+            fInput = new Lazy<string>(() => LoadInput());
         }
 
         #region Puzzle Input
-        private string ReadInput(string folder, string file) 
+        
+        private string LoadInput() 
         {
-            string relPath = Path.Combine(folder, Year.ToString(), file);
+            const string sessionCookieFile = "Session.user";
+            string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
+            if (!File.Exists(relPath) && File.Exists(sessionCookieFile))
+            {
+                var request = (HttpWebRequest)WebRequest.Create($"https://adventofcode.com/{Year:d4}/day/{Day}/input");
+                request.Method = "GET";
+                request.Accept = "*/*";
+                request.AllowAutoRedirect = false;
+                request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; .NET CLR 1.0.3705)";
+                request.CookieContainer = new CookieContainer();
+                request.Credentials = null;
+                request.CookieContainer.Add(new Cookie("session", File.ReadAllText(sessionCookieFile), "/", ".adventofcode.com"));
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var inputData = response.GetResponseStream())
+                    {
+                        if (!Directory.Exists(Path.GetDirectoryName(relPath)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(relPath));
+                        using (var fs = File.Create(relPath))
+                            inputData.CopyTo(fs);
+                    }
+                }
+                
+            }
             return File.ReadAllText(relPath).TrimEnd('\r', '\n');
         }
 
         private readonly Lazy<string> fInput;
         protected string Input => fInput.Value;
-        
-        public string Sample(string suffix = null) => ReadInput("Samples", $"{Day:d2}{(!string.IsNullOrEmpty(suffix) ? ("-"+suffix) : string.Empty)}.txt");
+
+        public virtual string Sample(string suffix = null) 
+        {
+            var asm = GetType().Assembly;
+            if (string.IsNullOrEmpty(suffix))
+                suffix = string.Empty;
+            else
+                suffix = "-" + suffix;
+            using (var stream = asm.GetManifestResourceStream(asm.GetName().Name + $".Samples._{Year:d4}.{Day:d2}{suffix}.txt"))
+            {
+                if (stream == null)
+                {
+                    Error("Sample could not be loaded!");
+                    return string.Empty;
+                }
+
+                using (var sr = new StreamReader(stream))
+                    return sr.ReadToEnd().TrimEnd('\r', '\n');
+            }
+        }
 
         #endregion
 
