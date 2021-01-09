@@ -1,19 +1,18 @@
 ﻿using AdventOfCode.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AdventOfCode._2015
 {
     class Day19 : Solution
     {
-        private static readonly string INPUT_MOLECULE 
-            = "ORnPBPMgArCaCaCaSiThCaCaSiThCaCaPBSiRnFArRnFArCaCaSiThCaCaSiThCaCaCaCaCaCaSiRnFYFArSiRnMgArCaSiRnPTiTiBFYPBFArSiRnCaSiRnTiRnFArSiAlArPTiBPTiRnCaSiAlArCaPTiTiBPMgYFArPTiRnFArSiRnCaCaFArRnCaFArCaSiRnSiRnMgArFYCaSiRnMgArCaCaSiThPRnFArPBCaSiRnMgArCaCaSiThCaSiRnTiMgArFArSiThSiThCaCaSiRnMgArCaCaSiRnFArTiBPTiRnCaSiAlArCaPTiRnFArPBPBCaCaSiThCaPBSiThPRnFArSiThCaSiThCaSiThCaPTiBSiRnFYFArCaCaPRnFArPBCaCaPBSiRnTiRnFArCaPRnFArSiRnCaCaCaSiThCaRnCaFArYCaSiRnFArBCaCaCaSiThFArPBFArCaSiRnFArRnCaCaCaFArSiRnFArTiRnPMgArF";
-
-        private long GetUniqueReactions(string rules, string molecule)
+        private long GetUniqueReactions(IEnumerable<string> rules, string molecule)
         {
             var results = new HashSet<string>();
-            var reactions = rules.Lines()
+            var reactions = rules
                 .Select(r => r.Split(" => "))
                 .Select(p => new { From = p[0], To = p[1] });
             foreach (var reaction in reactions)
@@ -30,11 +29,43 @@ namespace AdventOfCode._2015
             return results.Count;
         }
 
+        private string InputMolecule => Input.Lines().Last();
+        private IEnumerable<string> SampleRules => Sample().Lines();
+        private IEnumerable<string> InputRules => Input.Lines().TakeWhile(l => !string.IsNullOrEmpty(l));
+
         protected override long? Part1()
         {
-            Assert(GetUniqueReactions(Sample(), "HOH"), 4);
-            Assert(GetUniqueReactions(Sample(), "HOHOHO"), 7);
-            return GetUniqueReactions(Input, INPUT_MOLECULE);
+            Assert(GetUniqueReactions(SampleRules, "HOH"), 4);
+            Assert(GetUniqueReactions(SampleRules, "HOHOHO"), 7);
+            return GetUniqueReactions(InputRules, InputMolecule);
         }
+
+        private IEnumerable<string> TokenizeMolecule(string molecule)
+        {
+            var cur = new StringBuilder();
+            using(var mr = new StringReader(molecule))
+            {
+                while(mr.TryRead(out char c))
+                {
+                    if (char.IsUpper(c))
+                    {
+                        if (cur.Length > 0)
+                            yield return cur.ToString();
+                        cur.Clear();
+                    }
+                    cur.Append(c);
+                }
+            }
+            if (cur.Length > 0)
+                yield return cur.ToString();
+        }
+
+        protected override long? Part2() => TokenizeMolecule(InputMolecule).Aggregate(-1, (sum, m) => sum + m switch
+        {
+            "Rn" => 0,
+            "Ar" => 0,
+            "Y" => -1,
+            _ => 1
+        });
     }
 }
