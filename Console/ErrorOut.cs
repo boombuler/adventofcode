@@ -63,6 +63,12 @@ namespace AdventOfCode.Console
             WriteOutput();
         }
 
+        public override void WriteLine(string content)
+        {
+            Write(content);
+            Write(Environment.NewLine);
+        }
+
         public override void Write(string content)
         {
             using (var sr = new StringReader(content))
