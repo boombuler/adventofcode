@@ -6,7 +6,7 @@ namespace AdventOfCode.Console
 {
     class AssertOut : OutputMode
     {
-        public void WriteResult(string name, bool result)
+        public void WriteResult(string name, bool result, string errorTxt)
         {
             base.Write(string.Format("  Assertion {0,10} : ", name));
             var col = Foreground;
@@ -19,7 +19,15 @@ namespace AdventOfCode.Console
             else
             {
                 Foreground = ConsoleColor.Red;
-                base.WriteLine("FAIL");
+                base.Write("FAIL");
+
+                if (!string.IsNullOrEmpty(errorTxt))
+                {
+                    Foreground = ConsoleColor.DarkRed;
+                    base.Write(" ");
+                    base.Write(errorTxt);
+                }
+                base.WriteLine(null);
             }
             Foreground = col;
         }
