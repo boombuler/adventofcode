@@ -114,18 +114,18 @@ namespace AdventOfCode
         #region Assertions
 
         private int fAssertionCounter = 1;
-        private void WriteAssertion(string name, bool result)
+        private void WriteAssertion(string name, bool result, string errorTxt)
         {
             if (string.IsNullOrEmpty(name))
                 name = Convert.ToString(fAssertionCounter++);
-            Console<AssertOut>().WriteResult(name, result);
+            Console<AssertOut>().WriteResult(name, result, errorTxt);
         }
 
         protected void Assert<T>(T actual, T target, string name = null)
-            => WriteAssertion(name, Equals(actual, target));
+            => WriteAssertion(name, Equals(actual, target), $"expected {target} got {actual}");
 
         protected void Assert(bool result, string name = null)
-            => WriteAssertion(name, result);
+            => WriteAssertion(name, result, null);
 
 
         #endregion
