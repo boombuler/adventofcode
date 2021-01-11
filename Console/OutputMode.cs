@@ -1,38 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Con = System.Console;
 
 namespace AdventOfCode.Console
 {
     abstract class OutputMode
     {
         private bool fHasLB = false;
-        protected ConsoleColor Foreground
-        {
-            get => System.Console.ForegroundColor;
-            set => System.Console.ForegroundColor = value;
-        }
+        protected const int DEFAULT_BACKGROUND = 0x0f0f23;
+        protected const int DEFAULT_FOREGROUND = 0xffffff;
+        protected const int COLOR_CRIMSON = 0xDC143C;
+
         public virtual void Enter()
         {
-            System.Console.WriteLine();
+            Con.WriteLine();
         }
 
         public virtual void Exit()
         {
             if (!fHasLB)
-                System.Console.WriteLine();
+                Con.WriteLine();
         }
 
         public virtual void Write(string content)
         {
-            System.Console.Write(content);
+            Con.Write(content);
             fHasLB = content.EndsWith(Environment.NewLine);
                  
         }
         public virtual void WriteLine(string content)
         {
-            System.Console.WriteLine(content);
+            Con.WriteLine(content);
             fHasLB = true;
         }
+
+        protected void SetFG(int color)
+            => Con.Write($"\u001b[38;2;{(color >> 16) & 255};{(color >> 8) & 255};{color & 255}m");
+        protected void SetBG(int color)
+            => Con.Write($"\u001b[48;2;{(color >> 16) & 255};{(color >> 8) & 255};{color & 255}m");
     }
 }

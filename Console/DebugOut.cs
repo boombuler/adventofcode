@@ -6,19 +6,11 @@ namespace AdventOfCode.Console
 {
     class DebugOut : OutputMode
     {
-        private ConsoleColor fCC;
-
         public override void Enter()
         {
-            fCC = Foreground;
-            Foreground = ConsoleColor.Blue;
+            SetBG(DEFAULT_BACKGROUND);
+            SetFG(0x6495ED);
             base.Enter();
-        }
-
-        public override void Exit()
-        {
-            Foreground = fCC;
-            base.Exit();
         }
 
         public override void Write(string content)

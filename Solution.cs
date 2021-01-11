@@ -8,13 +8,10 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode
 {
-    public abstract class Solution : Solution<long?> { }
-    public abstract class Solution<TSolution> : Solution<TSolution, TSolution> { }
-    public abstract class Solution<TSolution1, TSolution2> : ISolution
+    abstract class Solution : Solution<long?> { }
+    abstract class Solution<TSolution> : Solution<TSolution, TSolution> { }
+    abstract class Solution<TSolution1, TSolution2> : ScreenBase, ISolution
     {
-        private OutputMode fTextMode = new DefaultOut();
-
-
         private static readonly Regex TrailingInt = new Regex(@"\d+$", RegexOptions.Compiled);
         public virtual int Year => int.Parse(TrailingInt.Match(GetType().Namespace).Value); // Override when this throws an exception 
         public virtual int Day => int.Parse(TrailingInt.Match(GetType().Name).Value); // Override when this throws an exception 
@@ -131,18 +128,6 @@ namespace AdventOfCode
         #endregion
 
         #region Console
-
-        private T Console<T>()
-            where T : OutputMode, new()
-        {
-            if (!(fTextMode is T))
-            {
-                fTextMode.Exit();
-                fTextMode = new T();
-                fTextMode.Enter();
-            }
-            return (T)fTextMode;
-        }
 
         private void WriteLn<T>(object output)
             where T : OutputMode, new()
