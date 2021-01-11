@@ -7,14 +7,13 @@ namespace AdventOfCode.Console
 {
     class ErrorOut : OutputMode
     {
-        private ConsoleColor fCC;
         int BoxWidth => Math.Min(System.Console.BufferWidth, 80);
 
         public override void Enter()
         {
             base.Enter();
-            fCC = Foreground;
-            Foreground = ConsoleColor.DarkRed;
+            SetBG(DEFAULT_BACKGROUND);
+            SetFG(COLOR_CRIMSON);
             var hLine = new string('═', BoxWidth - 3);
             base.WriteLine(" ╔" + hLine + "╗");
         }
@@ -23,7 +22,6 @@ namespace AdventOfCode.Console
         {
             var hLine = new string('═', BoxWidth - 3);
             base.Write(" ╚" + hLine + "╝");
-            Foreground = fCC;
             base.Exit();
         }
 
