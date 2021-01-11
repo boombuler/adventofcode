@@ -6,6 +6,7 @@ namespace AdventOfCode.Utils
 {
     public struct Point2D
     {
+        public static readonly Point2D Origin = (0, 0);
         public long X { get; private set; }
         public long Y { get; private set; }
 
