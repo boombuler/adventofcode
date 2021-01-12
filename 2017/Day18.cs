@@ -21,32 +21,14 @@ namespace AdventOfCode._2017
             jgz, // jgz X Y jumps with an offset of the value of Y, but only if the value of X is greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
         }
 
-        class Operation
+        class VM : AsmVM<OpCode>
         {
-            public OpCode Kind {get;}
-            public string X { get; }
-            public string Y { get; }
-
-            public Operation(string line)
-            {
-                var parts =  line.Split(' ');
-                Kind = Enum.Parse<OpCode>(parts[0]);
-                X = parts[1];
-                Y = (parts.Length > 2) ? parts[2] : null;
-            }
-        }
-
-        class VM
-        {
-            private int PC = 0;
-            private readonly long[] Registers = new long[1 + ('z' - 'a')];
             private readonly bool MultiThreading;
-            private readonly ImmutableList<Operation> Code;
             private readonly Queue<long> InputQueue = new Queue<long>();
 
-            public VM(ImmutableList<Operation> code, long? PID = null)
+            public VM(string code, long? PID = null)
+                : base(code)
             {
-                Code = code;
                 MultiThreading = PID.HasValue;
                 
                 this["p"] = PID ?? 0;
@@ -57,54 +39,39 @@ namespace AdventOfCode._2017
             {
                 while (true)
                 {
-                    var op = Code[PC];
-
-                    switch (op.Kind)
+                    switch (OpCode)
                     {
                         case OpCode.snd:
+                            var x = X;
                             PC++;
-                            return this[op.X]; 
-                        case OpCode.set: this[op.X] = this[op.Y]; break;
-                        case OpCode.add: this[op.X] += this[op.Y]; break;
-                        case OpCode.mul: this[op.X] *= this[op.Y]; break;
-                        case OpCode.mod: this[op.X] %= this[op.Y]; break;
+                            return x; 
+                        case OpCode.set: X = Y; break;
+                        case OpCode.add: X += Y; break;
+                        case OpCode.mul: X *= Y; break;
+                        case OpCode.mod: X %= Y; break;
                         case OpCode.rcv:
-                            if (MultiThreading || this[op.X] != 0)
+                            if (MultiThreading || X != 0)
                             {
                                 if (InputQueue.TryDequeue(out long v))
-                                    this[op.X] = v;
+                                    X = v;
                                 else
                                     return null;
                             }
                             break;
                         case OpCode.jgz:
-                            if (this[op.X] > 0)
-                                PC += (int)this[op.Y] - 1;
+                            if (X > 0)
+                                PC += (int)Y - 1;
                             break;
                     }
                     PC++;
                 }
             }
 
-            public long this[string arg]
-            {
-                get
-                {
-                    if (long.TryParse(arg, out long val))
-                        return val;
-                    return Registers[arg[0] - 'a'];
-                }
-                set
-                {
-                    Registers[arg[0] - 'a'] = value;
-                }
-            }
         }
 
         private long RecoverSounds(string code)
         {
-            var operations = code.Lines().Select(l => new Operation(l)).ToImmutableList();
-            var vm = new VM(operations);
+            var vm = new VM(code);
             var result = 0L;
             while (true)
             {
@@ -118,9 +85,8 @@ namespace AdventOfCode._2017
 
         private long PlayDuet(string code)
         {
-            var operations = code.Lines().Select(l => new Operation(l)).ToImmutableList();
-            var vm0 = new VM(operations, 0);
-            var vm1 = new VM(operations, 1);
+            var vm0 = new VM(code, 0);
+            var vm1 = new VM(code, 1);
             long result = 0;
             while (true)
             {

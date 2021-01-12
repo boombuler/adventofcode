@@ -7,7 +7,6 @@ namespace AdventOfCode._2015
 {
     class Day23 : Solution
     {
-
         enum OpCode
         {
             hlf, 
@@ -19,66 +18,54 @@ namespace AdventOfCode._2015
         }
         enum Register { a, b }
 
-        private static readonly Func<string, Operation> ParseOperation = new Regex(@"(?<Op>\w{3}) (?<Reg>[ab])?(, )?(?<Offset>[\+\-]?\d+)?", RegexOptions.Compiled).ToFactory<Operation>();
-        class Operation
+        class VM : AsmVM<OpCode>
         {
-            public OpCode Op { get; set; }
-            public Register Reg { get; set; }
-            public int Offset { get; set; }
-        }
-
-        private long RunProgram(string data, Register reg, ulong initialA = 0)
-        {
-            var program = data.Lines().Select(ParseOperation).ToList();
-
-            ulong A = initialA, B = 0;
-            int PC = 0;
-
-            while (PC < program.Count)
+            public VM(string code)
+                : base(code)
             {
-                var o = program[PC++];
-                switch(o.Op)
-                {
-                    case OpCode.hlf:
-                        if (o.Reg == Register.a)
-                            A = A / 2;
-                        else
-                            B = B / 2;
-                        break;
-                    case OpCode.tpl:
-                        if (o.Reg == Register.a)
-                            A = A * 3;
-                        else
-                            B = B * 3;
-                        break;
-                    case OpCode.inc:
-                        if (o.Reg == Register.a)
-                            A++;
-                        else
-                            B++;
-                        break;
-                    case OpCode.jmp:
-                        PC = (PC - 1) + o.Offset; 
-                        break;
-                    case OpCode.jie:
-                        if (((o.Reg == Register.a) ? A : B) % 2 == 0)
-                            PC = (PC - 1) + o.Offset;
-                        break;
-                    case OpCode.jio:
-                        if (((o.Reg == Register.a) ? A : B) == 1)
-                            PC = (PC - 1) + o.Offset;
-                        break;
-                }
             }
-            return (long)((reg == Register.a) ? A : B);
+
+            private long this[Register r]
+            {
+                get => base[r.ToString()];
+                set => base[r.ToString()] = value;
+            }
+
+            public long RunProgram(Register reg, long initialA = 0)
+            {
+                this[Register.a] = initialA;
+                while (!Finished)
+                {
+                    switch (OpCode)
+                    {
+                        case OpCode.hlf: X /= 2; break;
+                        case OpCode.tpl: X *= 3; break;
+                        case OpCode.inc: X += 1; break;
+                        case OpCode.jmp:
+                            PC = (PC - 1) + (int)X;
+                            break;
+                        case OpCode.jie:
+                            if (X % 2 == 0)
+                                PC = (PC - 1) + (int)Y;
+                            break;
+                        case OpCode.jio:
+                            if (X == 1)
+                                PC = (PC - 1) + (int)Y;
+                            break;
+                    }
+                    PC++;
+                }
+                return this[reg];
+            }
         }
+
 
         protected override long? Part1()
         {
-            Assert(RunProgram(Sample(), Register.a), 2);
-            return RunProgram(Input, Register.b);
+            Assert(new VM(Sample()).RunProgram(Register.a), 2);
+            return new VM(Input).RunProgram(Register.b);
         }
 
-        protected override long? Part2() => RunProgram(Input, Register.b, 1);
+        protected override long? Part2() => new VM(Input).RunProgram(Register.b, 1);
     }
 }
