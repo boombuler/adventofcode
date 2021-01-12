@@ -7,58 +7,46 @@ namespace AdventOfCode._2016
 {
     class Day12 : Solution
     {
-        public long RunCode(string input, long cInit = 0)
+        enum OpCode
         {
-            var opcodes = input.Lines().Select(s => s.Split(' ').ToImmutableArray()).ToImmutableArray();
-            long[] registers = new long[] { 0, 0, cInit, 0 };
-            int PC = 0;
-
-            while (PC < opcodes.Length)
-            {
-                var opcode = opcodes[PC++];
-
-                int REG(int n) => opcode[n] switch
-                {
-                    "a" => 0,
-                    "b" => 1,
-                    "c" => 2,
-                    _ => 3
-                };
-
-                long VAL(int n) => opcode[n] switch
-                {
-                    "a" => registers[0],
-                    "b" => registers[1],
-                    "c" => registers[2],
-                    "d" => registers[3],
-                    string other => long.Parse(other)
-                };
-
-                switch (opcode[0])
-                {
-                    case "cpy": // cpy x y copies x (either an integer or the value of a register) into register y.
-                        registers[REG(2)] = VAL(1); break;
-                    case "inc": // inc x increases the value of register x by one.
-                        registers[REG(1)] = registers[REG(1)] + 1; break;
-                    case "dec": // dec x decreases the value of register x by one.
-                        registers[REG(1)] = registers[REG(1)] - 1; break;
-                    case "jnz": // jnz x y jumps to an instruction y away(positive means forward; negative means backward), but only if x is not zero.
-                        if (VAL(1) != 0)
-                            PC += (int)(VAL(2) - 1);
-                        break;
-                }
-            }
-
-            return registers[0];
+            cpy, inc, dec, jnz
         }
 
+        class VM: AsmVM<OpCode>
+        {
+            public VM(string code)
+                : base(code) 
+            { }
+
+            public long Run(long cInit = 0)
+            {
+                this["c"] = cInit;
+
+                while (!Finished)
+                {
+                    switch (OpCode)
+                    {
+                        case OpCode.cpy: Y = X; break; // cpy x y copies x (either an integer or the value of a register) into register y.
+                        case OpCode.inc: X++;   break; // inc x increases the value of register x by one.
+                        case OpCode.dec: X--;   break;// dec x decreases the value of register x by one.
+                        case OpCode.jnz: // jnz x y jumps to an instruction y away(positive means forward; negative means backward), but only if x is not zero.
+                            if (X != 0)
+                                PC += (int)(Y - 1);
+                            break;
+                    }
+                    PC++;
+                }
+
+                return this["a"];
+            }
+        }
 
         protected override long? Part1()
         {
-            Assert(RunCode(Sample()), 42);
-            return RunCode(Input);
+            Assert(new VM(Sample()).Run(), 42);
+            return new VM(Input).Run();
         }
 
-        protected override long? Part2() => RunCode(Input, 1);
+        protected override long? Part2() => new VM(Input).Run(1);
     }
 }
