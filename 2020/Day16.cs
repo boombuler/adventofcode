@@ -8,10 +8,7 @@ namespace AdventOfCode._2020
 {
     class Day16 : Solution
     {
-        class Rule {
-            long min1, min2, max1, max2;
-            public string Name { get; set; }
-
+        record Rule(string Name, long min1, long min2, long max1, long max2) {
             public bool Valid(long v) => (v >= min1 && v <= max1) || (v >= min2 && v <= max2);
         }
 

@@ -8,7 +8,7 @@ namespace AdventOfCode._2016
 {
     class Day15 : Solution
     {
-        class Disc { public int No; public int Positions; public int Offset; }
+        record Disc(int No, int Positions, int Offset);
         private static Func<string, Disc> ParseDisc = new Regex(@"Disc #(?<No>\d+) has (?<Positions>\d+) positions; at time=0, it is at position (?<Offset>\d+)\.", RegexOptions.Compiled)
             .ToFactory<Disc>();
 

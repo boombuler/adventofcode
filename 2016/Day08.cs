@@ -17,8 +17,8 @@ namespace AdventOfCode._2016
             Debug(null);
         }
 
-        class Rect { public int w; public int h; }
-        class Rotate { public string direction; public int idx; public int offset; }
+        record Rect(int w, int h);
+        record Rotate(string direction, int idx, int offset);
         private static readonly Regex ParseRect = new Regex(@"rect (?<w>\d+)x(?<h>\d+)");
         private static readonly Regex ParseRotate = new Regex(@"rotate (?<direction>column|row) (x|y)=(?<idx>\d+) by (?<offset>\d+)");
 

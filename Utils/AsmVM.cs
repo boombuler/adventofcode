@@ -49,7 +49,7 @@ namespace AdventOfCode.Utils
 
         public AsmVM(string code)
         {
-            fOpCodes = code.Lines().Select(o => new AsmOperation<TOpCode>(o)).ToList();
+            fOpCodes = code.Lines().Select(o => AsmOperation<TOpCode>.Parse(o)).ToList();
         }
     }
 }

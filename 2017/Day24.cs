@@ -11,11 +11,9 @@ namespace AdventOfCode._2017
 {
     class Day24 : Solution
     {
-        record Connector 
+        record Connector (int A, int B)
         {
             public static readonly Func<string, Connector> Parse = new Regex(@"(?<A>\d+)/(?<B>\d+)").ToFactory<Connector>();
-            public int A { get; init; } 
-            public int B { get; init; }
         }
 
         record Bridge
