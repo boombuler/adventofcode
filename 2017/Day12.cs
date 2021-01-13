@@ -8,12 +8,9 @@ namespace AdventOfCode._2017
 {
     class Day12 : Solution
     {
-        class Pipe
+        record Pipe(int ID, int[] Children)
         {
             public static readonly Func<string, Pipe> Parse = new Regex(@"(?<ID>\d+) <-> ((, )?(?<Children>\d+))+").ToFactory<Pipe>();
-
-            public int ID;
-            public int[] Children;
         }
 
         private IEnumerable<IEnumerable<int>> BuildGroups(string input)

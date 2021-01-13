@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Utils
 {
-    class AsmOperation<TOpCode> where TOpCode: struct
+    record AsmOperation<TOpCode>(TOpCode Kind, string X, string Y) where TOpCode: struct
     {
-        public TOpCode Kind { get; }
-        public string X { get; }
-        public string Y { get; }
-
-        public AsmOperation(string line)
+        public static AsmOperation<TOpCode> Parse(string line)
         {
             var parts = line.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-            Kind = Enum.Parse<TOpCode>(parts[0]);
-            X = (parts.Length > 1) ? parts[1] : null;
-            Y = (parts.Length > 2) ? parts[2] : null;
+            return new AsmOperation<TOpCode>(
+                Enum.Parse<TOpCode>(parts[0]),
+                (parts.Length > 1) ? parts[1] : null,
+                (parts.Length > 2) ? parts[2] : null);
         }
     }
 }

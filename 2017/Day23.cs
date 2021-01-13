@@ -45,7 +45,7 @@ namespace AdventOfCode._2017
 
         protected override long? Part2()
         {
-            long b = long.Parse(Input.Lines().Select(l => new AsmOperation<OpCode>(l)).First().Y);
+            long b = long.Parse(Input.Lines().Select(l => AsmOperation<OpCode>.Parse(l)).First().Y);
 
             long result = 0;
             b = (b * 100) + 100000;

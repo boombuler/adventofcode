@@ -9,9 +9,9 @@ namespace AdventOfCode._2020
     class Day14 : Solution
     {
         private static readonly Regex MASK = new Regex(@"mask = (?<mask>[\dX]{36})");
-        class MaskMatch { public string mask; }
+        record MaskMatch(string mask);
         private static readonly Regex SET_VAL = new Regex(@"mem\[(?<addr>\d+)\] = (?<val>\d+)");
-        class SetValMatch { public long addr; public long val;  }
+        record SetValMatch(long addr, long val);
         
         private IEnumerable<(string Mask, long Address, long Value)> ParseCommands(string codes)
         {

@@ -8,22 +8,17 @@ namespace AdventOfCode._2015
 {
     class Day09 : Solution
     {
-        class Instruction 
-        { 
-            public string from; 
-            public string to; 
-            public long dist; 
-        }
+        record Instruction (string From,string To, long Dist);
         private static readonly Func<string, Instruction> ParseInstruction
-            = new Regex(@"(?<from>\w+) to (?<to>\w+) = (?<dist>\d+)", RegexOptions.Compiled).ToFactory<Instruction>();
+            = new Regex(@"(?<From>\w+) to (?<To>\w+) = (?<Dist>\d+)", RegexOptions.Compiled).ToFactory<Instruction>();
 
-        private IEnumerable<(string from, string to, long dist)> ReadInstructions(string instructions)
+        private IEnumerable<Instruction> ReadInstructions(string instructions)
         {
             foreach(var line in instructions.Lines())
             {
                 var itm = ParseInstruction(line);
-                yield return (itm.from, itm.to, itm.dist);
-                yield return (itm.to, itm.from, itm.dist);
+                yield return itm;
+                yield return itm with { To = itm.From, From = itm.To };
             }
         }
 
@@ -31,8 +26,8 @@ namespace AdventOfCode._2015
         {
             var instructions = ReadInstructions(fileName).ToList();
 
-            var cities = instructions.Select(i => i.from).Distinct();
-            var distances = instructions.ToDictionary(v => (v.from, v.to), v => v.dist);
+            var cities = instructions.Select(i => i.From).Distinct();
+            var distances = instructions.ToDictionary(v => (v.From, v.To), v => v.Dist);
 
             foreach(var route in cities.Permuatate())
             {

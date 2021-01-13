@@ -10,15 +10,7 @@ namespace AdventOfCode._2016
 {
     class Day22 : Solution
     {
-        class Node
-        {
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Used { get; set; }
-            public int Avail { get; set; }
-            public int Size { get; set; }
-        }
-
+        record Node(int X, int Y, int Used, int Avail, int Size, int UsePerc);
         private static readonly Func<string, Node> NodeFactory
             = new Regex(@"/dev/grid/node-x(?<X>\d+)-y(?<Y>\d+)\s*(?<Size>\d+)T\s*(?<Used>\d+)T\s*(?<Avail>\d+)T\s*(?<UsePerc>\d+)%", RegexOptions.Compiled).ToFactory<Node>();
 
