@@ -83,10 +83,33 @@ namespace AdventOfCode.Utils
             }
         }
 
-        public static IEnumerable<(T A, T B)> Combinations<T>(this IEnumerable<T> items)
-            => from ia in Enumerable.Range(0, items.Count())
-               from ib in Enumerable.Range(ia + 1, items.Count() - ia - 1)
-               select (items.ElementAt(ia), items.ElementAt(ib));
+        /// <summary>
+        /// returns an enumerable of each item combination of <paramref name="itemCount"/> items from the <paramref name="items"/>
+        /// </summary>
+        /// <example>
+        /// <code>
+        ///     new int[]{ 1, 2, 3, 4 }.Combinations(2)
+        /// </code>
+        /// would return { (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
+        /// </example>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="itemCount"></param>
+        /// <returns></returns>
+        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items, int itemCount)
+        {
+            int remainingItems = itemCount - 1;
+            for (int i = 0; i < items.Count() - remainingItems; i++)
+            {
+                var itm = items.ElementAt(i);
+                if (remainingItems > 0)
+                {
+                    foreach (var subCombination in Combinations(items.Skip(i + 1), remainingItems))
+                        yield return subCombination.Prepend(itm);
+                }
+                else yield return new[] { itm }; 
+            }
+        }
     }
 
 }
