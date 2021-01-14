@@ -82,6 +82,11 @@ namespace AdventOfCode.Utils
                 seed = next.NextSeed;
             }
         }
+
+        public static IEnumerable<(T A, T B)> Combinations<T>(this IEnumerable<T> items)
+            => from ia in Enumerable.Range(0, items.Count())
+               from ib in Enumerable.Range(ia + 1, items.Count() - ia - 1)
+               select (items.ElementAt(ia), items.ElementAt(ib));
     }
 
 }
