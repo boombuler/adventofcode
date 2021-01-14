@@ -7,21 +7,9 @@ namespace AdventOfCode._2020
 {
     class Day02 : Solution
     {
-        private static readonly Regex passwordLine = new Regex(@"(?<i1>\d+)\-(?<i2>\d+)\W(?<char>\w):\W(?<test>\w+)", RegexOptions.Compiled);
-
-        static (int i1, int i2, char c, string test) ParsePasswordLine(string line)
-        {
-            var match = passwordLine.Match(line);
-            if (!match.Success)
-                throw new ArgumentException("Invalid Passwordline");
-            return (
-                Convert.ToInt32(match.Groups["i1"].Value),
-                Convert.ToInt32(match.Groups["i2"].Value),
-                match.Groups["char"].Value[0],
-                match.Groups["test"].Value
-            );
-        }
-
+        record PasswordLine(int i1, int i2, char c, string test);
+        private static readonly Func<string, PasswordLine> ParsePasswordLine = 
+            new Regex(@"(?<i1>\d+)\-(?<i2>\d+)\W(?<c>\w):\W(?<test>\w+)", RegexOptions.Compiled).ToFactory<PasswordLine>();
 
         static bool IsPasswordValidPart1(string line)
         {

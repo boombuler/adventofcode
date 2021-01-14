@@ -7,34 +7,23 @@ namespace AdventOfCode._2020
 {
     class Day03 : Solution
     {
-        class Slope
+        public static readonly Point2D DefaultSlope = new(3, 1);
+
+        public static readonly Point2D[] AllSlopes = new Point2D[]
         {
-            public static readonly Slope Default = new Slope(1,3);
+            new (1,1), new (3, 1), new (5, 1), new (7, 1), new (1, 2)
+        };
 
-            public static readonly Slope[] All = new[]
+        public long Navigate(bool[][] map, Point2D slope)
+        {
+            long hits = 0;
+            for (var pos = Point2D.Origin; pos.Y < map.Length; pos += slope)
             {
-                new Slope(1,1), new Slope(1,3), new Slope(1, 5), new Slope(1, 7), new Slope(2, 1)
-            };
-
-            public int Down { get; }
-            public int Right { get; }
-
-            public Slope(int down, int right)
-                => (Down, Right) = (down, right);
-
-            public long Navigate(bool[][] map)
-            {
-                long hits = 0;
-                for (int y = 0, x = 0; y < map.Length; y += Down, x += Right)
-                {
-                    var row = map[y];
-                    var hit = row[x % row.Length];
-                    if (hit)
-                        hits++;
-                }
-
-                return hits;
+                if (map[pos.Y][pos.X % map[pos.Y].Length])
+                    hits++;
             }
+
+            return hits;
         }
 
         private bool[][] ReadTreeMap(string mappings)
@@ -42,22 +31,22 @@ namespace AdventOfCode._2020
                 .Select(s => s.Select(c => c == '#').ToArray())
                 .ToArray();
         
-        private long CheckSlopes(string mapFile, params Slope[] slopes)
+        private long CheckSlopes(string mapFile, params Point2D[] slopes)
         {
             var map = ReadTreeMap(mapFile);
-            return slopes.Select(s => s.Navigate(map)).Aggregate((a, b) => a * b);
+            return slopes.Select(s => Navigate(map, s)).Aggregate((a, b) => a * b);
         }
 
         protected override long? Part1()
         {
-            Assert(CheckSlopes(Sample(), Slope.Default), 7);
-            return CheckSlopes(Input, Slope.Default);
+            Assert(CheckSlopes(Sample(), DefaultSlope), 7);
+            return CheckSlopes(Input, DefaultSlope);
         }
 
         protected override long? Part2()
         {
-            Assert(CheckSlopes(Sample(), Slope.All), 336);
-            return CheckSlopes(Input, Slope.All);
+            Assert(CheckSlopes(Sample(), AllSlopes), 336);
+            return CheckSlopes(Input, AllSlopes);
         }
     }
 }
