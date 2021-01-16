@@ -75,7 +75,7 @@ namespace AdventOfCode.Utils
 
         public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator)
         {
-            while(true)
+            while (true)
             {
                 var next = generator(seed);
                 yield return next.Value;
@@ -107,9 +107,14 @@ namespace AdventOfCode.Utils
                     foreach (var subCombination in Combinations(items.Skip(i + 1), remainingItems))
                         yield return subCombination.Prepend(itm);
                 }
-                else yield return new[] { itm }; 
+                else yield return new[] { itm };
             }
         }
-    }
 
+        public static void Deconstruct<T>(this IEnumerable<T> items, out T first, out IEnumerable<T> rest)
+        {
+            first = items.First();
+            rest = items.Skip(1);
+        }
+    }
 }
