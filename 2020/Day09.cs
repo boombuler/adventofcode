@@ -8,21 +8,7 @@ namespace AdventOfCode._2020
     class Day09 : Solution
     {
         private bool IsValidNumber(IEnumerable<long> preamble, long number)
-        {
-            for (int iA = 0; iA < preamble.Count() - 1; iA++)
-            {
-                var items = preamble.Skip(iA);
-                long a = items.First();
-                foreach (long b in items.Skip(1))
-                {
-                    if (b == a)
-                        continue;
-                    if (a + b == number)
-                        return true;
-                }
-            }
-            return false;
-        }
+        => preamble.Where((a, iA) => preamble.Skip(iA).Where(b => b != a).Any(b => b + a == number)).Any();
 
         private long FindFirstInvalidNumber(string input, int preambleSize)
         {
