@@ -13,7 +13,8 @@ namespace AdventOfCode._2018
 
         protected override string Part2()
             => Input.Lines().Combinations(2)
-                .Select(itm => string.Concat(itm.First().Zip(itm.Last(), (ac, bc) => ac == bc ? ac.ToString() : string.Empty)))
+                .Select(items => { var (First, (Second, _)) = items; return new { First, Second }; })
+                .Select(i => string.Concat(i.First.Zip(i.Second, (ac, bc) => ac == bc ? ac.ToString() : string.Empty)))
                 .OrderByDescending(s => s.Length)
                 .First();
     }
