@@ -19,24 +19,14 @@ namespace AdventOfCode._2020
         private const string SourceBag = "shiny gold";
         static readonly Regex GetParent = new Regex(@"(?<name>\w+ \w+) bags contain ");
         static readonly Regex GetValue = new Regex(@"(, )?(?<count>\d+) (?<name>\w+ \w+) bags?");
-        //((?<none>no other bags)|(((, )?(?<count>\d+) (?<child>\w+ \w+) bags?)+))");
+
         private IEnumerable<Stacking> ReadRules(string ruleData)
-        {
-            foreach(string rule in ruleData.Lines())
-            {
-                var parentMatch = GetParent.Match(rule);
-                string parent = parentMatch.Groups["name"].Value;
-                var remaining = rule.Substring(parentMatch.Length + parentMatch.Index);
-                while (true)
-                {
-                    var content = GetValue.Match(remaining);
-                    if (!content.Success)
-                        break;
-                    remaining = remaining.Substring(content.Index + content.Length);
-                    yield return new Stacking(parent, content.Groups["name"].Value, int.Parse(content.Groups["count"].Value));
-                }
-            }
-        }
+            => ruleData.Lines()
+                .Select(l => new { Line = l, Parent = GetParent.Match(l).Groups["name"].Value })
+                .SelectMany(l =>
+                    GetValue.Matches(l.Line)
+                        .Select(m => new Stacking(l.Parent, m.Groups["name"].Value, int.Parse(m.Groups["count"].Value)))
+                );
 
         private int CountParentBags(string ruleData)
         {
@@ -46,9 +36,8 @@ namespace AdventOfCode._2020
             Stack<string> toCheck = new Stack<string>();
             toCheck.Push(SourceBag);
 
-            while(toCheck.Count != 0)
+            while(toCheck.TryPop(out var test))
             {
-                var test = toCheck.Pop();
                 foreach(var stacking in rules[test])
                 {
                     if (!result.Contains(stacking.Parent))

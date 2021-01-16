@@ -8,21 +8,7 @@ namespace AdventOfCode._2020
     class Day06 : Solution
     {
         private IEnumerable<IEnumerable<string>> ReadGroups(string input)
-        {
-            List<string> grp = new List<string>();
-            foreach (var line in input.Lines())
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    yield return grp;
-                    grp = new List<string>();
-                }
-                else
-                    grp.Add(line);
-            }
-            if (grp.Count > 0)
-                yield return grp;
-        }
+            => input.Replace("\r", string.Empty).Split("\n\n").Select(grp => grp.Split("\n"));
 
         private int CollectUniqueResults(string input)
             => ReadGroups(input)
