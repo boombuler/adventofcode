@@ -17,19 +17,24 @@ namespace AdventOfCode._2018
             var points = input.Lines().Select(ParsePt).ToList();
             var (maxX, maxY) = (points.Max(p => p.X), points.Max(p => p.Y));
 
-            var grid = new List<int>();
+            var itemCounts = new int[points.Count];
             var unlimited = new HashSet<int>();
             foreach (var loc in Point2D.Range(Point2D.Origin, (maxX, maxY)))
             {
-                var near = points.Select((p, i) => new { Distance = p.ManhattanDistance(loc), Index = i }).GroupBy(x => x.Distance).OrderBy(x => x.Key).First();
+                var near = points
+                    .Select((p, i) => new { Distance = p.ManhattanDistance(loc), Index = i })
+                    .GroupBy(x => x.Distance)
+                    .OrderBy(x => x.Key)
+                    .First();
+
                 if (near.Count() > 1)
                     continue;
                 var idx = near.First().Index;
-                grid.Add(idx);
+                itemCounts[idx]++;
                 if (loc.X == 0 || loc.X == maxX || loc.Y == 0 || loc.Y == maxY)
                     unlimited.Add(idx);
             }
-            return grid.Where(n => !unlimited.Contains(n)).GroupBy(x => x).Max(x => x.Count());
+            return Enumerable.Range(0, points.Count).Except(unlimited).Max(i => itemCounts[i]);
         }
         protected override long? Part1()
         {
