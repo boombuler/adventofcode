@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode._2016
 {
-    class Day08 : Solution
+    class Day08 : Solution<long?, string>
     {
 
         private void PrintScreen(bool[,] screen)
@@ -69,10 +69,11 @@ namespace AdventOfCode._2016
             return Count(RunCode(Input, 50, 6));
         }
 
-        protected override long? Part2()
+        protected override string Part2()
         {
-            PrintScreen(RunCode(Input, 50, 6));
-            return base.Part2();
+            var screen = RunCode(Input, 50, 6);
+            var ocr = new OCR6x5();
+            return ocr.Decode((x, y) => screen[y, x], screen.GetLength(1));
         }
     }
 }
