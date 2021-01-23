@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode._2018
 {
-    class Day11 : Solution<string>
+    class Day11 : Solution<Point2D, string>
     {
         const int GRIDSIZE = 300;
 
@@ -25,14 +25,14 @@ namespace AdventOfCode._2018
             return (A, B) => sums[B.X, B.Y] + sums[A.X - 1, A.Y - 1] - sums[A.X - 1, B.Y] - sums[B.X, A.Y - 1];
         }
 
-        private string FindBestFuleSquare(string serial)
+        private Point2D FindBestFuleSquare(string serial)
         {
             var lookup = GetPowerLevelSumLookup(serial);
             var square = Point2D.Range((1, 1), (GRIDSIZE - 2, GRIDSIZE - 2)).Select(p => (
                 Origin: p,
                 Level: lookup(p, p+(2, 2))
             )).OrderByDescending(c => c.Level).First();
-            return $"{square.Origin.X},{square.Origin.Y}";
+            return square.Origin;
         }
 
         private string FindBestFuleSquareAndSize(string serial)
@@ -49,13 +49,13 @@ namespace AdventOfCode._2018
                 )
                 .OrderByDescending(c => c.Level).First();
 
-            return $"{res.Origin.X},{res.Origin.Y},{res.Size}";
+            return $"{res.Origin},{res.Size}";
         }
 
-        protected override string Part1()
+        protected override Point2D Part1()
         {
-            Assert(FindBestFuleSquare("42"), "21,61");
-            Assert(FindBestFuleSquare("18"), "33,45");
+            Assert(FindBestFuleSquare("42"), new Point2D(21,61));
+            Assert(FindBestFuleSquare("18"), new Point2D(33,45));
             return FindBestFuleSquare(Input);
         }
 
