@@ -10,7 +10,7 @@ namespace AdventOfCode.Utils
 
     
 
-        public override string ToString() => $"{X}|{Y}";
+        public override string ToString() => $"{X},{Y}";
 
         public static implicit operator (long, long)(Point2D pt) => (pt.X, pt.Y);
         public static implicit operator Point2D((long, long) t) => new Point2D(t.Item1, t.Item2);
