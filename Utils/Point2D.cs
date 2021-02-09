@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AdventOfCode.Utils
 {
-    public record Point2D(long X, long Y)
+    public record Point2D(long X, long Y) : IComparable<Point2D>
     {
         public static readonly Point2D Origin = (0, 0);
 
@@ -48,6 +48,14 @@ namespace AdventOfCode.Utils
             for (long x = minX; x <= maxX; x++)
                 for (long y = minY; y <= maxY; y++)
                     yield return new Point2D(x, y);
+        }
+
+        public int CompareTo(Point2D other)
+        {
+            var dy = Y - other.Y;
+            if (dy == 0)
+                return Math.Sign(X - other.X);
+            return Math.Sign(dy);
         }
     }
 }
