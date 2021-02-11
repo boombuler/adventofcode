@@ -25,7 +25,7 @@ namespace AdventOfCode._2018
             return (A, B) => sums[B.X, B.Y] + sums[A.X - 1, A.Y - 1] - sums[A.X - 1, B.Y] - sums[B.X, A.Y - 1];
         }
 
-        private Point2D FindBestFuleSquare(string serial)
+        private Point2D FindBestFuelSquare(string serial)
         {
             var lookup = GetPowerLevelSumLookup(serial);
             var square = Point2D.Range((1, 1), (GRIDSIZE - 2, GRIDSIZE - 2)).Select(p => (
@@ -35,7 +35,7 @@ namespace AdventOfCode._2018
             return square.Origin;
         }
 
-        private string FindBestFuleSquareAndSize(string serial)
+        private string FindBestFuelSquareAndSize(string serial)
         {
             var lookup = GetPowerLevelSumLookup(serial);
 
@@ -54,16 +54,16 @@ namespace AdventOfCode._2018
 
         protected override Point2D Part1()
         {
-            Assert(FindBestFuleSquare("42"), new Point2D(21,61));
-            Assert(FindBestFuleSquare("18"), new Point2D(33,45));
-            return FindBestFuleSquare(Input);
+            Assert(FindBestFuelSquare("42"), new Point2D(21,61));
+            Assert(FindBestFuelSquare("18"), new Point2D(33,45));
+            return FindBestFuelSquare(Input);
         }
 
         protected override string Part2()
         {
-            Assert(FindBestFuleSquareAndSize("18"), "90,269,16");
-            Assert(FindBestFuleSquareAndSize("42"), "232,251,12");
-            return FindBestFuleSquareAndSize(Input);
+            Assert(FindBestFuelSquareAndSize("18"), "90,269,16");
+            Assert(FindBestFuelSquareAndSize("42"), "232,251,12");
+            return FindBestFuelSquareAndSize(Input);
         }
     }
 }
