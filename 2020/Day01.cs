@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Utils;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode._2020
@@ -9,8 +10,10 @@ namespace AdventOfCode._2020
         private static int? Solve(int[] items, int factorCount, int targetSum = 2020)
             => items.Combinations(factorCount).First(itms => itms.Sum() == targetSum).Aggregate((a, b) => a * b);
 
-        protected override long? Part1() => Solve(Input.Lines().Select(int.Parse).ToArray(), 2);
-        protected override long? Part2() => Solve(Input.Lines().Select(int.Parse).ToArray(), 3);
+
+        private int[] Items => Input.Lines().Select(int.Parse).OrderBy(n => n).ToArray();
+        protected override long? Part1() => Solve(Items, 2);
+        protected override long? Part2() => Solve(Items, 3);
        
     }
 }
