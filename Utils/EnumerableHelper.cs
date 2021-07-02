@@ -142,5 +142,23 @@ namespace AdventOfCode.Utils
             }
             return (min, max);
         }
+
+        public static T Min<T>(this IEnumerable<T> items, IComparer<T> comparer)
+        {
+            T result = default;
+            bool first = true;
+
+            foreach(var itm in items)
+            {
+                if (first)
+                {
+                    result = itm;
+                    first = false;
+                }
+                else if (comparer.Compare(result, itm) > 0)
+                    result = itm;
+            }
+            return result;
+        }
     }
 }
