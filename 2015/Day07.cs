@@ -1,78 +1,60 @@
 ﻿using AdventOfCode.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode._2015
 {
     class Day07 : Solution
     {
-        private static readonly Regex Intermediate = new Regex(@"^(?<value>\w+) \-\> (?<wire>\w+)$");
-        private static readonly Regex AND = new Regex(@"^(?<a>\w+) AND (?<b>\w+) \-\> (?<wire>\w+)$");
-        private static readonly Regex OR = new Regex(@"^(?<a>\w+) OR (?<b>\w+) \-\> (?<wire>\w+)$");
-        private static readonly Regex NOT = new Regex(@"^NOT (?<a>\w+) \-\> (?<wire>\w+)$");
-        private static readonly Regex LSHIFT = new Regex(@"^(?<a>\w+) LSHIFT (?<val>\d+) \-\> (?<wire>\w+)$");
-        private static readonly Regex RSHIFT = new Regex(@"^(?<a>\w+) RSHIFT (?<val>\d+) \-\> (?<wire>\w+)$");
+        enum Operation
+        {
+            Intermediate, AND, OR, NOT, LSHIFT, RSHIFT
+        }
+        record Instruction(string Arg0, string Wire, string Arg1 = null, Operation Op = Operation.Intermediate)
+        {
+            public static Func<string, Instruction> Parse = new Regex(@"(((?<Arg1>(\d+|\w+))\s)?(?<Op>NOT|RSHIFT|LSHIFT|OR|AND)\s)?(?<Arg0>\d+|\w+)\s->\s(?<Wire>\w+)").ToFactory<Instruction>();
+        }
 
         private ushort TestWire(string instructions, string wire, (string wire, ushort value)? wireOverride = null)
         {
             Dictionary<string, Func<ushort>> wireNet = new Dictionary<string, Func<ushort>>();
-            Match match;
-            Func<ushort> arg(string grp)
+            
+            Func<ushort> ValueOf(string v)
             {
-                var v = match.Groups[grp].Value;
+                v ??= string.Empty;
                 if (ushort.TryParse(v, out ushort val))
                     return () => val;
                 return () => wireNet[v]();
             }
 
-            void AddCalculation(Func<ushort> generator)
+            foreach(var instruction in instructions.Lines().Select(Instruction.Parse))
             {
-                var val = new Lazy<ushort>(generator);
-                wireNet[match.Groups["wire"].Value] = () => val.Value;
-            }
-
-            foreach(var instruction in instructions.Lines())
-            {
-                bool TryMatch(Regex r)
+                void CalcLazy(Func<ushort> generator)
                 {
-                    match = r.Match(instruction);
-                    return match.Success;
+                    var val = new Lazy<ushort>(generator);
+                    wireNet[instruction.Wire] = () => val.Value;
                 }
 
-                if (TryMatch(Intermediate))
-                    AddCalculation(arg("value"));
-                else if (TryMatch(AND))
+                var arg0 = ValueOf(instruction.Arg0);
+                var arg1 = ValueOf(instruction.Arg1);
+
+                switch (instruction.Op)
                 {
-                    var a = arg("a");
-                    var b = arg("b");
-                    AddCalculation(() => (ushort)(a() & b()));
+                    case Operation.Intermediate:
+                        CalcLazy(arg0); break;
+                    case Operation.AND:
+                        CalcLazy(() => (ushort)(arg1() & arg0())); break;
+                    case Operation.OR:
+                        CalcLazy(() => (ushort)(arg1() | arg0())); break;
+                    case Operation.NOT:
+                        CalcLazy(() => (ushort)(~arg0())); break;
+                    case Operation.LSHIFT:
+                        CalcLazy(() => (ushort)(arg1() << arg0())); break;
+                    case Operation.RSHIFT:
+                        CalcLazy(() => (ushort)(arg1() >> arg0())); break;
                 }
-                else if (TryMatch(OR))
-                {
-                    var a = arg("a");
-                    var b = arg("b");
-                    AddCalculation(() => (ushort)(a() | b()));
-                }
-                else if (TryMatch(NOT))
-                {
-                    var a = arg("a");
-                    AddCalculation(() => (ushort)~a());
-                }
-                else if (TryMatch(LSHIFT))
-                {
-                    var a = arg("a");
-                    var val = int.Parse(match.Groups["val"].Value);
-                    AddCalculation(() =>(ushort)(a() << val));
-                }
-                else if (TryMatch(RSHIFT))
-                {
-                    var a = arg("a");
-                    var val = int.Parse(match.Groups["val"].Value);
-                    AddCalculation(() => (ushort)(a() >> val));
-                }
-                else
-                    throw new NotImplementedException("Unknown Instruction");
             }
             if (wireOverride.HasValue)
                 wireNet[wireOverride.Value.wire] = () => wireOverride.Value.value;

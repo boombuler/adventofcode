@@ -47,7 +47,7 @@ namespace AdventOfCode._2016
         }
 
         private long ShortestPath(Point2D src, Point2D dest, int wallPattern)
-            => new WallAStar(src, wallPattern).ShortestPath(dest);
+            => new WallAStar(src, wallPattern).ShortestPath(dest).Cost;
 
         protected override long? Part1()
         {
