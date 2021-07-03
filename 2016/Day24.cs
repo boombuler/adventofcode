@@ -64,7 +64,7 @@ namespace AdventOfCode._2016
                     if (dest == src)
                         continue;
 
-                    distances[(src, dest)] = astar.ShortestPath(grid[dest]);
+                    distances[(src, dest)] = astar.ShortestPath(grid[dest]).Cost;
                 }
             }
 
