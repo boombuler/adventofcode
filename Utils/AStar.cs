@@ -19,7 +19,7 @@ namespace AdventOfCode.Utils
 
         public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
         {
-            var open = new PriorityQueue<(T, long)>(Comparer<(T, long)>.Create((a, b) => Math.Sign(a.Item2 - b.Item2)));
+            var open = new MinHeap<(T, long)>(ComparerBuilder<(T Item, long Cost)>.CompareBy(x => x.Cost));
             open.Push((fSrc, 0));
             var costs = new Dictionary<T, long>();
             var paths = new Dictionary<T, T>();

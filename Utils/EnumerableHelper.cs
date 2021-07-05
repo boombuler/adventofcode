@@ -160,5 +160,37 @@ namespace AdventOfCode.Utils
             }
             return result;
         }
+    
+        public static (T min, T max) MinMaxBy<T, TVal>(this IEnumerable<T> items, Func<T, TVal> selector, IComparer<TVal> comparer = null)
+        {
+            comparer ??= Comparer<TVal>.Default;
+
+            T maxItm = default;
+            TVal maxVal = default;
+            T minItm = default;
+            TVal minVal = default;
+            bool first = true;
+
+            foreach(var itm in items)
+            {
+                var v = selector(itm);
+                var f = first;
+                if (f || comparer.Compare(v, maxVal) > 0)
+                {
+                    maxVal = v;
+                    maxItm = itm;
+                    first = false;
+                }
+                if (f || comparer.Compare(v, minVal) < 0)
+                {
+                    minVal = v;
+                    minItm = itm;
+                    first = false;
+                }
+            }
+            if (first)
+                throw new InvalidOperationException();
+            return (minItm, maxItm);
+        }
     }
 }
