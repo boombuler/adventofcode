@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Utils
 {
-    class PriorityQueue<T>
+    class MinHeap<T>
     {
         private int fCount;
-        private T[] fHeap;
+        private T[] fData;
         private readonly IComparer<T> fComparer;
 
         public int Count => fCount;
 
-        public PriorityQueue(IComparer<T> comparer = null)
+        public MinHeap(IComparer<T> comparer = null)
         {
             fCount = 0;
-            fHeap = new T[64];
+            fData = new T[64];
             fComparer = comparer ?? Comparer<T>.Default;
         }
 
@@ -25,33 +25,41 @@ namespace AdventOfCode.Utils
         private int ILeft(int idx) => ((idx + 1) * 2) - 1;
         private int IRight(int idx) => (idx + 1) * 2;
 
-
-        private bool LessThen(int ia, int ib) => fComparer.Compare(fHeap[ia], fHeap[ib]) < 0;
-
         public void Push(T value)
         {
-            if (fHeap.Length == fCount)
-                Array.Resize(ref fHeap, fCount * 2);
+            if (fData.Length == fCount)
+                Array.Resize(ref fData, fCount * 2);
 
             int idx = fCount++;
-
-            while (idx > 0 && LessThen(idx, IParent(idx)))
+            while (idx > 0 && fComparer.Compare(value, fData[IParent(idx)]) < 0)
             {
                 var iPar = IParent(idx);
-                fHeap[idx] = fHeap[iPar];
+                fData[idx] = fData[iPar];
                 idx = iPar;
             }
-            fHeap[idx] = value;
+            fData[idx] = value;
         }
 
+        public bool TryPop(out T val)
+        {
+            if (fCount > 0)
+            {
+                val = Pop();
+                return true;
+            }
+            val = default;
+            return false;
+        }
 
         public T Pop()
         {
             if (fCount == 0)
                 throw new InvalidOperationException();
 
-            var result = fHeap[0];
-            fHeap[0] = fHeap[--fCount];
+            bool LessThen(int ia, int ib) => fComparer.Compare(fData[ia], fData[ib]) < 0;
+
+            var result = fData[0];
+            fData[0] = fData[--fCount];
 
             int idx = 0;
             while (ILeft(idx) < fCount)
@@ -62,11 +70,20 @@ namespace AdventOfCode.Utils
 
                 if (LessThen(idx, iMin))
                     break;
-                (fHeap[iMin], fHeap[idx]) = (fHeap[idx], fHeap[iMin]);
+                (fData[iMin], fData[idx]) = (fData[idx], fData[iMin]);
                 idx = iMin;
             }
+            fData[fCount] = default;
             return result;
         }
+    }
 
+
+    class MaxHeap<T> : MinHeap<T>
+    {
+        public MaxHeap(IComparer<T> comparer = null)
+            : base((comparer ?? Comparer<T>.Default).Invert())
+        {
+        }
     }
 }
