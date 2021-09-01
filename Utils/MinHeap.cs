@@ -15,20 +15,28 @@ namespace AdventOfCode.Utils
         public int Count => fCount;
 
         public MinHeap(IComparer<T> comparer = null)
+            : this(Enumerable.Empty<T>(), comparer)
         {
-            fCount = 0;
-            fData = new T[64];
-            fComparer = comparer ?? Comparer<T>.Default;
         }
 
-        private int IParent(int idx) => ((idx + 1) / 2) - 1;
-        private int ILeft(int idx) => ((idx + 1) * 2) - 1;
-        private int IRight(int idx) => (idx + 1) * 2;
+        public MinHeap(IEnumerable<T> items, IComparer<T> comparer = null)
+        {
+            fData = items.ToArray();
+            fCount = fData.Length;
+            fComparer = comparer ?? Comparer<T>.Default;
+
+            for (int i = IParent(fCount - 1); i >= 0; i--)
+                Heapify(i);
+        }
+
+        private int IParent(int idx) => (idx - 1) / 2;
+        private int ILeft(int idx) => (idx * 2) + 1;
+        private int IRight(int idx) => (idx * 2) + 2;
 
         public void Push(T value)
         {
             if (fData.Length == fCount)
-                Array.Resize(ref fData, fCount * 2);
+                Array.Resize(ref fData, Math.Max(64, fCount * 2));
 
             int idx = fCount++;
             while (idx > 0 && fComparer.Compare(value, fData[IParent(idx)]) < 0)
@@ -56,12 +64,19 @@ namespace AdventOfCode.Utils
             if (fCount == 0)
                 throw new InvalidOperationException();
 
-            bool LessThen(int ia, int ib) => fComparer.Compare(fData[ia], fData[ib]) < 0;
-
             var result = fData[0];
             fData[0] = fData[--fCount];
 
-            int idx = 0;
+            Heapify(0);
+
+            fData[fCount] = default;
+            return result;
+        }
+
+        private void Heapify(int idx)
+        {
+            bool LessThen(int ia, int ib) => fComparer.Compare(fData[ia], fData[ib]) < 0;
+
             while (ILeft(idx) < fCount)
             {
                 var (il, ir) = (ILeft(idx), IRight(idx));
@@ -73,8 +88,6 @@ namespace AdventOfCode.Utils
                 (fData[iMin], fData[idx]) = (fData[idx], fData[iMin]);
                 idx = iMin;
             }
-            fData[fCount] = default;
-            return result;
         }
     }
 
