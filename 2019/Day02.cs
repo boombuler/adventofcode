@@ -13,34 +13,22 @@ namespace AdventOfCode._2019
         private const int OC_MUL = 2;
         private long RunIntCode(string code, long? noun = null, long? verb = null)
         {
-            var data = code.Split(',').Select(long.Parse).ToArray();
+            var vm = new IntCodeVM(code);
             if (noun.HasValue)
-                data[1] = noun.Value;
+                vm[1] = noun.Value;
             if (verb.HasValue)
-                data[2] = verb.Value;
-            int pc = 0;
+                vm[2] = verb.Value;
 
-            while (true)
+            try
             {
-                switch(data[pc++])
-                {
-                    case OC_HALT: return data[0];
-                    case OC_ADD:
-                        {
-                            var (a, b, c) = (data[pc++], data[pc++], data[pc++]);
-                            data[c] = data[a] + data[b];
-                        }
-                        break;
-                    case OC_MUL:
-                        {
-                            var (a, b, c) = (data[pc++], data[pc++], data[pc++]);
-                            data[c] = data[a] * data[b];
-                        }
-                        break;
-                    default:
-                        Error("Unsupported OpCode"); break;
-                }
-            
+                foreach (var _ in vm.Run()) ;
+
+                return vm[0];
+            }
+            catch(Exception e)
+            {
+                Error(e.Message);
+                return 0;
             }
         }
 
