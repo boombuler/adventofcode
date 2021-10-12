@@ -17,13 +17,16 @@ namespace AdventOfCode._2019
         private const long OC_JZ = 6;
         private const long OC_LT = 7;
         private const long OC_EQ = 8;
+        private const long OC_ADJRBA = 9; // Adjust relative base offset.
 
         private const long PM_POS = 0;
         private const long PM_IMM = 1;
+        private const long PM_REL = 2;
 
         private long[] fCode;
         private Dictionary<long, long> fData;
         private long fPC;
+        private long fRelativeBaseOffset;
         public IntCodeVM(string code)
         {
             fCode = code.Split(',').Select(long.Parse).ToArray();
@@ -33,35 +36,49 @@ namespace AdventOfCode._2019
         public void Reset()
         {
             fPC = 0;
+            fRelativeBaseOffset = 0;
             fData = fCode.Select((v, i) => (v, i)).ToDictionary(x => (long)x.i, x => x.v);
         }
 
         public long this[long idx]
         {
-            get => fData.TryGetValue(idx, out var res) ? res : 0;
+            get => idx < 0 ? throw new InvalidOperationException() : (fData.TryGetValue(idx, out var res) ? res : 0);
             set => fData[idx] = value;
         }
 
-        private long Param(ref long opcode, long? forcedMode = null)
+        private long Param(ref long opcode)
         {
             var m = opcode % 10;
             opcode = opcode / 10;
-
-            m = forcedMode ?? m;
-
             var value = this[fPC++];
             switch(m)
             {
                 case PM_POS: return this[value];
                 case PM_IMM: return value;
+                case PM_REL: return this[value + fRelativeBaseOffset];
+                default: throw new NotImplementedException();
+            }
+        }
+
+        private void SetParam(ref long opcode, long value)
+        {
+            var m = opcode % 10;
+            opcode = opcode / 10;
+
+            var addr = this[fPC++];
+            switch (m)
+            {
+                case PM_IMM: // Setting to IMM behaves like POS mode.
+                case PM_POS: this[addr] = value; break;
+                case PM_REL: this[addr + fRelativeBaseOffset] = value; break;
                 default: throw new NotImplementedException();
             }
         }
 
         private void BinaryOp(long p, Func<long, long, long> op)
         {
-            var (a, b, c) = (Param(ref p), Param(ref p), Param(ref p, PM_IMM));
-            this[c] = op(a, b);
+            var (a, b) = (Param(ref p), Param(ref p));
+            SetParam(ref p, op(a, b));
         }
 
         private (long? Value, bool Continue) Step(IEnumerator<long> input)
@@ -82,8 +99,7 @@ namespace AdventOfCode._2019
                     {
                         if (!input.MoveNext())
                             throw new InvalidOperationException("missing input");
-                        var r = Param(ref p, PM_IMM);
-                        this[r] = input.Current;
+                        SetParam(ref p, input.Current);
                     } break;
                 case OC_JNZ:
                     {
@@ -98,8 +114,8 @@ namespace AdventOfCode._2019
                             fPC = target;
                     }
                     break;
-                
-
+                case OC_ADJRBA:
+                        fRelativeBaseOffset += Param(ref p); break;
                 default:
                     throw new InvalidOperationException("Unsupported OpCode"); 
             }
