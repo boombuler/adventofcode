@@ -83,6 +83,13 @@ namespace AdventOfCode.Utils
             }
         }
 
+        public static bool NextValue<T>(this IEnumerator<T> self, out T value)
+        {
+            var res = self.MoveNext();
+            value = self.Current;
+            return res;
+        }
+
         /// <summary>
         /// returns an enumerable of each item combination of <paramref name="itemCount"/> items from the <paramref name="items"/>
         /// </summary>
