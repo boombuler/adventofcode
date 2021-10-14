@@ -22,6 +22,7 @@ namespace AdventOfCode.Utils
             Array.Copy(array, 0, array, count, array.Length - count);
             Array.Copy(buff, array, count);
         }
+
         public static IEnumerable<int> Generate(int start = 0, int step = 1)
         {
             var value = start;
@@ -32,14 +33,26 @@ namespace AdventOfCode.Utils
                 value += step;
             }
         }
-        public static IEnumerable<IEnumerable<T>> Chunks<T>(this IEnumerable<T> items, int chunckSize)
+
+        public static IEnumerable<IEnumerable<T>> Chunks<T>(this IEnumerable<T> items, int chunkSize)
         {
-            if (chunckSize <= 0)
+            if (chunkSize <= 0)
                 throw new ArgumentException();
-            return items.Select((itm, i) => new { Value = itm, ChunkNo = i / chunckSize })
-                .GroupBy(c => c.ChunkNo)
-                .Select(c => c.Select(i => i.Value));
+
+            int i = 0;
+            var row = new T[chunkSize];
+            foreach(var itm in items)
+            {
+                row[i++] = itm;
+                if (i == chunkSize)
+                {
+                    yield return row;
+                    row = new T[chunkSize];
+                    i = 0;
+                }
+            }
         }
+
         public static IEnumerable<T[]> Permuatate<T>(this IEnumerable<T> items)
         {
             var arr = items.ToArray();
@@ -81,13 +94,6 @@ namespace AdventOfCode.Utils
                 yield return next.Value;
                 seed = next.NextSeed;
             }
-        }
-
-        public static bool NextValue<T>(this IEnumerator<T> self, out T value)
-        {
-            var res = self.MoveNext();
-            value = self.Current;
-            return res;
         }
 
         /// <summary>

@@ -36,13 +36,9 @@ namespace AdventOfCode._2019
                 if (startOnWhiteTile)
                     fWhiteTiles.Add(fPosition);
 
-                var commands = fVM.Run(new LazyIntCodeVMParam(GetCameraValue)).GetEnumerator();
-
-                while(commands.NextValue(out long color))
+                foreach(var (color, (dir, _)) in fVM.Run(new LazyIntCodeVMParam(GetCameraValue)).Chunks(2))
                 {
                     Paint(color);
-                    if (!commands.NextValue(out long dir))
-                        break;
                     Turn(dir);
                     fPosition += MoveDirections[fDirection];
                 }
