@@ -1,9 +1,7 @@
-﻿using System;
+﻿using AdventOfCode.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AdventOfCode.Utils;
 
 namespace AdventOfCode._2019
 {
@@ -31,11 +29,10 @@ namespace AdventOfCode._2019
 
         protected override long? Part2()
         {
-            var vm = new IntCodeVM(Input);
-            vm[0] = 2; 
+            var vm = new IntCodeVM(Input).SetAddress(0,2);
             long joyPos = 0;
             long ballPos = 0;
-            var joystick = new LazyIntCodeVMParam(() => Math.Sign(ballPos - joyPos));
+            var joystick = new Func<long>(() => Math.Sign(ballPos - joyPos));
 
             long score = 0;
             foreach (var (x, (y, (tile, _))) in vm.Run(joystick).Chunks(3))

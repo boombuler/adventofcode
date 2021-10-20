@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode._2019
 {
-    class IntCodeVM
+    public record IntCodeVM(long PC, long RelativeBaseOffset, ImmutableSortedDictionary<long, long> Data)
     {
         private const long OC_HALT = 99;
         private const long OC_ADD = 1;
@@ -23,119 +22,108 @@ namespace AdventOfCode._2019
         private const long PM_IMM = 1;
         private const long PM_REL = 2;
 
-        private long[] fCode;
-        private Dictionary<long, long> fData;
-        private long fPC;
-        private long fRelativeBaseOffset;
-        public IntCodeVM(string code)
-        {
-            fCode = code.Split(',').Select(long.Parse).ToArray();
-            Reset();
-        }
+        public bool Halted => PC < 0;
 
-        public void Reset()
+
+        public IntCodeVM(string code)
+            : this(0, 0, code.Split(',').Select(long.Parse).Select((v, i) => (v, i)).ToImmutableSortedDictionary(n => (long)n.i, n => n.v))
         {
-            fPC = 0;
-            fRelativeBaseOffset = 0;
-            fData = fCode.Select((v, i) => (v, i)).ToDictionary(x => (long)x.i, x => x.v);
         }
 
         public long this[long idx]
-        {
-            get => idx < 0 ? throw new InvalidOperationException() : (fData.TryGetValue(idx, out var res) ? res : 0);
-            set => fData[idx] = value;
-        }
+            => idx < 0 ? throw new InvalidOperationException() : (Data.TryGetValue(idx, out var res) ? res : 0);
 
-        private long Param(ref long opcode)
+        public IntCodeVM SetAddress(long address, long value)
+            => this with { Data = Data.SetItem(address, value) };
+
+        private long Param(ref long pc, ref long opcode)
         {
             var m = opcode % 10;
             opcode = opcode / 10;
-            var value = this[fPC++];
-            switch(m)
+
+            var value = this.Data[pc++];
+            switch (m)
             {
                 case PM_POS: return this[value];
                 case PM_IMM: return value;
-                case PM_REL: return this[value + fRelativeBaseOffset];
+                case PM_REL: return this[value + RelativeBaseOffset];
                 default: throw new NotImplementedException();
             }
         }
 
-        private void SetParam(ref long opcode, long value)
+        private IntCodeVM SetParam(long pc, ref long opcode, long value)
         {
             var m = opcode % 10;
             opcode = opcode / 10;
 
-            var addr = this[fPC++];
-            switch (m)
-            {
-                case PM_IMM: // Setting to IMM behaves like POS mode.
-                case PM_POS: this[addr] = value; break;
-                case PM_REL: this[addr + fRelativeBaseOffset] = value; break;
-                default: throw new NotImplementedException();
-            }
+            var addr = this[pc];
+            if (m == PM_REL)
+                addr += RelativeBaseOffset;
+
+            return this with { PC = pc + 1, Data = Data.SetItem(addr, value) };
         }
 
-        private void BinaryOp(long p, Func<long, long, long> op)
+
+        private IntCodeVM BinaryOp(long pc, long p, Func<long, long, long> op)
         {
-            var (a, b) = (Param(ref p), Param(ref p));
-            SetParam(ref p, op(a, b));
+            var (a, b) = (Param(ref pc, ref p), Param(ref pc, ref p));
+            return SetParam(pc, ref p, op(a, b));
         }
 
-        private (long? Value, bool Continue) Step(IEnumerator<long> input)
+        private IntCodeVM ConditionalJump(long pc, long p, Predicate<long> test)
         {
-            var opCode = this[fPC++];
+            var (t, target) = (Param(ref pc, ref p), Param(ref pc, ref p));
+            if (test(t))
+                pc = target;
+            return this with { PC = pc };
+        }
+
+        public (long? Value, IntCodeVM NextState) Step(Func<long> currentInput)
+        {
+            var pc = PC;
+            var opCode = this[pc++];
             var p = opCode / 100;
 
-            switch (opCode % 100)
+            return (opCode % 100) switch
             {
-                case OC_HALT: 
-                    return (null, false);
-                case OC_ADD: BinaryOp(p, (a, b) => a + b); break;
-                case OC_MUL: BinaryOp(p, (a, b) => a * b); break;
-                case OC_LT: BinaryOp(p, (a, b) => a < b ? 1 : 0); break;
-                case OC_EQ: BinaryOp(p, (a, b) => a == b ? 1 : 0); break;
-                case OC_OUT: return (Param(ref p), true);
-                case OC_IN:
-                    {
-                        if (!input.MoveNext())
-                            throw new InvalidOperationException("missing input");
-                        SetParam(ref p, input.Current);
-                    } break;
-                case OC_JNZ:
-                    {
-                        var (test, target) = (Param(ref p), Param(ref p));
-                        if (test != 0)
-                            fPC = target;
-                    } break;
-                case OC_JZ:
-                    {
-                        var (test, target) = (Param(ref p), Param(ref p));
-                        if (test == 0)
-                            fPC = target;
-                    }
-                    break;
-                case OC_ADJRBA:
-                        fRelativeBaseOffset += Param(ref p); break;
-                default:
-                    throw new InvalidOperationException("Unsupported OpCode"); 
-            }
-            return (null, true);
+                OC_HALT => (null, this with { PC = -1 }),
+                OC_ADD => (null, BinaryOp(pc, p, (a, b) => a + b)),
+                OC_MUL => (null, BinaryOp(pc, p, (a, b) => a * b)),
+                OC_LT => (null, BinaryOp(pc, p, (a, b) => a < b ? 1 : 0)),
+                OC_EQ => (null, BinaryOp(pc, p, (a, b) => a == b ? 1 : 0)),
+                OC_OUT => (Param(ref pc, ref p), this with { PC = pc }),
+                OC_IN => (null, SetParam(pc, ref p, currentInput())),
+                OC_ADJRBA => (null, this with
+                {
+                    RelativeBaseOffset = RelativeBaseOffset + Param(ref pc, ref p),
+                    PC = pc
+                }),
+                OC_JNZ => (null, ConditionalJump(pc, p, n => n != 0)),
+                OC_JZ => (null, ConditionalJump(pc, p, n => n == 0)),
+                _ => throw new InvalidOperationException("Unsupported OpCode")
+            };
         }
 
-        public IEnumerable<long> Run(IEnumerable<long> input = null)
+        public IEnumerable<long> Run(params long[] input)
         {
-            input ??= Enumerable.Empty<long>();
             var inputEnumerator = input.GetEnumerator();
-            bool cont;
-            do
+            return Run(() => {
+                if (!inputEnumerator.MoveNext())
+                    throw new InvalidOperationException("missing input");
+                return (long)inputEnumerator.Current;
+            });
+        }
+
+        public IEnumerable<long> Run(Func<long> currentInput)
+        {
+            var s = this;
+            while (!s.Halted)
             {
                 long? v;
-                (v, cont) = Step(inputEnumerator);
+                (v, s) = s.Step(currentInput);
                 if (v.HasValue)
                     yield return v.Value;
             }
-            while (cont);
         }
-
     }
 }

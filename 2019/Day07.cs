@@ -7,64 +7,41 @@ namespace AdventOfCode._2019
 {
     class Day07 : Solution
     {
-        class IntCodeVMParam : IEnumerable<long>
-        {
-            class Enumerator : IEnumerator<long>
-            {
-                private long fCurrent = 0;
-                private readonly Queue<long> fQueue;
-                public Enumerator(Queue<long> queue)
-                    => fQueue = queue;
-
-                public long Current => fCurrent;
-                object IEnumerator.Current => fCurrent;
-
-                public void Dispose() { }
-
-                public bool MoveNext() => fQueue.TryDequeue(out fCurrent);
-
-                public void Reset() { }
-            }
-
-            private readonly Queue<long> fQueue = new Queue<long>();
-
-            public void AddParam(long l)
-                => fQueue.Enqueue(l);
-
-            public IntCodeVMParam(params long[] initialParams)
-            {
-                foreach(var p in initialParams)
-                    AddParam(p);
-            }
-
-            public IEnumerator<long> GetEnumerator() => new Enumerator(fQueue);
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        }
-
         private long MaxThrusterSignal(string code)
         {
             var phaseSettings = new long[] { 0, 1, 2, 3, 4 };
-            
+            var vm = new IntCodeVM(code);
             return phaseSettings.Permuatate()
-                .Select(settings => settings.Aggregate((long)0, (o, phase) => new IntCodeVM(code).Run(new[] { phase, o }).First()))
+                .Select(settings => settings.Aggregate((long)0, (o, phase) => vm.Run(phase, o).First()))
                 .Max();
         }
 
         private long RunWithFeedbackLoop(string code, long[] phaseSettings)
         {
-            var parameters = phaseSettings.Select(p => new IntCodeVMParam(p)).ToArray();
-            var vms = parameters.Select(p => new IntCodeVM(code).Run(p).GetEnumerator()).ToArray();
-            long param = 0;
+            var parameters = new Queue<long>(phaseSettings);
+            var vms = phaseSettings.Select(_ => new IntCodeVM(code)).ToArray();
             int amp = 0;
-            while (true)
+
+            // Init VMs
+            while (parameters.Count > 0)
             {
-                parameters[amp].AddParam(param);
-                if (!vms[amp].MoveNext())
-                    return param;
-                param = vms[amp].Current;
+                (_, vms[amp]) = vms[amp].Step(parameters.Dequeue);
                 amp = (amp + 1) % vms.Length;
             }
+            parameters.Enqueue(0);
+            
+            amp = 0;
+            while(!vms.Skip(amp).Any(v => v.Halted))
+            {
+                long? nextParam = null;
+                while(!nextParam.HasValue && !vms[amp].Halted)
+                    (nextParam, vms[amp]) = vms[amp].Step(parameters.Dequeue);
+                if (nextParam.HasValue)
+                    parameters.Enqueue(nextParam.Value);
+                amp = (amp + 1) % vms.Length;
+            }
+
+            return parameters.Dequeue();
         }
 
         private long MaxThrusterSignalFeedbackLoop(string code)

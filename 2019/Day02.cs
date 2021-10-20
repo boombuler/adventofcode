@@ -8,21 +8,18 @@ namespace AdventOfCode._2019
 {
     class Day02 : Solution
     {
-        private const int OC_HALT = 99;
-        private const int OC_ADD = 1;
-        private const int OC_MUL = 2;
         private long RunIntCode(string code, long? noun = null, long? verb = null)
         {
             var vm = new IntCodeVM(code);
             if (noun.HasValue)
-                vm[1] = noun.Value;
+                vm = vm.SetAddress(1, noun.Value);
             if (verb.HasValue)
-                vm[2] = verb.Value;
+                vm = vm.SetAddress(2, verb.Value);
 
             try
             {
-                foreach (var _ in vm.Run()) ;
-
+                while(!vm.Halted)
+                    (_, vm) = vm.Step(() => 0);
                 return vm[0];
             }
             catch(Exception e)
