@@ -8,7 +8,7 @@ namespace AdventOfCode.Utils
     {
         public static readonly Point2D Origin = (0, 0);
 
-    
+
 
         public override string ToString() => $"{X},{Y}";
 
@@ -57,5 +57,7 @@ namespace AdventOfCode.Utils
                 return Math.Sign(X - other.X);
             return Math.Sign(dy);
         }
+
+        public Point3D WithZ(long z) => new Point3D(X, Y, z);
     }
 }

@@ -13,8 +13,8 @@ namespace AdventOfCode
     abstract class Solution<TSolution1, TSolution2> : ScreenBase, ISolution
     {
         private static readonly Regex TrailingInt = new Regex(@"\d+$", RegexOptions.Compiled);
-        public virtual int Year => int.Parse(TrailingInt.Match(GetType().Namespace).Value); // Override when this throws an exception 
-        public virtual int Day => int.Parse(TrailingInt.Match(GetType().Name).Value); // Override when this throws an exception 
+        public virtual int Year => int.Parse(TrailingInt.Match(GetType().Namespace).Value); // Override when this throws an exception
+        public virtual int Day => int.Parse(TrailingInt.Match(GetType().Name).Value); // Override when this throws an exception
 
         public Solution()
         {
@@ -22,8 +22,8 @@ namespace AdventOfCode
         }
 
         #region Puzzle Input
-        
-        private string LoadInput() 
+
+        private string LoadInput()
         {
             const string sessionCookieFile = "Session.user";
             string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
@@ -48,7 +48,7 @@ namespace AdventOfCode
                             inputData.CopyTo(fs);
                     }
                 }
-                
+
             }
             return File.ReadAllText(relPath).TrimEnd('\r', '\n');
         }
@@ -56,7 +56,7 @@ namespace AdventOfCode
         private readonly Lazy<string> fInput;
         protected string Input => fInput.Value;
 
-        public virtual string Sample(string suffix = null) 
+        public virtual string Sample(string suffix = null)
         {
             var asm = GetType().Assembly;
             if (string.IsNullOrEmpty(suffix))
@@ -83,26 +83,33 @@ namespace AdventOfCode
         protected virtual TSolution2 Part2() => default;
         public void Run()
         {
-            WriteLn<DefaultOut>($" ====================");
-            WriteLn<DefaultOut>($" = Year {Year:d4} Day {Day:d2} =");
-            WriteLn<DefaultOut>($" ====================");
-            WriteLn<DefaultOut>(null);
-
-            WriteLn<DefaultOut>("-- Part 1 --");
-            var p1 = Part1();
-            WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
-            WriteLn<DefaultOut>(null);
-            WriteLn<DefaultOut>(null);
-
-            if (Day < 25)
+            try
             {
-                fAssertionCounter = 1;
-                WriteLn<DefaultOut>("-- Part 2 --");
+                WriteLn<DefaultOut>($" ====================");
+                WriteLn<DefaultOut>($" = Year {Year:d4} Day {Day:d2} =");
+                WriteLn<DefaultOut>($" ====================");
+                WriteLn<DefaultOut>(null);
 
-                var p2 = Part2();
-                if (!Equals(p2, default(TSolution2)))
-                    WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
-                WriteLn<DefaultOut>(string.Empty);
+                WriteLn<DefaultOut>("-- Part 1 --");
+                var p1 = Part1();
+                WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
+                WriteLn<DefaultOut>(null);
+                WriteLn<DefaultOut>(null);
+
+                if (Day < 25)
+                {
+                    fAssertionCounter = 1;
+                    WriteLn<DefaultOut>("-- Part 2 --");
+
+                    var p2 = Part2();
+                    if (!Equals(p2, default(TSolution2)))
+                        WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
+                    WriteLn<DefaultOut>(string.Empty);
+                }
+            }
+            catch(Exception e)
+            {
+                Error(e.Message);
             }
         }
 
