@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode.Utils
@@ -20,5 +21,10 @@ namespace AdventOfCode.Utils
                 }
             }
         }
+
+        public static Dictionary<Point2D, char> Cells(this string str)
+            => str.Lines()
+                .SelectMany((l, y) => l.Select((c, x) => (x, y, c)))
+                .ToDictionary(n => new Point2D(n.x, n.y), n => n.c);
     }
 }

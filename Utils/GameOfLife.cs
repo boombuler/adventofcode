@@ -13,22 +13,26 @@ namespace AdventOfCode.Utils
         public static long Emulate<T>(HashSet<T> activeCells, int rounds, GetNeighbours<T> getNeighbours, CheckAlive checkAlive)
         {
             var nextGen = new HashSet<T>();
+            var curGen = new HashSet<T>(activeCells);
             for (int gen = 0; gen < rounds; gen++)
             {
-                var lookAt = activeCells.SelectMany(t => getNeighbours(t)).Union(activeCells).Distinct().ToList();
+                var lookAt = curGen.SelectMany(t => getNeighbours(t)).Union(curGen).Distinct().ToList();
                 foreach (var cell in lookAt)
                 {
-                    var active = getNeighbours(cell).Where(activeCells.Contains).Count();
-                    bool wasActive = activeCells.Contains(cell);
+                    var active = getNeighbours(cell).Where(curGen.Contains).Count();
+                    bool wasActive = curGen.Contains(cell);
 
                     if (checkAlive(wasActive, active))
                         nextGen.Add(cell);
                 }
 
-                (activeCells, nextGen) = (nextGen, activeCells);
+                (curGen, nextGen) = (nextGen, curGen);
                 nextGen.Clear();
             }
-            return activeCells.Count();
+            activeCells.Clear();
+            foreach (var n in curGen)
+                activeCells.Add(n);
+            return curGen.Count();
         }
 
     }
