@@ -5,20 +5,8 @@ namespace AdventOfCode._2019
 {
     class Day21 : Solution
     {
-        private long? RunCode(params string[] springscript)
-        {
-            var vm = new IntCodeVM(Input);
-            var result = vm.Run(springscript.SelectMany(s => s + "\n").Select(b => (long)(byte)b).ToArray());
-            var sb = new StringBuilder();
-            foreach(var c in result)
-            {
-                if (c > 127)
-                    return c;
-                sb.Append((char)(byte)c);
-            }
-            Debug(sb.ToString());
-            return null;
-        }
+        private long RunCode(params string[] springscript)
+            => long.Parse(new IntCodeVM(Input).RunASCIICommands(springscript).Last().Result);
 
 
         protected override long? Part1()

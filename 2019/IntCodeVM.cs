@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 
 namespace AdventOfCode._2019
 {
@@ -124,6 +125,55 @@ namespace AdventOfCode._2019
                 if (v.HasValue)
                     yield return v.Value;
             }
+        }
+
+        public IEnumerable<(string Result, IntCodeVM State)> RunASCIICommands(IEnumerable<string> commands = null)
+        {
+            var queue = new Queue<long>();
+            var sbLine = new StringBuilder();
+            long? d;
+            var cmds = (commands ?? Enumerable.Empty<string>()).GetEnumerator();
+            var vm = this;
+            const int EOL = 10;
+            while (!vm.Halted)
+            {
+                var stop = false;
+
+                (d, vm) = vm.Step(() => {
+                    if (queue.Count == 0)
+                    {
+                        if (!cmds.MoveNext())
+                        {
+                            stop = true;
+                            return -1;
+                        }
+                        foreach (var c in cmds.Current)
+                            queue.Enqueue(c);
+                        queue.Enqueue(EOL);
+                    }
+                    return queue.Dequeue();
+                });
+                
+                    
+                if (d.HasValue)
+                {
+                    if (d == EOL)
+                    {
+                        var str = sbLine.ToString();
+                        yield return (str, vm);
+                        sbLine.Clear();
+                    }
+                    else if (d.Value > 127) // treat as number
+                        sbLine.Append(d.Value);
+                    else
+                        sbLine.Append((char)d.Value);
+                }
+
+                if (stop)
+                    break;
+            }
+            if (sbLine.Length > 0)
+                yield return (sbLine.ToString(), vm);
         }
     }
 }

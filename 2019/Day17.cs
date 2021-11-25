@@ -16,8 +16,7 @@ namespace AdventOfCode._2019
         private Dictionary<Point2D, char> GetScaffoldMap()
         {
             var vm = new IntCodeVM(Input);
-            return Encoding.ASCII.GetString(vm.Run().Select(l => (byte)l).ToArray())
-                .Split('\n')
+            return vm.RunASCIICommands().Select(l => l.Result)
                 .SelectMany((line, y) => line.Select((c, x) => (new Point2D(x, y), c)))
                 .Where(t => t.c != '.')
                 .ToDictionary(t => t.Item1, t => t.c);
