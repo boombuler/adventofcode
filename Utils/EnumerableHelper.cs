@@ -105,10 +105,6 @@ namespace AdventOfCode.Utils
         /// </code>
         /// would return { (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
         /// </example>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="items"></param>
-        /// <param name="itemCount"></param>
-        /// <returns></returns>
         public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items, int itemCount)
         {
             int remainingItems = itemCount - 1;
@@ -121,6 +117,37 @@ namespace AdventOfCode.Utils
                         yield return subCombination.Prepend(itm);
                 }
                 else yield return new[] { itm };
+            }
+        }
+
+
+        /// <summary>
+        /// returns a sliding window with <paramref name="windowSize"/> items from the <paramref name="items"/>
+        /// </summary>
+        /// <example>
+        /// <code>
+        ///     new int[]{ 1, 2, 3, 4 }.SlidingWindow(2)
+        /// </code>
+        /// would return { (1, 2), (2, 3), (3, 4) }
+        /// </example>
+        public static IEnumerable<T[]> SlidingWindow<T>(this IEnumerable<T> items, int windowSize)
+        {
+            var it = items.GetEnumerator();
+            var buf = new T[windowSize];
+            for (int i = 0; i < windowSize; i++)
+            {
+                if (!it.MoveNext())
+                    yield break;
+                buf[i] = it.Current;
+            }
+            yield return buf;
+
+            while (it.MoveNext())
+            {
+                var newBuf = new T[windowSize];
+                Array.Copy(buf, 1, newBuf, 0, windowSize - 1);
+                newBuf[windowSize - 1] = it.Current;
+                yield return buf = newBuf;
             }
         }
 
