@@ -21,6 +21,8 @@ namespace AdventOfCode.Utils
             => new Point2D(a.X + b.X, a.Y + b.Y);
         public static Point2D operator *(Point2D a, long b)
             => new Point2D(a.X * b, a.Y * b);
+        public static Point2D operator *(long a, Point2D b)
+            => b * a;
 
         public IEnumerable<Point2D> Neighbours(bool withDiagonal = false)
         {

@@ -19,6 +19,8 @@ namespace AdventOfCode.Utils
             => new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Point3D operator *(Point3D a, long b)
             => new Point3D(a.X * b, a.Y * b, a.Z * b);
+        public static Point3D operator *(long a, Point3D b)
+            => b * a;
 
         public long ManhattanDistance(Point3D other)
             => Math.Abs(other.X - X) + Math.Abs(other.Y - Y) + Math.Abs(other.Z - Z);
