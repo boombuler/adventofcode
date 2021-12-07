@@ -13,16 +13,14 @@ namespace AdventOfCode._2019
         // a*x+b mod m
         record LCF(BigInteger A, BigInteger B, long M)
         {
-            private static BigInteger Mod(BigInteger a, long m) => ((a % m) + m) % m;
-
             public static LCF Combine(LCF a, LCF b)
             {
                 if (a.M != b.M)
                     throw new InvalidOperationException();
 
                 return new LCF(
-                    Mod(a.A * b.A, a.M),
-                    Mod((a.B * b.A) + b.B, a.M),
+                    MathExt.Mod(a.A * b.A, a.M),
+                    MathExt.Mod((a.B * b.A) + b.B, a.M),
                     a.M
                 );
             }
@@ -42,7 +40,7 @@ namespace AdventOfCode._2019
             }
 
             public long Apply(long x)
-                => (long)Mod((A * x) + B, M);
+                => (long)MathExt.Mod((A * x) + B, M);
 
             public LCF Invert()
             {

@@ -17,7 +17,7 @@ namespace AdventOfCode._2016
             var discs = discDescriptions.Lines().Select(ParseDisc);
             return (long)discs
                 .Select(d => (a: -(BigInteger)d.Offset - d.No, n: (BigInteger)d.Positions))
-                .Aggregate(ChineseRemainder.Solve).a;
+                .Aggregate(MathExt.ChineseRemainder).a;
         }
 
         protected override long? Part1()

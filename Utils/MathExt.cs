@@ -1,13 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AdventOfCode.Utils
 {
-    public class ChineseRemainder
+    class MathExt
     {
-        private static (BigInteger, BigInteger) extEuclid(BigInteger a, BigInteger b)
+        public static long GCD(long a, long b)
+        {
+            while (b != 0)
+                (a, b) = (b, a % b);
+            return a;
+        }
+
+        public static BigInteger Mod(BigInteger a, BigInteger m) => ((a % m) + m) % m;
+
+        /// <summary>
+        /// Solves `ax + by = GCD(a, b)`
+        /// </summary>
+        public static (BigInteger x, BigInteger y) ExtEuclid(BigInteger a, BigInteger b)
         {
             BigInteger x0 = 1;
             BigInteger y0 = 0;
@@ -40,20 +54,16 @@ namespace AdventOfCode.Utils
         /// and 
         /// x ≡ p2.a mod p2.n
         /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <returns></returns>
-        public static (BigInteger a, BigInteger n) Solve((BigInteger a, BigInteger n) p1, (BigInteger a, BigInteger n) p2)
+        /// <returns>
+        /// A tuple where (a: x, n: p1.n * p2.n)
+        /// </returns>
+        public static (BigInteger a, BigInteger n) ChineseRemainder((BigInteger a, BigInteger n) p1, (BigInteger a, BigInteger n) p2)
         {
-            (BigInteger m1, BigInteger m2) = extEuclid(p1.n, p2.n);
+            (BigInteger m1, BigInteger m2) = ExtEuclid(p1.n, p2.n);
             var n = p1.n * p2.n;
             var x = (p1.a * m2 * p2.n) % n;
             var y = (p2.a * m1 * p1.n) % n;
-            var a = (x + y) % n;
-            if (a < 0)
-                a += n;
-            return (a, n);
+            return (Mod(x + y, n), n);
         }
-
     }
 }

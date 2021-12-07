@@ -27,7 +27,7 @@ namespace AdventOfCode._2020
 
             var result = busses
                 .Select(b => (a: (BigInteger)((b.ID - b.Idx) % b.ID), n: (BigInteger)b.ID))
-                .Aggregate(ChineseRemainder.Solve);
+                .Aggregate(MathExt.ChineseRemainder);
             if (result.a < 0)
                 return (long)(result.a + result.n);
             return (long)result.a;
@@ -40,7 +40,7 @@ namespace AdventOfCode._2020
 
         protected override long? Part2()
         {
-            Assert(ChineseRemainder.Solve((2, 8), (4, 5)).a, 34);
+            Assert(MathExt.ChineseRemainder((2, 8), (4, 5)).a, 34);
             Assert(GetContestWinningMinute(Sample()), 1068781);
             return GetContestWinningMinute(Input);
         }

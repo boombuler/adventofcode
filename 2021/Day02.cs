@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AdventOfCode.Utils;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AdventOfCode.Utils;
 
 namespace AdventOfCode._2021
 {

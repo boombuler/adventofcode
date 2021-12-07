@@ -9,9 +9,8 @@ namespace AdventOfCode._2019
     {
         private Point2D Normalize(Point2D center, Point2D pt)
         {
-            long GCD(long a, long b) => b == 0 ? a : GCD(b, a % b);
             pt = pt - center;
-            var gcd = Math.Abs(GCD(pt.X, pt.Y));
+            var gcd = Math.Abs(MathExt.GCD(pt.X, pt.Y));
             return (pt.X / gcd, pt.Y / gcd);
         }
 

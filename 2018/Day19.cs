@@ -1,17 +1,4 @@
-﻿using AdventOfCode.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace AdventOfCode._2018
+﻿namespace AdventOfCode._2018
 {
     class Day19 : Solution
     {   
