@@ -11,7 +11,7 @@ namespace AdventOfCode._2021
     {
         protected override long? Part1()
         {
-            var map = Input.Cells().ToDictionary(kvp => kvp.Key, kvp => kvp.Value - '0');
+            var map = Input.Cells(c => c - '0');
             long result = 0;
             foreach(var pt in Point2D.Range(Point2D.Origin, map.Keys.Max()))
             {
