@@ -61,5 +61,12 @@ namespace AdventOfCode.Utils
         }
 
         public Point3D WithZ(long z) => new Point3D(X, Y, z);
+
+        public static Func<Point2D, bool> InBounds(Point2D min, Point2D max)
+        {
+            var (minX, maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
+            var (minY, maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
+            return (pt) => pt.X >= minX && pt.X <= maxX && pt.Y >= minY && pt.Y <= maxY;
+        }
     }
 }
