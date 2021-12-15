@@ -6,6 +6,28 @@ namespace AdventOfCode._2021
 {
     class Day15 : Solution
     {
+        class PathFinder : AStar<Point2D>
+        {
+            private Dictionary<Point2D, long> fRiskMap;
+
+            public PathFinder(Dictionary<Point2D, long> riskMap)
+                : base(Point2D.Origin)
+            {
+                fRiskMap = riskMap;
+            }
+
+            protected override long Distance(Point2D one, Point2D another)
+            {
+                var distance = one.ManhattanDistance(another);
+                if (distance == 1)
+                    return fRiskMap[another];
+                return distance;
+            }
+
+            protected override IEnumerable<Point2D> NeighboursOf(Point2D node)
+                => node.Neighbours().Where(fRiskMap.ContainsKey);
+        }
+
         private long? FindPath(string input, int expandMap = 1)
         {
             var baseMap = input.Cells(c => c - '0');
@@ -16,28 +38,10 @@ namespace AdventOfCode._2021
             {
                 var offset = new Point2D(of.X * size.X, of.Y * size.Y);
                 foreach (var (k, v) in baseMap)
-                    riskMap[k + offset] = (of.X + of.Y + v + 1) % 9 + 1;
+                    riskMap[k + offset] = (of.X + of.Y + v - 1) % 9 + 1;
             }
 
-            var target = riskMap.Keys.Max();
-
-            var open = new MinHeap<(long Cost, Point2D Path)>(ComparerBuilder<(long Cost, Point2D Path)>.CompareBy(i => i.Cost));
-            open.Push((0, Point2D.Origin));
-            var visited = new HashSet<Point2D>();
-            while(open.TryPop(out var cur))
-            {
-                var (curCost, curPath) = cur;
-                if (curPath == target)
-                    return curCost;
-                if (!visited.Add(curPath))
-                    continue;
-                foreach(var n in curPath.Neighbours())
-                {
-                    if (riskMap.TryGetValue(n, out var cost))
-                        open.Push((curCost + cost, n));
-                }
-            }
-            return null;
+            return new PathFinder(riskMap).ShortestPath(riskMap.Keys.Max()).Cost;
         }
 
         protected override long? Part1()
