@@ -13,6 +13,7 @@ namespace AdventOfCode._2021
         class Cluster
         {
             public ImmutableArray<ImmutableArray<Point3D>> Orientations { get; }
+
             public Cluster(IEnumerable<Point3D> beacons)
             {
                 Orientations = GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray).ToImmutableArray();
@@ -20,26 +21,16 @@ namespace AdventOfCode._2021
 
             private static IEnumerable<Func<Point3D, Point3D>> GetOrientations()
             {
-                IEnumerable<Func<Point3D, Point3D>> Rotate()
-                {
-                    yield return p => (p.X, p.Y, p.Z);
-                    yield return p => (p.X, -p.Z, p.Y);
-                    yield return p => (p.X, -p.Y, -p.Z);
-                    yield return p => (p.X, p.Z, -p.Y);
-                }
+                IEnumerable<Mat4> Rotate(Point3D direction)
+                    => Mat4.Identity.Unfold(m => m.Rotate90Degree(direction)).Take(4);
 
-                IEnumerable<Func<Point3D, Point3D>> Directions()
-                {
-                    yield return p => (p.X, p.Y, p.Z);
-                    yield return p => (-p.X, -p.Y, p.Z);
-                    yield return p => (p.Y, p.Z, p.X);
-                    yield return p => (-p.Y, -p.Z, p.X);
-                    yield return p => (p.Z, p.X, p.Y);
-                    yield return p => (-p.Z, -p.X, p.Y);
-                }
-                return Directions().SelectMany(dir => Rotate().Select(dir.Combine));
+                return Rotate((0, 1, 0)).Concat(Rotate((0, 0, 1)))
+                    .SelectMany(r => Rotate((1, 0, 0)).Select(r.Combine))
+                    .Distinct()
+                    .Select(m => new Func<Point3D, Point3D>(m.Apply));
             }
         }
+
         record Scanner(ImmutableArray<Point3D> Beacons, Point3D Offset);
 
         private List<Cluster> Parse(string input)
