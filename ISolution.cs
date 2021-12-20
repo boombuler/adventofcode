@@ -9,5 +9,7 @@ namespace AdventOfCode
         int Year { get; }
         int Day { get; }
         void Run();
+
+        bool Validate();
     }
 }

@@ -1,9 +1,7 @@
 ﻿using AdventOfCode.Console;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode
@@ -91,21 +89,24 @@ namespace AdventOfCode
                 WriteLn<DefaultOut>(null);
 
                 WriteLn<DefaultOut>("-- Part 1 --");
+                fAssertionHandler = new ConsoleAsssertionHandler(Console<AssertOut>);
                 var p1 = Part1();
                 WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
                 WriteLn<DefaultOut>(null);
                 WriteLn<DefaultOut>(null);
 
+                TSolution2 p2 = default;
                 if (Day < 25)
                 {
-                    fAssertionCounter = 1;
+                    fAssertionHandler = new ConsoleAsssertionHandler(Console<AssertOut>);
                     WriteLn<DefaultOut>("-- Part 2 --");
 
-                    var p2 = Part2();
+                    p2 = Part2();
                     if (!Equals(p2, default(TSolution2)))
                         WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
                     WriteLn<DefaultOut>(string.Empty);
                 }
+                WriteResults(Convert.ToString(p1), Convert.ToString(p2));
             }
             catch(Exception e)
             {
@@ -117,12 +118,39 @@ namespace AdventOfCode
 
         #region Assertions
 
-        private int fAssertionCounter = 1;
+        interface IAssertionHandler
+        {
+            void HandleAssertion(string name, bool result, string errorTxt);
+        }
+
+        class ConsoleAsssertionHandler : IAssertionHandler
+        {
+            private readonly Func<AssertOut> fGetConsole;
+            private int fAssertionCounter = 1;
+            public ConsoleAsssertionHandler(Func<AssertOut> getConsole)
+                => fGetConsole = getConsole;
+
+            public void HandleAssertion(string name, bool result, string errorTxt)
+            {
+                if (string.IsNullOrEmpty(name))
+                    name = Convert.ToString(fAssertionCounter++);
+                fGetConsole().WriteResult(name, result, errorTxt);
+            }
+        }
+
+        class ExceptionAssertionHandler : IAssertionHandler
+        {
+            public void HandleAssertion(string name, bool result, string errorTxt)
+            {
+                if (!result)
+                    throw new InvalidOperationException(name);
+            }
+        }
+
+        private IAssertionHandler fAssertionHandler;
         private void WriteAssertion(string name, bool result, string errorTxt)
         {
-            if (string.IsNullOrEmpty(name))
-                name = Convert.ToString(fAssertionCounter++);
-            Console<AssertOut>().WriteResult(name, result, errorTxt);
+            fAssertionHandler.HandleAssertion(name, result, errorTxt);
         }
 
         protected void Assert<T>(T actual, T target, string name = null)
@@ -145,6 +173,57 @@ namespace AdventOfCode
 
         protected void Error(string output)
             => WriteLn<ErrorOut>(output);
+
+        #endregion
+
+        #region Validate
+
+        const string RESULT_DIR = "Results";
+
+        private void WriteResults(string p1, string p2)
+        {
+            if (!Directory.Exists("Results"))
+                return;
+            Directory.CreateDirectory(Path.Combine(RESULT_DIR, Year.ToString()));
+            string relPath = Path.Combine(RESULT_DIR, Year.ToString(), $"{Day:d2}.txt");
+            File.WriteAllText(relPath, p1 + "\n" + p2);
+        }
+
+        private (string Part1, string Part2) Results()
+        {
+            string relPath = Path.Combine(RESULT_DIR, Year.ToString(), $"{Day:d2}.txt");
+            if (!File.Exists(relPath))
+                return (null, null);
+            using (var sr = new StreamReader(relPath))
+                return (sr.ReadLine(), sr.ReadLine());
+        }
+
+        public bool Validate()
+        {
+            var oldHandler = fAssertionHandler;
+            var counter = new ExceptionAssertionHandler();
+            fAssertionHandler = counter;
+            try
+            {
+                var (res1, res2) = Results();
+
+                var p1 = Part1();
+                if (!string.IsNullOrEmpty(res1) && Convert.ToString(p1) != res1)
+                    return false;
+                if (Day < 25)
+                {
+                    var p2 = Part2();
+                    if (!string.IsNullOrEmpty(res2) && Convert.ToString(p2) != res2)
+                        return false;
+                }
+                return true;
+            }
+            catch { return false; }
+            finally
+            {
+                fAssertionHandler = oldHandler;
+            }
+        }
 
         #endregion
     }
