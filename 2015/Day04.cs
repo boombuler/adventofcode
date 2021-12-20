@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdventOfCode.Utils;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -7,57 +9,44 @@ namespace AdventOfCode._2015
 {
     class Day04 : Solution
     {
-        private void IncText(Span<byte> txt, ref int len)
-        {
-            var idx = txt.Length-1;
-            while (true)
-            {
-                txt[idx]++;
-                if (txt[idx] > (byte)'9')
-                    txt[idx--] = (byte)'0';
-                else
-                {
-                    var l = txt.Length - idx;
-                    if (l > len)
-                        len = l;
-                    return;
-                }   
-            }
-        }
-
         private long FindLowestHash(string privateKey, int leadingZeros = 5)
         {
-            var md5 = MD5.Create();
-
-            bool IsMatch()
+            bool IsMatch(byte[] hash)
             {
                 for (int i = 0; i < leadingZeros / 2; i++)
                 {
-                    if (md5.Hash[i] != 0)
+                    if (hash[i] != 0)
                         return false;
                 }
                 if (leadingZeros % 2 != 0)
                 {
-                    var v = md5.Hash[leadingZeros / 2];
+                    var v = hash[leadingZeros / 2];
                     return (v & 0xF0) == 0;
                 }
                 return true;
             }
 
-            var pk = Encoding.ASCII.GetBytes(privateKey);
-            var counter = Enumerable.Range(0, 15).Select(_ => (byte)'0').ToArray();
-            int len = 1;
-            while (true)
+            var sw = Stopwatch.StartNew();
+            try
             {
-                md5.TransformBlock(pk, 0, pk.Length, null, 0);
-                md5.TransformFinalBlock(counter, counter.Length - len, len);
-                if (IsMatch())
+                var md = MD5.Create();
+                var pk = Encoding.ASCII.GetBytes(privateKey);
+                int prefixLen = pk.Length;
+                Array.Resize(ref pk, pk.Length + 12);
+
+                var counter = new AsciiCounter(pk.AsSpan(prefixLen));
+                while (true)
                 {
-                    var txt = Encoding.ASCII.GetString(counter, counter.Length - len, len);
-                    return long.Parse(txt);
+                    var hash = md.ComputeHash(pk, 0, prefixLen + counter.Length);
+                    if (IsMatch(hash))
+                        return counter.Value;
+                    counter.Step();
                 }
-                else
-                    IncText(counter, ref len);
+            }
+            finally
+            {
+                sw.Stop();
+                Debug(sw.Elapsed);
             }
         }
 
