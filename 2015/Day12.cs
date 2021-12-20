@@ -33,12 +33,23 @@ namespace AdventOfCode._2015
             }
         }
 
-        private long GetSum(Func<JsonElement, bool> filter)
-            => Walk(JsonDocument.Parse(Input).RootElement, filter).Sum();
+        private long GetSum(string input, Func<JsonElement, bool> filter)
+            => Walk(JsonDocument.Parse(input).RootElement, filter).Sum();
 
-        protected override long? Part1() 
-            => GetSum(_ => true);
-        protected override long? Part2() 
-            => GetSum(js => js.EnumerateObject().Any(jp => jp.Value.ValueKind == JsonValueKind.String && jp.Value.GetString() == "red"));
+        protected override long? Part1()
+        {
+            long Sum(string s) 
+                => GetSum(s, _ => true);
+            Assert(Sum("[1,2,3]"), 6);
+            Assert(Sum("{\"a\":{\"b\":4},\"c\":-1}"), 3);
+            return Sum(Input);
+        }
+        protected override long? Part2()
+        {
+            long Sum(string s) => 
+                GetSum(s, js => !js.EnumerateObject().Any(jp => jp.Value.ValueKind == JsonValueKind.String && jp.Value.GetString() == "red"));
+            Assert(Sum("[1,{\"c\":\"red\",\"b\":2},3]"), 4);
+            return Sum(Input);
+        }
     }
 }
