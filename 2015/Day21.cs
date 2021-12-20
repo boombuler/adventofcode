@@ -9,7 +9,7 @@ namespace AdventOfCode._2015
     {
         class Mob
         {
-            public int Attack{get;}
+            public int Attack { get; }
             public int HP { get; set; }
             public int Defense { get; }
 
@@ -18,7 +18,7 @@ namespace AdventOfCode._2015
             public static Mob Boss(string data)
             {
                 var stats = data.Lines().ToDictionary(l => l.Substring(0, l.IndexOf(':')), l => int.Parse(l.Substring(l.IndexOf(':') + 2)));
-                return new Mob(stats["Armor"], stats["Hit Points"], stats["Damage"]);
+                return new Mob(stats["Damage"], stats["Hit Points"], stats["Armor"]);
             }
 
             public static Mob Player(int hp, IEnumerable<Item> items)
@@ -39,16 +39,16 @@ namespace AdventOfCode._2015
 
         private Item[] Weapons = new[]
         {
-            new Item("Dagger"    ,  8, 4, 0), 
+            new Item("Dagger"    ,  8, 4, 0),
             new Item("Shortsword", 10, 5, 0),
-            new Item("Warhammer" , 25, 6, 0), 
+            new Item("Warhammer" , 25, 6, 0),
             new Item("Longsword" , 40, 7, 0),
             new Item("Greataxe"  , 74, 8, 0),
         };
 
         private Item[] Armors = new[]
         {
-            new Item("Leather"   ,  13, 0, 1), 
+            new Item("Leather"   ,  13, 0, 1),
             new Item("Chainmail" ,  31, 0, 2),
             new Item("Splintmail",  53, 0, 3),
             new Item("Bandedmail",  75, 0, 4),
@@ -57,9 +57,9 @@ namespace AdventOfCode._2015
 
         private Item[] Rings = new[]
         {
-            new Item("Damage +1",  25, 1, 0), 
-            new Item("Damage +2",  50, 2, 0), 
-            new Item("Damage +3", 100, 3, 0), 
+            new Item("Damage +1",  25, 1, 0),
+            new Item("Damage +2",  50, 2, 0),
+            new Item("Damage +3", 100, 3, 0),
             new Item("Defense +1", 20, 0, 1),
             new Item("Defense +2", 54, 0, 2),
             new Item("Defense +3", 80, 0, 3),
@@ -73,7 +73,7 @@ namespace AdventOfCode._2015
 
             foreach (var cWeap in weapons)
             {
-                foreach(var cArmor in armors)
+                foreach (var cArmor in armors)
                 {
                     foreach (var cRing in rings)
                         yield return cWeap.Union(cArmor).Union(cRing);
@@ -114,7 +114,7 @@ namespace AdventOfCode._2015
 
             var def = player;
             var att = boss;
-            while(att.HP > 0)
+            while (att.HP > 0)
             {
                 (att, def) = (def, att);
                 var dmg = Math.Max(1, att.Attack - def.Defense);
