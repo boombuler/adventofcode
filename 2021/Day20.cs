@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Utils;
-using System.Collections.Generic;
+using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AdventOfCode._2021
@@ -8,35 +9,40 @@ namespace AdventOfCode._2021
     {
         public long Enhance(string input, int rounds)
         {
-            var lookup = input.Lines().First().Select((c, i) => new { Value = c == '#', Index = i }).Where(x => x.Value).Select(x => x.Index).ToHashSet();
-            var img = string.Join("\n", input.Lines().Skip(2)).Cells(c => c == '#').Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToHashSet();
-            var topLeft = new Point2D(0, 0);
-            var bottomRight = new Point2D(input.Lines().Skip(2).First().Length-1, input.Lines().Skip(2).Count()-1);
+            var lookup = new BitArray(input.Lines().First().Select(c => c == '#').ToArray());
+            var img = new BitArray(input.Lines().Skip(2).SelectMany(line => line.Select(c => c == '#')).ToArray());
+            int size = input.Lines().Count() - 2;
             bool everythingLit = false;
 
             for (int i = 0; i < rounds; i++)
             {
-                var next = new HashSet<Point2D>();
-                var inCurrentImg = Point2D.InBounds(topLeft, bottomRight);
+                var nextSize = size + 2;
+                var next = new BitArray((int)(nextSize * nextSize));
 
-                topLeft -= (1, 1);
-                bottomRight += (1, 1);
-                
-                foreach (var px in Point2D.Range(topLeft, bottomRight))
+                foreach (var px in Point2D.Range((-1, -1), (size, size)))
                 {
                     var window = from y in Enumerable.Range((int)px.Y - 1, 3)
                                  from x in Enumerable.Range((int)px.X - 1, 3)
                                  select new Point2D(x, y);
 
-                    var lookupIdx = window.Select((p, i) => inCurrentImg(p) ? img.Contains(p) : everythingLit)
-                        .Select((p,i) => (p ? 1 : 0) << (8 - i)).Aggregate((a, b) => a | b);
-                    if (lookup.Contains(lookupIdx))
-                        next.Add(px);
+                    var lookupIdx = window.Select((p, i) =>
+                    {
+                        if (p.X >= 0 && p.Y >= 0 && p.X < size && p.Y < size)
+                            return img[(int)(p.X + (size * p.Y))];
+                        return everythingLit;
+                    }).Select((p,i) => (p ? 1 : 0) << (8 - i)).Aggregate((a, b) => a | b);
+
+                    if (lookup[lookupIdx])
+                    {
+                        var idx = (int)((px.X + 1) + ((px.Y + 1) * nextSize));
+                        next[idx] = true;
+                    }
                 }
-                everythingLit ^= lookup.Contains(0);
+                everythingLit ^= lookup[0];
                 img = next;
+                size = nextSize;
             }
-            return everythingLit ? long.MaxValue : img.Count;
+            return everythingLit ? long.MaxValue : img.OfType<bool>().Count(x => x);
         }
 
         protected override long? Part1()
