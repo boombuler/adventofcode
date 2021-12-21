@@ -17,7 +17,8 @@ namespace AdventOfCode
                 .Cast<ISolution>()
                 .ToList();
 
-        public IEnumerable<ISolution> All() => fSolutions.Value;
+        public IEnumerable<ISolution> All(int? year, int? day) 
+            => fSolutions.Value.Where(s => s.Year == (year ?? s.Year) && s.Day == (day ?? s.Day));
 
         public int? GetMostRecentDayInYear(int? year)
              => year.HasValue ? fSolutions.Value.Where(s => s.Year == year.Value).OrderByDescending(s => s.Day).FirstOrDefault()?.Day : null;

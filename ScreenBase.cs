@@ -1,15 +1,10 @@
 ﻿using AdventOfCode.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode
 {
     class ScreenBase
     {
-        private OutputMode fTextMode = new DefaultOut();
+        private OutputMode fTextMode = null;
 
         #region Console
 
@@ -18,7 +13,7 @@ namespace AdventOfCode
         {
             if (!(fTextMode is T))
             {
-                fTextMode.Exit();
+                fTextMode?.Exit();
                 fTextMode = new T();
                 fTextMode.Enter();
             }
@@ -28,13 +23,18 @@ namespace AdventOfCode
         {
             if (fTextMode != mode)
             {
-                fTextMode.Exit();
+                fTextMode?.Exit();
                 fTextMode = mode;
                 fTextMode.Enter();
             }
             return mode;
         }
 
+        protected void ExitConsoleMode()
+        {
+            fTextMode?.Exit();
+            fTextMode = null;
+        }
 
         #endregion
     }

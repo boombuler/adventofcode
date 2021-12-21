@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 
 namespace AdventOfCode
 {
@@ -21,8 +22,8 @@ namespace AdventOfCode
             return command.InvokeAsync(args).Result;
         }
 
-        private static void Validate()
-            => new Validator().Run(new SolutionRepository().All());
+        private static void Validate(int? year, int? day)
+            => new Validator().Run(new SolutionRepository().All(year, day));
 
         private static void RunPuzzle(int? year, int? day)
         {
@@ -39,7 +40,7 @@ namespace AdventOfCode
                 eo.Exit();
             }
             else
-                target.Run();
+                new SolutionExecutor().Run(target);
         }
     }
 }

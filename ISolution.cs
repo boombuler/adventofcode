@@ -8,8 +8,8 @@ namespace AdventOfCode
     {
         int Year { get; }
         int Day { get; }
-        void Run();
 
-        bool Validate();
+        string Part1(IOutput output);
+        string Part2(IOutput output);
     }
 }
