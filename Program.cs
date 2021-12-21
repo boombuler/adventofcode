@@ -16,11 +16,15 @@ namespace AdventOfCode
                 new Option<int?>(new [] {"--year", "-y"}, "Specifies the year for the AoC puzzles"),
                 new Option<int?>(new [] {"--day", "-d"}, "Specifies a puzzle day"),
                 
-                new Command("validate") { Handler = CommandHandler.Create(Validate) }
+                new Command("validate", "checks if all puzzle solvers work correctly") { Handler = CommandHandler.Create(Validate) },
+                new Command("benchmark", "measures the execution time for the given puzzles") { Handler = CommandHandler.Create(Benchmark) },
             };
             command.Handler = CommandHandler.Create(RunPuzzle);
             return command.InvokeAsync(args).Result;
         }
+
+        private static void Benchmark(int? year, int? day)
+            => new Benchmarker().Run(new SolutionRepository().All(year, day));
 
         private static void Validate(int? year, int? day)
             => new Validator().Run(new SolutionRepository().All(year, day));
