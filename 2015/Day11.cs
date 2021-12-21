@@ -6,24 +6,38 @@ namespace AdventOfCode._2015
 {
     class Day11 : Solution<string>
     {
-        private const string Alphabet = "abcdefghijklmnopqrstuvwxyz";
-
-        public string IncStr(string input)
+        private string IncStr(string input)
         {
-            var values = input.Select(c => Alphabet.IndexOf(c)).ToList();
-            
-            bool carry = false;
-            for (int i = values.Count - 1; i >= 0; i--)
+            var chars = input.ToArray();
+            for (int i = chars.Length - 1; i >= 0; i--)
             {
-                var newVal = (values[i] + 1) % Alphabet.Length;
-                carry = newVal == 0;
-                values[i] = newVal;
-                if (!carry)
+                var a = (char)(chars[i]+1);
+                if (a > 'z')
+                    a = 'a';
+                chars[i] = a;
+                if (a != 'a')
+                {
+                    EnsureRule2(chars, i);
                     break;
+                }
             }
-            if (carry)
-                values.Insert(0, 1);
-            return new string(values.Select(i => Alphabet[i]).ToArray());
+            return new string(chars);
+        }
+
+        private void EnsureRule2(char[] chars, int startIdx = 0)
+        {
+            for (int i = startIdx; i < chars.Length; i++)
+            {
+                var a = chars[i];
+                if (a == 'i' || a == 'l' || a == 'o')
+                {
+                    a++;
+                    chars[i] = a;
+                    for (int ii = i + 1; ii < chars.Length; ii++)
+                        chars[ii] = 'a';
+                    return;
+                }
+            }
         }
 
         private bool CheckRule1(string pwd)
@@ -45,10 +59,14 @@ namespace AdventOfCode._2015
         private static readonly Regex Rule3 = new Regex(@".*(\w)\1.*(\w)\2", RegexOptions.Compiled);
 
         public bool IsPasswordValid(string pwd)
-            => CheckRule1(pwd) && !Rule2.IsMatch(pwd) && Rule3.IsMatch(pwd);
+            => CheckRule1(pwd) && Rule3.IsMatch(pwd);
         
         public string NextValidPassword(string pwd)
         {
+            var pwdArr = pwd.ToArray();
+            EnsureRule2(pwdArr);
+            pwd = new string(pwdArr);
+
             do
             {
                 pwd = IncStr(pwd);
@@ -58,8 +76,6 @@ namespace AdventOfCode._2015
 
         protected override string Part1()
         {
-            Assert(IncStr("a"), "b");
-            Assert(IncStr("xz"), "ya");
             Assert(!IsPasswordValid("hijklmmn"));
             Assert(!IsPasswordValid("abbceffg"));
             Assert(!IsPasswordValid("abbcegjk"));
