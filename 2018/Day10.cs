@@ -25,7 +25,7 @@ namespace AdventOfCode._2018
         {
             var curStars =  stars.Lines().Select(ParseStar).ToArray();
             var next = new Star[curStars.Length];
-            int seconds = 0;
+            int seconds = 1;
             while(true)
             {
                 for (int i = 0; i < curStars.Length; i++)
