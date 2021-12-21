@@ -34,25 +34,6 @@ namespace AdventOfCode.Utils
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Chunks<T>(this IEnumerable<T> items, int chunkSize)
-        {
-            if (chunkSize <= 0)
-                throw new ArgumentException();
-
-            int i = 0;
-            var row = new T[chunkSize];
-            foreach(var itm in items)
-            {
-                row[i++] = itm;
-                if (i == chunkSize)
-                {
-                    yield return row;
-                    row = new T[chunkSize];
-                    i = 0;
-                }
-            }
-        }
-
         public static IEnumerable<T[]> Permuatate<T>(this IEnumerable<T> items)
         {
             var arr = items.ToArray();

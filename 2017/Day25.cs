@@ -28,7 +28,7 @@ namespace AdventOfCode._2017
             foreach(var stateDescrpt in parts.Skip(1))
             {
                 var name = ParseStateName.Match(stateDescrpt.Lines().First()).Groups["Name"].Value;
-                var ops = stateDescrpt.Lines().Skip(1).Chunks(4).Select(grp => string.Join("\n", grp)).Select(ParseOperation);
+                var ops = stateDescrpt.Lines().Skip(1).Chunk(4).Select(grp => string.Join("\n", grp)).Select(ParseOperation);
                 states.Add(new State(name, ops.ToArray()));
             }
             return new StateMachine(initialState, rounds, states.ToArray());

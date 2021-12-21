@@ -1,6 +1,7 @@
 ﻿using AdventOfCode.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode._2019
 {
@@ -33,7 +34,7 @@ namespace AdventOfCode._2019
                 if (startOnWhiteTile)
                     fWhiteTiles.Add(fPosition);
 
-                foreach(var (color, (dir, _)) in fVM.Run(GetCameraValue).Chunks(2))
+                foreach(var (color, (dir, _)) in fVM.Run(GetCameraValue).Chunk(2))
                 {
                     Paint(color);
                     Turn(dir);

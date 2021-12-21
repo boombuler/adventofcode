@@ -36,7 +36,7 @@ namespace AdventOfCode._2021
         private IEnumerable<long> Scores(string input)
         {
             var (numbers, boardStrs) = input.Lines();
-            var boards = boardStrs.Chunks(BOARD_SIZE+1).Select(l => new BingoBoard(l.Skip(1))).ToList();
+            var boards = boardStrs.Chunk(BOARD_SIZE+1).Select(l => new BingoBoard(l.Skip(1))).ToList();
 
             foreach(var n in numbers.Split(',').Select(long.Parse))
             {

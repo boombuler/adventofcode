@@ -34,7 +34,7 @@ namespace AdventOfCode._2017
             }
 
             return numbers
-                .Chunks(16)
+                .Chunk(16)
                 .Select(chunk => (byte)chunk.Aggregate((a, b) => a ^ b))
                 .ToArray();
         }

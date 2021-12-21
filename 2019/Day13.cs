@@ -21,7 +21,7 @@ namespace AdventOfCode._2019
             var vm = new IntCodeVM(Input);
             var screen = new Dictionary<Point2D, Tile>();
             
-            foreach(var (x, (y, (tile, _))) in vm.Run().Chunks(3))
+            foreach(var (x, (y, (tile, _))) in vm.Run().Chunk(3))
                 screen[(x, y)] = (Tile)tile;
 
             return screen.Values.Count(t => t == Tile.Block);
@@ -35,7 +35,7 @@ namespace AdventOfCode._2019
             var joystick = new Func<long>(() => Math.Sign(ballPos - joyPos));
 
             long score = 0;
-            foreach (var (x, (y, (tile, _))) in vm.Run(joystick).Chunks(3))
+            foreach (var (x, (y, (tile, _))) in vm.Run(joystick).Chunk(3))
             {
                 if (x == -1 && y == 0)
                     score = tile;

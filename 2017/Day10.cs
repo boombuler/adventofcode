@@ -43,7 +43,7 @@ namespace AdventOfCode._2017
                 KnotHashRound(numbers, ref current, ref skipSize, lengths);
 
             return string.Concat(numbers
-                .Chunks(16)
+                .Chunk(16)
                 .Select(chunk => chunk.Aggregate((a, b) => a ^ b))
                 .Select(val => val.ToString("x2"))
             );
