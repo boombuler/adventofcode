@@ -11,7 +11,7 @@ namespace AdventOfCode._2018
         enum Direction { Up = 0, Right = 1, Down = 2, Left = 3, MASK = Left, Invalid = -1 }
         private static Point2D[] DirectionOffsets = new Point2D[]
         {
-            (0, -1), (0, 1), (-1, 0), (1, 0)
+            (0, -1), (1, 0), (0, 1), (-1, 0)
         };
         enum TurnDirection { Left = -1, Straight = 0, Right = 1 }
 
