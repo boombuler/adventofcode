@@ -46,6 +46,7 @@ namespace AdventOfCode
             catch (Exception e)
             {
                 WriteLn<ErrorOut>(e.Message);
+                WriteLn<ErrorOut>(e.StackTrace);
                 ExitConsoleMode();
             }
         }
