@@ -11,8 +11,9 @@ namespace AdventOfCode._2016
         {
             public string Name;
             public int Id;
+#pragma warning disable 0649
             public string CheckSum;
-
+#pragma warning restore 0649
             private static string Alphabet = "abcdefghijklmnopqrstuvwxyz";
 
             public string DecodeName()

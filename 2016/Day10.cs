@@ -8,7 +8,9 @@ namespace AdventOfCode._2016
 {
     class Day10 : Solution
     {
+#pragma warning disable 0649
         class Bot { public string Name; public string Low; public string High; public long? HoldValue; }
+#pragma warning restore 0649
         private static readonly Func<string, Bot> ParseBot = 
             new Regex(@"(?<Name>bot \d+) gives low to (?<Low>(bot|output) \d+) and high to (?<High>(bot|output) \d+)", RegexOptions.Compiled).ToFactory<Bot>();
 

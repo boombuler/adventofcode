@@ -2,17 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AdventOfCode._2018
 {
     class Day16 : Solution
     {
-        record Sample(int OpCode, int A, int B, int C, int[] Before, int[] After)
+        record SampleRow(int OpCode, int A, int B, int C, int[] Before, int[] After)
         {
-            public static Func<string, Sample> Parse = new Regex(@"Before:\s*\[((, )?(?<Before>\d+))+\]\n(?<OpCode>\d+) (?<A>\d+) (?<B>\d+) (?<C>\d+)\nAfter:\s*\[((, )?(?<After>\d+))+\]", RegexOptions.Compiled | RegexOptions.Multiline).ToFactory<Sample>();
+            public static Func<string, SampleRow> Parse = new Regex(@"Before:\s*\[((, )?(?<Before>\d+))+\]\n(?<OpCode>\d+) (?<A>\d+) (?<B>\d+) (?<C>\d+)\nAfter:\s*\[((, )?(?<After>\d+))+\]", RegexOptions.Compiled | RegexOptions.Multiline).ToFactory<SampleRow>();
 
             public bool Matches(OpCodeImpl impl)
                 => After.SequenceEqual(impl(A, B, C, Before));
@@ -54,8 +52,8 @@ namespace AdventOfCode._2018
             Addr, Addi, Mulr, Muli, Banr, Bani, Borr, Bori, Setr, Seti, Gtir, Gtri, Gtrr, Eqir, Eqri, Eqrr
         };
 
-        private List<Sample> ParseSamples(string input)
-            => input.Replace("\r", string.Empty).Split("\n\n").Select(Sample.Parse).Where(s => s != null).ToList();
+        private List<SampleRow> ParseSamples(string input)
+            => input.Replace("\r", string.Empty).Split("\n\n").Select(SampleRow.Parse).Where(s => s != null).ToList();
 
         private OpCodeImpl[] RestoreOpCodeTable(string input)
         {
