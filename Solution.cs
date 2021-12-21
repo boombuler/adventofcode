@@ -1,7 +1,7 @@
-﻿using AdventOfCode.Console;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode
@@ -29,26 +29,25 @@ namespace AdventOfCode
             string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
             if (!File.Exists(relPath) && File.Exists(sessionCookieFile))
             {
-                var request = (HttpWebRequest)WebRequest.Create($"https://adventofcode.com/{Year:d4}/day/{Day}/input");
-                request.Method = "GET";
-                request.Accept = "*/*";
-                request.AllowAutoRedirect = false;
-                request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; .NET CLR 1.0.3705)";
-                request.CookieContainer = new CookieContainer();
-                request.Credentials = null;
-                request.CookieContainer.Add(new Cookie("session", File.ReadAllText(sessionCookieFile), "/", ".adventofcode.com"));
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    using (var inputData = response.GetResponseStream())
+                var baseAddress = new Uri("https://adventofcode.com");
+                var cookieContainer = new CookieContainer();
+                cookieContainer.Add(new Cookie("session", File.ReadAllText(sessionCookieFile), "/", ".adventofcode.com"));
+
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                {    
+                    var response = client.GetAsync($"/{Year:d4}/day/{Day}/input").Result;
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (!Directory.Exists(Path.GetDirectoryName(relPath)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(relPath));
-                        using (var fs = File.Create(relPath))
-                            inputData.CopyTo(fs);
+                        using (var inputData = response.Content.ReadAsStream())
+                        {
+                            if (!Directory.Exists(Path.GetDirectoryName(relPath)))
+                                Directory.CreateDirectory(Path.GetDirectoryName(relPath));
+                            using (var fs = File.Create(relPath))
+                                inputData.CopyTo(fs);
+                        }
                     }
                 }
-
             }
             return File.ReadAllText(relPath).TrimEnd('\r', '\n');
         }
