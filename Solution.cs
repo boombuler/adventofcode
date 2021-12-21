@@ -184,6 +184,11 @@ namespace AdventOfCode
         {
             if (!Directory.Exists("Results"))
                 return;
+
+            var (old1, old2) = Results();
+            if (old1 == p1 && old2 == p2)
+                return;
+
             Directory.CreateDirectory(Path.Combine(RESULT_DIR, Year.ToString()));
             string relPath = Path.Combine(RESULT_DIR, Year.ToString(), $"{Day:d2}.txt");
             File.WriteAllText(relPath, p1 + "\n" + p2);
