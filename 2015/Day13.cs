@@ -22,33 +22,45 @@ namespace AdventOfCode._2015
                 if (m.Groups["gol"].Value == "lose")
                     amount = -amount;
 
-                rules[(m.Groups["a"].Value, m.Groups["b"].Value)] = amount;
+                var a = m.Groups["a"].Value;
+                var b = m.Groups["b"].Value;
+
+                rules[(a, b)] = rules.GetValueOrDefault((a, b)) + amount;
+                rules[(b, a)] = rules.GetValueOrDefault((b, a)) + amount;
             }
             return rules;
-        }
-
-        private long CheckHappiness(string[] seatOrder, Dictionary<(string, string), long> rules)
-        {
-            long result = 0;
-            for (int i = 0; i < seatOrder.Length; i++)
-            {
-                var person = seatOrder[i];
-                var left = i == 0 ? seatOrder.Last() : seatOrder[i - 1];
-                var right = i == seatOrder.Length - 1 ? seatOrder.First() : seatOrder[i + 1];
-                if (rules.TryGetValue((person, left), out long d))
-                    result += d;
-                if (rules.TryGetValue((person, right), out d))
-                    result += d;
-            }
-            return result;
         }
 
         private long CheckBestSeatOrder(string inputFile, params string[] AdditionalPersons)
         {
             var rules = ParseRules(inputFile);
-            var persons = AdditionalPersons.Union(rules.Keys.SelectMany(k => new string[] { k.Item1, k.Item2 })).Distinct();
+            var persons = AdditionalPersons.Union(rules.Keys.SelectMany(k => new string[] { k.Item1, k.Item2 })).ToArray();
 
-            return persons.Permuatate().Select(so => CheckHappiness(so, rules)).Max();
+            int max = persons.Length - 1;
+            long maxHappyness = 0;
+
+            void permutateSeatings(int index, long happyness)
+            {
+                if (index == max)
+                {
+                    happyness += rules.GetValueOrDefault((persons[0], persons[index])) +
+                                 rules.GetValueOrDefault((persons[index - 1], persons[index]));
+                    if (happyness > maxHappyness)
+                        maxHappyness = happyness;
+                }
+                else
+                {
+                    for (int i = index; i <= max; i++)
+                    {
+                        (persons[index], persons[i]) = (persons[i], persons[index]);
+                        var diff = index == 0 ? 0 : rules.GetValueOrDefault((persons[index - 1], persons[index]));
+                        permutateSeatings(index + 1, happyness + diff);
+                        (persons[index], persons[i]) = (persons[i], persons[index]);
+                    }
+                }
+            }
+            permutateSeatings(0, 0);
+            return maxHappyness;
         }
 
         protected override long? Part1()
