@@ -10,24 +10,30 @@ namespace AdventOfCode._2015
         private static IEnumerable<long[]> SubsetSums(long[] arr, long sum)
         {
             List<long[]> result = new List<long[]>();
-            int[] indices = new int[arr.Length];
+            long[] values = new long[arr.Length];
             
-            void WalkItems(int i, long rest)
+            void WalkItems(int i, int k, long rest)
             {
+                if (rest < 0)
+                    return;
                 if (rest == 0)
-                    result.Add(Enumerable.Range(0, i).Select(j => arr[indices[j]]).ToArray());
-                else
                 {
-                    int k = (i != 0) ? indices[i - 1] + 1 : 0;
+                    var res = new long[i];
+                    Array.Copy(values, res, i);
+                    result.Add(res);
+                }
+                else
+                {   
                     for (int j = k; j < arr.Length; j++)
                     {
-                        indices[i] = j;
-                        WalkItems(i + 1, rest - arr[j]);
+                        var value = arr[j];
+                        values[i] = value;
+                        WalkItems(i + 1, j+1, rest - value);
                     }
                 }
                 
             }
-            WalkItems(0, sum);
+            WalkItems(0, 0, sum);
             return result;
         }
 
