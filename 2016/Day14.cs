@@ -15,7 +15,8 @@ namespace AdventOfCode._2016
     {
         class HashBox
         {
-            static readonly ImmutableArray<string> fHexLookup;
+            static readonly string[] fHexLookup;
+            static readonly byte[] fHexCharLookup;
 
             private readonly Dictionary<int, string> fHashes = new Dictionary<int, string>();
             private readonly string fSalt;
@@ -28,25 +29,39 @@ namespace AdventOfCode._2016
             {
                 fHexLookup = Enumerable.Range(0, 256)
                     .Select(b => b.ToString("x2"))
-                    .ToImmutableArray();
+                    .ToArray();
+                fHexCharLookup = Enumerable.Range(0, 16).Select(i => (byte)(i.ToString("x")[0])).ToArray();
             }
 
             private static string DoHash(string value, int rounds)
             {
                 var md = MD5.Create();
-                return Enumerable.Range(0, rounds).Aggregate(value, (val, _) =>
-                    string.Concat(
-                        md.ComputeHash(Encoding.ASCII.GetBytes(val)).Select(b => fHexLookup[b])
-                    )
-                );
+
+                Span<byte> inBuf = stackalloc byte[32];
+                Span<byte> hashBuf = stackalloc byte[16];
+                md.TryComputeHash(Encoding.ASCII.GetBytes(value), hashBuf, out _);
+
+                for (int r = 1; r < rounds; r++)
+                {
+                    for(int i = 0; i < hashBuf.Length; i++)
+                    {
+                        inBuf[i * 2 + 0] = fHexCharLookup[hashBuf[i] >> 4];
+                        inBuf[i * 2 + 1] = fHexCharLookup[hashBuf[i] & 0xF];
+                    }
+                    md.TryComputeHash(inBuf, hashBuf, out _);
+                }
+                var sb = new StringBuilder(32);
+                for (int i = 0; i < hashBuf.Length; i++)
+                    sb.Append(fHexLookup[hashBuf[i]]);
+                return sb.ToString();
             }
-        
+
             public string Get(int number)
             {
                 if (fHashes.TryGetValue(number, out string hash))
                     return hash;
 
-                var newHashes = Enumerable.Range(number, 10_000)
+                var newHashes = Enumerable.Range(number, 1_000)
                     .Select(n => new { Index = n, Value = fSalt + n, Rounds = fRounds })
                     .AsParallel()
                     .Select(itm => new { Index = itm.Index, Hash = DoHash(itm.Value, itm.Rounds) });
@@ -67,10 +82,10 @@ namespace AdventOfCode._2016
             return EnumerableHelper.Generate()
                 .Select(i => new { Index = i, Match = FindTriplett.Match(box.Get(i)) })
                 .Where(m => m.Match.Success)
-                .Where(m =>
-                    Enumerable.Range(m.Index + 1, LOOKAHEAD).Select(box.Get)
-                        .Any(new Regex(m.Match.Value[0] + "{5}").IsMatch)
-                ).Select(m => m.Index);
+                .Where(m => {
+                    var search = new string(m.Match.Value[0], 5);
+                    return Enumerable.Range(m.Index + 1, LOOKAHEAD).Select(box.Get).Any(s => s.Contains(search));
+                 }).Select(m => m.Index);
         }
 
         private long GetIndexForKeyNo(string salt, int keyNo, int additionalRounds = 0)
