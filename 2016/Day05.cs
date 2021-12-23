@@ -9,24 +9,28 @@ namespace AdventOfCode._2016
 {
     class Day05 : Solution<string>
     {
-        bool IsValidHash(byte[] hash)
+        bool IsValidHash(ReadOnlySpan<byte> hash)
             => hash[0] == 0 && hash[1] == 0 && (hash[2] & 0xF0) == 0;
 
         private IEnumerable<byte[]> GenerateValidHashes(string doorId)
         {
             var md = MD5.Create();
-            var buffer = Encoding.ASCII.GetBytes(doorId);
-            int prefixLen = buffer.Length;
-            Array.Resize(ref buffer, buffer.Length + 12);
-            buffer[prefixLen] = (byte)'0';
+            var inputBuf = Encoding.ASCII.GetBytes(doorId);
+            int prefixLen = inputBuf.Length;
+            Array.Resize(ref inputBuf, inputBuf.Length + 12);
+            inputBuf[prefixLen] = (byte)'0';
             var counterLen = 1;
+            const int MD5_LEN = 32;
+            var hashBuf = new byte[MD5_LEN];
 
             while (true)
             {
-                var hash = md.ComputeHash(buffer, 0, prefixLen + counterLen);
-                if (IsValidHash(hash))
-                    yield return hash;
-                AsciiCounter.Step(buffer.AsSpan(prefixLen), ref counterLen);
+                md.TryComputeHash(inputBuf.AsSpan(0, prefixLen + counterLen), hashBuf, out _);
+
+                if (IsValidHash(hashBuf))
+                    yield return (byte[])hashBuf.Clone();
+
+                AsciiCounter.Step(inputBuf.AsSpan(prefixLen), ref counterLen);
             }
         }
 
