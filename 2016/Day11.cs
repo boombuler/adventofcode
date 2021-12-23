@@ -1,26 +1,67 @@
 ﻿using AdventOfCode.Utils;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace AdventOfCode._2016
 {
     class Day11 : Solution
     {
+        record struct Items(int Chips, int Generators)
+        {
+            public static readonly Items Empty = new Items(0, 0);
+
+            public int Count => NumberOfSetBits(Chips) + NumberOfSetBits(Generators);
+            public int GetElements(Items[] buffer)
+            {       
+                int r = 0;
+                var c = Chips;
+                var g = Generators;
+                for (int i = 0; c != 0 || g != 0; i++)
+                {
+                    var mask = 1 << i;
+                    if ((c & mask) != 0)
+                        buffer[r++] = new Items(mask, 0);
+                    if ((g & mask) != 0)
+                        buffer[r++] = new Items(0, mask);
+                    mask = ~mask;
+                    c &= mask;
+                    g &= mask;
+                }
+                return r;
+            }
+
+            public bool IsValidFloor
+            {
+                get
+                {
+                    bool hasGen = Generators != 0;
+                    bool missingGen = (Chips & ~Generators) != 0;
+                    return !hasGen || !missingGen;
+                }
+            }
+            int NumberOfSetBits(int i)
+            {
+                i = i - ((i >> 1) & 0x55555555);
+                i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
+                return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+            }
+
+        }
+
         class State
         {
             private static IEnumerable<State> NONE = Enumerable.Empty<State>();
-            private readonly ImmutableList<string> Floors;
+            private readonly ImmutableArray<Items> Floors;
             private readonly int ElevatorPos;
             public int NumberOfMoves { get; }
-            public State(ImmutableList<string> floors)
+            public State(ImmutableArray<Items> floors)
                 : this(floors, 0, 0)
             { 
             }
-            private State(ImmutableList<string> floors, int moveCount, int elevatorPos)
+            private State(ImmutableArray<Items> floors, int moveCount, int elevatorPos)
             {
                 Floors = floors;
                 NumberOfMoves = moveCount;
@@ -29,91 +70,93 @@ namespace AdventOfCode._2016
 
             public bool Success()
             {
-                if (ElevatorPos != Floors.Count - 1)
+                if (ElevatorPos != Floors.Length - 1)
                     return false;
-                for (int i = 0; i < (Floors.Count - 1); i++)
-                    if (!string.IsNullOrEmpty(Floors[i]))
+                for (int i = 0; i < (Floors.Length - 1); i++)
+                    if (Floors[i].Chips != 0 || Floors[i].Generators != 0)
                         return false;
                 return true;
             }
 
-            private static bool ValidFloor(string s)
-            {
-                if (s.Any(char.IsUpper))
-                {
-                    foreach (var chip in s.ToUpperInvariant())
-                    {
-                        if (!s.Contains(chip))
-                            return false;
-                    }
-                }
-                return true;
-            }
 
-
-            private State Move(int dir, int i1, int? i2 = null)
+            private State Move(int dir, int chips, int generators)
             {
                 var curFloor = Floors[ElevatorPos];
-                var newCurFloor = new string(curFloor.Where((_, i) => i != i1 && i != i2).ToArray());
-                if (!ValidFloor(newCurFloor))
-                    return null;
-                
-                var newOtherFloor = Floors[ElevatorPos + dir].Append(curFloor[i1]);
-                if (i2.HasValue)
-                    newOtherFloor = newOtherFloor.Append(curFloor[i2.Value]);
+                curFloor = new Items(curFloor.Chips & ~chips, curFloor.Generators & ~generators);
 
-                var other = new string(newOtherFloor.OrderBy(c => c).ToArray());
-                
-                if (!ValidFloor(other))
+                if (!curFloor.IsValidFloor)
                     return null;
 
-                var newFloors = Floors.SetItem(ElevatorPos, newCurFloor).SetItem(ElevatorPos + dir, other);
+                var other = Floors[ElevatorPos + dir];
+                other = new Items(other.Chips | chips, other.Generators | generators);
+
+                if (!other.IsValidFloor)
+                    return null;
+
+                var newFloors = Floors.SetItem(ElevatorPos, curFloor).SetItem(ElevatorPos + dir, other);
                 return new State(newFloors, NumberOfMoves + 1, ElevatorPos + dir);
             }
 
-            private IEnumerable<State> Move1(int dir) 
-                => Enumerable.Range(0, Floors[ElevatorPos].Length)
-                    .Select(i => Move(dir, i))
-                    .Where(m => m != null);
-
-            private IEnumerable<State> Move2(int dir)
+            private IEnumerable<State> MoveOneItem(int dir, Items[] items, int count)
             {
-                var len = Floors[ElevatorPos].Length;
+                for (int i = 0; i < count; i++)
+                {
+                    var elem = items[i];
+                    var move = Move(dir, elem.Chips, elem.Generators);
+                    if (move != null)
+                        yield return move;
+                }
+            }
+
+            private IEnumerable<State> MoveTwoItems(int dir, Items[] items, int count)
+            {
+                var len = count;
                 for (int i1 = 0; i1 < len; i1++)
+                {
+                    var (c1, g1) = items[i1];
                     for (int i2 = i1 + 1; i2 < len; i2++)
                     {
-                        var m = Move(dir, i1, i2);
+                        var (c2, g2) = items[i2];
+                        var m = Move(dir, c1|c2, g1|g2);
                         if (m != null)
                             yield return m;
-                    }    
+                    }
+                }
             }
 
             public IEnumerable<State> GetValidMoves()
             {
                 var moves = NONE;
-
-                void AppendGenerator(int dir, Func<int, IEnumerable<State>> genA, Func<int, IEnumerable<State>> genB)
+                var buf = ArrayPool<Items>.Shared.Rent(Floors[ElevatorPos].Count);
+                try
                 {
-                    var items = genA(dir);
-                    if (items.Any())
-                        moves = moves.Union(items);
-                    else
-                        moves = moves.Union(genB(dir));
+                    var elemCount = Floors[ElevatorPos].GetElements(buf);
+
+                    void AppendGenerator(int dir, Func<int, Items[], int, IEnumerable<State>> genA, Func<int, Items[], int, IEnumerable<State>> genB)
+                    {
+                        var items = genA(dir, buf, elemCount);
+                        if (items.Any())
+                            moves = moves.Concat(items);
+                        else
+                            moves = moves.Concat(genB(dir, buf, elemCount));
+                    }
+
+                    if (ElevatorPos < (Floors.Length - 1))
+                        AppendGenerator(+1, MoveTwoItems, MoveOneItem);
+                    if (ElevatorPos > 0)
+                        AppendGenerator(-1, MoveOneItem, MoveTwoItems);
                 }
-
-                if (ElevatorPos < (Floors.Count - 1))
-                    AppendGenerator(+1, Move2, Move1);
-                if (ElevatorPos > 0)
-                    AppendGenerator(-1, Move1, Move2);
-
+                finally
+                {
+                    ArrayPool<Items>.Shared.Return(buf);
+                }
                 return moves;
             }
 
             public override int GetHashCode()
             {
-                var result = 17;
-                result = (result * 23) + ElevatorPos.GetHashCode();
-                for (int i = 0; i < Floors.Count; i++)
+                var result = ElevatorPos.GetHashCode();
+                for (int i = 0; i < Floors.Length; i++)
                     result = (result * 23) + Floors[i].GetHashCode();
                 return result;
             }
@@ -121,7 +164,7 @@ namespace AdventOfCode._2016
             public override bool Equals(object obj)
             {
                 if (obj is State other)
-                    return ElevatorPos == other.ElevatorPos && Floors.SequenceEqual(other.Floors, StringComparer.Ordinal);
+                    return ElevatorPos == other.ElevatorPos && Floors.SequenceEqual(other.Floors);
                 return false;
             }
         }
@@ -129,20 +172,33 @@ namespace AdventOfCode._2016
 
         private long Solve(string notes)
         {
+            var itemTypes = new List<string>();
+
             var floors = notes.Lines().Select(note =>
             {
                 note = note.Substring(note.IndexOf("contains") + "contains".Length).Replace(" and ", ",");
-                var itms = note.Split(',');
-                return new string(itms
+                var itms = note.Split(',')
                     .Select(itm => itm.Trim(' ', '.'))
                     .Where(itm => itm.StartsWith("a ") || itm.StartsWith("an "))
                     .Select(itm => itm.Substring(2).Split(' ', '-'))
-                    .Select(parts => new { Element = parts.First().First(), Generator = parts.Last() == "generator" })
-                    .Select(itm => itm.Generator ? char.ToUpperInvariant(itm.Element) : char.ToLowerInvariant(itm.Element))
-                    .OrderBy(c => c)
-                    .ToArray()
-                );
-            }).ToImmutableList();
+                    .Select(parts => new { Element = parts.First(), Generator = parts.Last() == "generator" });
+                int chips = 0, generatos = 0;
+                foreach(var itm in itms)
+                {
+                    var id = itemTypes.IndexOf(itm.Element);
+                    if (id == -1)
+                    {
+                        id = itemTypes.Count;
+                        itemTypes.Add(itm.Element);
+                    }
+                    var mask = 1 << id;
+                    if (itm.Generator)
+                        generatos |= mask;
+                    else
+                        chips |= mask;
+                }
+                return new Items(chips, generatos);
+            }).ToImmutableArray();
 
 
             var states = new Queue<State>();
