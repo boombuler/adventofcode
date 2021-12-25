@@ -24,9 +24,10 @@ namespace AdventOfCode.Utils
 
         public static Dictionary<Point2D, char> Cells(this string str) => str.Cells(c => c);
 
-        public static Dictionary<Point2D, T> Cells<T>(this string str, Func<char, T> selector)
+        public static Dictionary<Point2D, T> Cells<T>(this string str, Func<char, T> selector, Func<char, bool> filter = null)
             => str.Lines()
                 .SelectMany((l, y) => l.Select((c, x) => (x, y, c)))
+                .Where(n => filter?.Invoke(n.c) ?? true)
                 .ToDictionary(n => new Point2D(n.x, n.y), n => selector(n.c));
     }
 }
