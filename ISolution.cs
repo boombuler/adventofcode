@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace AdventOfCode;
 
-namespace AdventOfCode
+interface ISolution
 {
-    interface ISolution
-    {
-        int Year { get; }
-        int Day { get; }
+    int Year { get; }
+    int Day { get; }
 
-        string Part1(IOutput output);
-        string Part2(IOutput output);
-    }
+    string Part1(IOutput output);
+    string Part2(IOutput output);
 }

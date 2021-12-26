@@ -1,63 +1,57 @@
-﻿using System;
+﻿namespace AdventOfCode.Utils;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace AdventOfCode.Utils
+public abstract class AStar<T>
 {
-    public abstract class AStar<T>
+    protected abstract long Distance(T one, T another);
+
+    private readonly T fSrc;
+
+    protected AStar(T src)
+        => fSrc = src;
+
+    protected abstract IEnumerable<T> NeighboursOf(T node);
+
+    public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
     {
-        protected abstract long Distance(T one, T another);
+        var open = new MinHeap<(T, long)>(ComparerBuilder<(T Item, long Cost)>.CompareBy(x => x.Cost));
+        open.Push((fSrc, 0));
+        var costs = new Dictionary<T, long>() { [fSrc] = 0 };
+        var paths = new Dictionary<T, T> { [fSrc] = fSrc };
 
-        private readonly T fSrc;
-
-
-        protected AStar(T src)
-            => fSrc = src;
-
-        protected abstract IEnumerable<T> NeighboursOf(T node);
-
-        public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
+        while (open.Count > 0)
         {
-            var open = new MinHeap<(T, long)>(ComparerBuilder<(T Item, long Cost)>.CompareBy(x => x.Cost));
-            open.Push((fSrc, 0));
-            var costs = new Dictionary<T, long>();
-            var paths = new Dictionary<T, T>();
+            var (current, _) = open.Pop();
+            var curCost = costs[current];
+            if (Equals(current, dest))
+                return (curCost, new Lazy<IEnumerable<T>>(() => BuildPath(dest, paths)));
 
-            paths[fSrc] = fSrc;
-            costs[fSrc] = 0;
-
-            while (open.Count > 0)
+            foreach (var next in NeighboursOf(current))
             {
-                var (current, _) = open.Pop();
-                var curCost = costs[current];
-                if (Equals(current, dest))
-                    return (curCost, new Lazy<IEnumerable<T>>(() => BuildPath(dest, paths)));
-
-                foreach (var next in this.NeighboursOf(current))
+                var newCost = curCost + Distance(current, next);
+                if (!costs.TryGetValue(next, out var oldCost) || newCost < oldCost)
                 {
-                    var newCost = curCost + Distance(current, next);
-                    if (!costs.TryGetValue(next, out var oldCost) || newCost < oldCost)
-                    {
-                        costs[next] = newCost;
-                        var priority = newCost + Distance(next, dest);
-                        open.Push((next, priority));
-                        paths[next] = current;
-                    }
+                    costs[next] = newCost;
+                    var priority = newCost + Distance(next, dest);
+                    open.Push((next, priority));
+                    paths[next] = current;
                 }
             }
-            return (-1, new Lazy<IEnumerable<T>>(Enumerable.Empty<T>));
         }
+        return (-1, new Lazy<IEnumerable<T>>(Enumerable.Empty<T>));
+    }
 
-        private IEnumerable<T> BuildPath(T dest, Dictionary<T, T> shortestPath)
+    private IEnumerable<T> BuildPath(T dest, Dictionary<T, T> shortestPath)
+    {
+        var s = new Stack<T>();
+        do
         {
-            Stack<T> s = new Stack<T>();
-            do
-            {
-                s.Push(dest);
-                dest = shortestPath[dest];
-            } while (!Equals(dest, fSrc));
-            return s;
-        }
+            s.Push(dest);
+            dest = shortestPath[dest];
+        } while (!Equals(dest, fSrc));
+        return s;
     }
 }

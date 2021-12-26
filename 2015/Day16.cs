@@ -1,43 +1,43 @@
-﻿using AdventOfCode.Utils;
+﻿namespace AdventOfCode._2015;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AdventOfCode.Utils;
 
-namespace AdventOfCode._2015
+class Day16 : Solution
 {
-    class Day16 : Solution
+    private static readonly Regex LinePattern = new(@"^Sue (?<n>\d+):\W(?<values>.*)$", RegexOptions.Compiled);
+    private IEnumerable<int> CheckSues(Dictionary<string, Func<int, bool>> facts)
     {
-        private static Regex LinePattern = new Regex(@"^Sue (?<n>\d+):\W(?<values>.*)$", RegexOptions.Compiled);
-        private IEnumerable<int> CheckSues(Dictionary<string, Func<int, bool>> facts)
+        foreach (var line in Input.Lines())
         {
-            foreach(var line in Input.Lines())
+            var m = LinePattern.Match(line);
+            int sue = int.Parse(m.Groups["n"].Value);
+            string values = m.Groups["values"].Value;
+
+            bool valid = true;
+            foreach (var kvp in values.Split(','))
             {
-                var m = LinePattern.Match(line);
-                int sue = int.Parse(m.Groups["n"].Value);
-                string values = m.Groups["values"].Value;
+                var itm = kvp.Split(":");
+                var key = itm[0].Trim();
+                var val = int.Parse(itm[1].Trim());
 
-                bool valid = true;
-                foreach(var kvp in values.Split(','))
+                if (!facts[key](val))
                 {
-                    var itm = kvp.Split(":");
-                    var key = itm[0].Trim();
-                    var val = int.Parse(itm[1].Trim());
-
-                    if (!facts[key](val))
-                    {
-                        valid = false;
-                        break;
-                    }
+                    valid = false;
+                    break;
                 }
-                if (valid)
-                    yield return sue;
             }
+            if (valid)
+                yield return sue;
         }
+    }
 
-        protected override long? Part1()
-        {
-            var facts = new Dictionary<string, Func<int, bool>>()
+    protected override long? Part1()
+    {
+        var facts = new Dictionary<string, Func<int, bool>>()
             {
                 { "children", x => x == 3 },
                 { "cats" , x => x ==7 },
@@ -51,12 +51,12 @@ namespace AdventOfCode._2015
                 { "perfumes" , x => x ==1 },
             };
 
-            return CheckSues(facts).Single();
-        }
+        return CheckSues(facts).Single();
+    }
 
-        protected override long? Part2()
-        {
-            var facts = new Dictionary<string, Func<int, bool>>()
+    protected override long? Part2()
+    {
+        var facts = new Dictionary<string, Func<int, bool>>()
             {
                 { "children", x => x == 3 },
                 { "cats" , x => x > 7 },
@@ -70,7 +70,6 @@ namespace AdventOfCode._2015
                 { "perfumes" , x => x == 1 },
             };
 
-            return CheckSues(facts).Single();
-        }
+        return CheckSues(facts).Single();
     }
 }

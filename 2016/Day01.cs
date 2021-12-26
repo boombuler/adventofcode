@@ -1,68 +1,62 @@
-﻿using System;
+﻿namespace AdventOfCode._2016;
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode.Utils;
 
-namespace AdventOfCode._2016
+class Day01 : Solution
 {
-    class Day01 : Solution
+    private static IEnumerable<Point2D> WalkDirections(string directions)
     {
-        private IEnumerable<(int x, int y)> WalkDirections(string directions)
+        int x = 0, y = 0;
+        int direction = 0;
+        yield return (x, y);
+
+        foreach (var d in directions.Split(",").Select(s => s.Trim()))
         {
-            int x = 0, y = 0;
-            int direction = 0;
-            yield return (x, y);
+            var dist = int.Parse(d[1..]);
+            var turn = (d[0] == 'L') ? -1 : 1;
+            direction = (direction + turn) % 4;
 
-            foreach(var d in directions.Split(",").Select(s => s.Trim()))
+            var mod = ((direction & 2) == 0) ? -1 : 1;
+
+            for (int i = 0; i < dist; i++)
             {
-                var dist = int.Parse(d.Substring(1));
-                var turn = (d[0] == 'L') ? -1 : 1;
-                direction = (direction + turn) % 4;
+                if ((direction % 2) == 0)
+                    x += mod;
+                else
+                    y += mod;
 
-                var mod = ((direction & 2) == 0) ? -1 : 1;
-
-                for (int i = 0; i < dist; i++)
-                {
-                    if ((direction % 2) == 0)
-                        x += mod;
-                    else
-                        y += mod;
-
-                    yield return (x, y);
-                }
+                yield return (x, y);
             }
         }
+    }
 
-        private long GetFinalDistance(string directions)
-        {
-            var final = WalkDirections(directions).Last();
-            return Math.Abs(final.x) + Math.Abs(final.y);
-        }
+    private static long GetFinalDistance(string directions) 
+        => WalkDirections(directions).Last().ManhattanDistance(Point2D.Origin);
 
-        private long GetDistanceToFirstPlaceVisitedTwice(string directions)
+    private long GetDistanceToFirstPlaceVisitedTwice(string directions)
+    {
+        var visited = new HashSet<Point2D>();
+        foreach (var pt in WalkDirections(directions))
         {
-            HashSet<(int, int)> visited = new HashSet<(int, int)>();
-            foreach(var pt in WalkDirections(directions))
-            {
-                if (visited.Contains(pt))
-                    return Math.Abs(pt.x) + Math.Abs(pt.y);
-                visited.Add(pt);
-            }
-            Error("No point visited twice");
-            return 0;
+            if (!visited.Add(pt))
+                return pt.ManhattanDistance(Point2D.Origin);
         }
+        Error("No point visited twice");
+        return 0;
+    }
 
-        protected override long? Part1()
-        {
-            Assert(GetFinalDistance("R2, L3"), 5);
-            Assert(GetFinalDistance("R2, R2, R2"), 2);
-            Assert(GetFinalDistance("R5, L5, R5, R3"), 12);
-            return GetFinalDistance(Input);
-        }
+    protected override long? Part1()
+    {
+        Assert(GetFinalDistance("R2, L3"), 5);
+        Assert(GetFinalDistance("R2, R2, R2"), 2);
+        Assert(GetFinalDistance("R5, L5, R5, R3"), 12);
+        return GetFinalDistance(Input);
+    }
 
-        protected override long? Part2()
-        {
-            Assert(GetDistanceToFirstPlaceVisitedTwice("R8, R4, R4, R8"), 4);
-            return GetDistanceToFirstPlaceVisitedTwice(Input);
-        }
+    protected override long? Part2()
+    {
+        Assert(GetDistanceToFirstPlaceVisitedTwice("R8, R4, R4, R8"), 4);
+        return GetDistanceToFirstPlaceVisitedTwice(Input);
     }
 }

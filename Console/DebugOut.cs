@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace AdventOfCode.Console;
 
-namespace AdventOfCode.Console
+class DebugOut : OutputMode
 {
-    class DebugOut : OutputMode
+    public override void Enter()
     {
-        public override void Enter()
-        {
-            SetBG(DEFAULT_BACKGROUND);
-            SetFG(0x6495ED);
-            base.Enter();
-        }
-
-        public override void Write(string content)
-            => base.Write("        " + content);
+        SetBG(DEFAULT_BACKGROUND);
+        SetFG(0x6495ED);
+        base.Enter();
     }
+
+    public override void Write(string content)
+        => base.Write("        " + content);
 }

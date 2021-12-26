@@ -1,71 +1,64 @@
-﻿using AdventOfCode.Utils;
-using System;
+﻿namespace AdventOfCode._2019;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AdventOfCode.Utils;
 
-namespace AdventOfCode._2019
+class Day03 : Solution
 {
-    class Day03 : Solution
+    private IEnumerable<Point2D> TracePath(string path)
     {
-        private IEnumerable<Point2D> TracePath(string path)
-        {
-            var result = new HashSet<Point2D>();
-            var cur = Point2D.Origin;
-            (char Direction, int Amount) = ('\0',0);
+        var cur = Point2D.Origin;
+        (char direction, int amount) = ('\0', 0);
 
-            using(var sr = new StringReader(path+","))
+        using var sr = new StringReader(path + ",");
+        while (sr.TryRead(out char c))
+        {
+            if (c == ',')
             {
-                while (sr.TryRead(out char c))
+                var off = direction switch
                 {
-                    if (c == ',')
-                    {
-                        var off = Direction switch
-                        {
-                            'U' => (0, -1),
-                            'D' => (0, 1),
-                            'L' => (-1, 0),
-                            _ => (1, 0)
-                        };
-                        for (int i = 0; i < Amount; i++)
-                            yield return cur += off;
-                        (Direction, Amount) = ('\0', 0);
-                    }
-                    else if (c >= '0' && c <= '9')
-                        Amount = (Amount * 10) + (c - '0');
-                    else
-                        Direction = c;
-                }
+                    'U' => (0, -1),
+                    'D' => (0, 1),
+                    'L' => (-1, 0),
+                    _ => (1, 0)
+                };
+                for (int i = 0; i < amount; i++)
+                    yield return cur += off;
+                (direction, amount) = ('\0', 0);
             }
+            else if (c is >= '0' and <= '9')
+                amount = (amount * 10) + (c - '0');
+            else
+                direction = c;
         }
+    }
 
-        private long ClosestIntersection(params string[] paths)
-            => paths.Select(TracePath).Aggregate(Enumerable.Intersect).Min(Point2D.Origin.ManhattanDistance);
-    
-        protected override long? Part1()
-        {
-            Assert(ClosestIntersection("R8,U5,L5,D3", "U7,R6,D4,L4"), 6);
-            Assert(ClosestIntersection("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"), 159);
-            Assert(ClosestIntersection("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"), 135);
+    private long ClosestIntersection(params string[] paths)
+        => paths.Select(TracePath).Aggregate(Enumerable.Intersect).Min(Point2D.Origin.ManhattanDistance);
 
-            return ClosestIntersection(Input.Lines().ToArray());
-        }
+    protected override long? Part1()
+    {
+        Assert(ClosestIntersection("R8,U5,L5,D3", "U7,R6,D4,L4"), 6);
+        Assert(ClosestIntersection("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"), 159);
+        Assert(ClosestIntersection("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"), 135);
 
-        private long FirstIntersection(params string[] paths)
-        {
-            var lists = paths.Select(TracePath).Select(Enumerable.ToList).ToList();
-            return lists.Aggregate<IEnumerable<Point2D>>(Enumerable.Intersect).Select(pt => lists.Count + lists.Sum(l => l.IndexOf(pt))).Min();
-        }
+        return ClosestIntersection(Input.Lines().ToArray());
+    }
 
-        protected override long? Part2()
-        {
-            Assert(FirstIntersection("R8,U5,L5,D3", "U7,R6,D4,L4"), 30);
-            Assert(FirstIntersection("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"), 610);
-            Assert(FirstIntersection("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"), 410);
+    private long FirstIntersection(params string[] paths)
+    {
+        var lists = paths.Select(TracePath).Select(Enumerable.ToList).ToList();
+        return lists.Aggregate<IEnumerable<Point2D>>(Enumerable.Intersect).Select(pt => lists.Count + lists.Sum(l => l.IndexOf(pt))).Min();
+    }
 
-            return FirstIntersection(Input.Lines().ToArray());
-        }
+    protected override long? Part2()
+    {
+        Assert(FirstIntersection("R8,U5,L5,D3", "U7,R6,D4,L4"), 30);
+        Assert(FirstIntersection("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83"), 610);
+        Assert(FirstIntersection("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"), 410);
+
+        return FirstIntersection(Input.Lines().ToArray());
     }
 }

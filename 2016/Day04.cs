@@ -1,65 +1,57 @@
-﻿using AdventOfCode.Utils;
+﻿namespace AdventOfCode._2016;
+
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AdventOfCode.Utils;
 
-namespace AdventOfCode._2016
+class Day04 : Solution
 {
-    class Day04 : Solution
+    record Room(string Name, int Id, string CheckSum = "")
     {
-        class Room
+        private const string ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
+        public string DecodeName()
+            => new(
+            Name.Trim('-').Select(c => ALPHABET.IndexOf(c))
+                .Select(i => i == -1 ? ' ' : ALPHABET[(i + Id) % ALPHABET.Length])
+                .ToArray());
+
+        public bool ValidCheckSum()
         {
-            public string Name;
-            public int Id;
-#pragma warning disable 0649
-            public string CheckSum;
-#pragma warning restore 0649
-            private static string Alphabet = "abcdefghijklmnopqrstuvwxyz";
+            var letters = Name.Where(c => c != '-').GroupBy(c => c).Select(grp => new { grp.Key, Count = grp.Count() })
+                .OrderByDescending(c => c.Count);
+            var minCount = letters.Skip(4).First().Count;
 
-            public string DecodeName()
-                => new string(
-                Name.Trim('-').Select(c => Alphabet.IndexOf(c))
-                    .Select(i => i == -1 ? ' ' : Alphabet[(i + Id) % Alphabet.Length])
-                    .ToArray());
-
-            public bool ValidCheckSum()
-            {
-                var letters = Name.Where(c => c != '-').GroupBy(c => c).Select(grp => new { grp.Key, Count = grp.Count() })
-                    .OrderByDescending(c => c.Count);
-                var minCount = letters.Skip(4).First().Count;
-
-                var cs = new string(letters
-                    .TakeWhile(g => g.Count >= minCount)
-                    .OrderByDescending(g => g.Count).ThenBy(g => g.Key)
-                    .Select(g => g.Key)
-                    .Take(5).ToArray()
-                );
-                return cs == CheckSum;
-            }
+            var cs = new string(letters
+                .TakeWhile(g => g.Count >= minCount)
+                .OrderByDescending(g => g.Count).ThenBy(g => g.Key)
+                .Select(g => g.Key)
+                .Take(5).ToArray()
+            );
+            return cs == CheckSum;
         }
+    }
 
-        private static Func<string, Room> RoomFactory = new Regex(@"(?<Name>(\w+\-)+)(?<Id>\d+)\[(?<CheckSum>\w{5})\]", RegexOptions.Compiled).ToFactory<Room>();
+    private static readonly Func<string, Room> RoomFactory = new Regex(@"(?<Name>(\w+\-)+)(?<Id>\d+)\[(?<CheckSum>\w{5})\]", RegexOptions.Compiled).ToFactory<Room>();
 
-        private long SumValidRoomIDs(string rooms)
-            => rooms.Lines().Select(RoomFactory).Where(r => r.ValidCheckSum()).Select(r => r.Id).Sum();
+    private static long SumValidRoomIDs(string rooms)
+        => rooms.Lines().Select(RoomFactory).Where(r => r.ValidCheckSum()).Select(r => r.Id).Sum();
 
+    protected override long? Part1()
+    {
+        Assert(SumValidRoomIDs(Sample()), 1514);
+        return SumValidRoomIDs(Input);
+    }
 
-        protected override long? Part1()
-        {
-            Assert(SumValidRoomIDs(Sample()), 1514);
-            return SumValidRoomIDs(Input);
-        }
+    protected override long? Part2()
+    {
+        Assert(new Room("qzmt-zixmtkozy-ivhz", 343).DecodeName(), "very encrypted name");
 
-
-        protected override long? Part2()
-        {
-            Assert((new Room() { Name = "qzmt-zixmtkozy-ivhz", Id = 343 }).DecodeName(), "very encrypted name");
-
-            return Input.Lines()
-                .Select(RoomFactory)
-                .Where(r => r.ValidCheckSum())
-                .Where(r => r.DecodeName() == "northpole object storage")
-                .First().Id;
-        }
+        return Input.Lines()
+            .Select(RoomFactory)
+            .Where(r => r.ValidCheckSum())
+            .Where(r => r.DecodeName() == "northpole object storage")
+            .First().Id;
     }
 }

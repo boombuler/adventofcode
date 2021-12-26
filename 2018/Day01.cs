@@ -1,25 +1,24 @@
-﻿using AdventOfCode.Utils;
+﻿namespace AdventOfCode._2018;
+
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode.Utils;
 
-namespace AdventOfCode._2018
+class Day01 : Solution
 {
-    class Day01 : Solution
+    protected override long? Part1() => Input.Lines().Select(long.Parse).Sum();
+
+    protected override long? Part2()
     {
-        protected override long? Part1() => Input.Lines().Select(long.Parse).Sum();
+        var cur = 0L;
+        var seen = new HashSet<long>() { 0 };
+        var changes = Input.Lines().Select(long.Parse).ToArray();
 
-        protected override long? Part2()
+        for (int i = 0; ; i++)
         {
-            var cur = 0L;
-            var seen = new HashSet<long>() { 0 };
-            var changes = Input.Lines().Select(long.Parse).ToArray();
-
-            for (int i = 0; ; i++)
-            {
-                cur += changes[i % changes.Length];
-                if (!seen.Add(cur))
-                    return cur;
-            }
+            cur += changes[i % changes.Length];
+            if (!seen.Add(cur))
+                return cur;
         }
     }
 }

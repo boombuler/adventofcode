@@ -1,110 +1,107 @@
-﻿using System;
+﻿namespace AdventOfCode._2019;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using AdventOfCode.Utils;
 
-namespace AdventOfCode._2019
+class Day20 : Solution
 {
-    class Day20 : Solution
+    record Portal(string Name, Point2D OtherPortal, int Direction);
+
+    private static (ImmutableDictionary<Point2D, Portal> Portals, ImmutableHashSet<Point2D> WalkableTiles) ParseMap(string map)
     {
-        record Portal(string Name, Point2D OtherPortal, int Direction);
+        var mapLines = map.Lines().ToArray();
+        char GetCh(Point2D pt) => mapLines[(int)pt.Y][(int)pt.X];
+        var width = mapLines.Max(l => l.Length) - 2;
+        var height = mapLines.Length - 2;
+        var walkable = ImmutableHashSet<Point2D>.Empty;
+        var innerPortals = new Dictionary<string, Point2D>();
+        var outerPortals = new Dictionary<string, Point2D>();
+        var portPos = new Dictionary<Point2D, (string Name, Dictionary<string, Point2D> Other)>();
 
-        private (ImmutableDictionary<Point2D, Portal> Portals, ImmutableHashSet<Point2D> WalkableTiles) ParseMap(string map)
+        foreach (var pos in Point2D.Range((1, 1), (width, height)))
         {
-            var mapLines = map.Lines().ToArray();
-            char GetCh(Point2D pt) => mapLines[(int)pt.Y][(int)pt.X];
-            var width = mapLines.Max(l => l.Length) - 2;
-            var height = mapLines.Length - 2;
-            var walkable = ImmutableHashSet<Point2D>.Empty;
-            var innerPortals = new Dictionary<string, Point2D>();
-            var outerPortals = new Dictionary<string, Point2D>();
-            var portPos = new Dictionary<Point2D, (string Name, Dictionary<string, Point2D> Other)>();
-
-            foreach (var pos in Point2D.Range((1,1), (width, height)))
+            var ch = GetCh(pos);
+            switch (ch)
             {
-                var ch = GetCh(pos);
-                switch(ch)
-                {
-                    case ' ':
-                    case '#':
+                case ' ':
+                case '#':
+                    continue;
+                case '.':
+                    walkable = walkable.Add(pos); break;
+                default:
+                    var waypoint = pos.Neighbours().FirstOrDefault(p => GetCh(p) == '.');
+                    if (waypoint == null)
                         continue;
-                    case '.':
-                        walkable = walkable.Add(pos); break;
-                    default:
-                        var waypoint = pos.Neighbours().FirstOrDefault(p => GetCh(p) == '.');
-                        if (waypoint == null)
-                            continue;
 
-                        var otherLetterPos = pos - (waypoint - pos);
-                        var otherLetter = GetCh(otherLetterPos);
-                        var name = pos.CompareTo(otherLetterPos) < 0 ? new string(new char[] { ch, otherLetter }) : new string(new char[] { otherLetter, ch });
-                        var (targetRing, otherRing) = (pos.X <= 1 || pos.Y <= 1 || pos.X >= width || pos.Y >= height) ? (outerPortals, innerPortals) : (innerPortals, outerPortals);
-                        targetRing[name] = waypoint;
-                        portPos[waypoint] = (name, otherRing);
+                    var otherLetterPos = pos - (waypoint - pos);
+                    var otherLetter = GetCh(otherLetterPos);
+                    var name = pos.CompareTo(otherLetterPos) < 0 ? new string(new char[] { ch, otherLetter }) : new string(new char[] { otherLetter, ch });
+                    var (targetRing, otherRing) = (pos.X <= 1 || pos.Y <= 1 || pos.X >= width || pos.Y >= height) ? (outerPortals, innerPortals) : (innerPortals, outerPortals);
+                    targetRing[name] = waypoint;
+                    portPos[waypoint] = (name, otherRing);
+                    break;
+            }
+        }
+
+        return (portPos.ToImmutableDictionary(
+                kvp => kvp.Key,
+                kvp => new Portal(kvp.Value.Name, kvp.Value.Other.GetValueOrDefault(kvp.Value.Name), kvp.Value.Other == innerPortals ? -1 : 1)
+            ), walkable);
+    }
+
+    private static int ShortestPath(string mapStr, bool recursive)
+    {
+        var (portals, walkable) = ParseMap(mapStr);
+        var open = new Queue<(Point3D, int Distance)>();
+        var closed = new HashSet<Point3D>();
+        var start = portals.First(p => p.Value.Name == "AA").Key.WithZ(0);
+        var offset = recursive ? 1 : 0;
+
+        open.Enqueue((start, 0));
+        while (open.TryDequeue(out var current))
+        {
+            var (node, dist) = current;
+
+            if (node.Z < 0 || !closed.Add(node))
+                continue;
+
+            var (pos, level) = node;
+
+            if (portals.TryGetValue(pos, out var portal))
+            {
+                switch (portal.Name)
+                {
+                    case "AA": break;
+                    case "ZZ":
+                        if (level == 0)
+                            return dist;
+                        break;
+                    default:
+                        open.Enqueue((portal.OtherPortal.WithZ(level + (portal.Direction * offset)), dist + 1));
                         break;
                 }
             }
 
-            return (portPos.ToImmutableDictionary(
-                    kvp => kvp.Key,
-                    kvp => new Portal(kvp.Value.Name, kvp.Value.Other.GetValueOrDefault(kvp.Value.Name), kvp.Value.Other == innerPortals ? -1 : 1)
-                ), walkable);
+            foreach (var n in pos.Neighbours().Where(walkable.Contains))
+                open.Enqueue((n.WithZ(level), dist + 1));
         }
+        return -1;
+    }
 
-        private int ShortestPath(string mapStr, bool recursive)
-        {
-            var (portals, walkable) = ParseMap(mapStr);
-            var open = new Queue<(Point3D, int Distance)>();
-            var closed = new HashSet<Point3D>();
-            var start = portals.First(p => p.Value.Name == "AA").Key.WithZ(0);
-            var offset = recursive ? 1 : 0;
+    protected override long? Part1()
+    {
+        Assert(ShortestPath(Sample("1"), false), 23);
+        Assert(ShortestPath(Sample("2"), false), 58);
+        return ShortestPath(Input, false);
+    }
 
-            open.Enqueue((start, 0));
-            while(open.TryDequeue(out var current))
-            {
-                var (node, dist) = current;
-
-                if (node.Z < 0 || !closed.Add(node))
-                    continue;
-
-                var (pos, level) = node;
-
-                if (portals.TryGetValue(pos, out var portal))
-                {
-                    switch(portal.Name)
-                    {
-                        case "AA": break;
-                        case "ZZ":
-                            if (level == 0)
-                                return dist;
-                            break;
-                        default:
-                            open.Enqueue((portal.OtherPortal.WithZ(level + (portal.Direction * offset)), dist + 1));
-                            break;
-                    }
-                }
-
-                foreach (var n in pos.Neighbours().Where(walkable.Contains))
-                    open.Enqueue((n.WithZ(level), dist+1));
-            }
-            return -1;
-        }
-
-
-
-        protected override long? Part1()
-        {
-            Assert(ShortestPath(Sample("1"), false), 23);
-            Assert(ShortestPath(Sample("2"), false), 58);
-            return ShortestPath(Input, false);
-        }
-
-        protected override long? Part2()
-        {
-            Assert(ShortestPath(Sample("1"), true), 26);
-            Assert(ShortestPath(Sample("3"), true), 396);
-            return ShortestPath(Input, true);
-        }
+    protected override long? Part2()
+    {
+        Assert(ShortestPath(Sample("1"), true), 26);
+        Assert(ShortestPath(Sample("3"), true), 396);
+        return ShortestPath(Input, true);
     }
 }

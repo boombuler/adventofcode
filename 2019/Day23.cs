@@ -1,136 +1,136 @@
-﻿using System;
+﻿namespace AdventOfCode._2019;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AdventOfCode.Utils;
 
-namespace AdventOfCode._2019
+class Day23 : Solution
 {
-    class Day23 : Solution
+    const int COMPUTER_COUNT = 50;
+    class NAT
     {
-        const int COMPUTER_COUNT = 50;
-        class NAT
+        private readonly Dictionary<long, Queue<(long, long)>> fQueue = new();
+        private readonly HashSet<long> fIdleDevices = new ();
+        public int IdleCount => FIdleDevices.Count;
+        public (long X, long Y)? Memory { get; private set; }
+
+        public HashSet<long> FIdleDevices => fIdleDevices;
+
+        public void ResumeNetwork()
         {
-            private Dictionary<long, Queue<(long, long)>> fQueue = new Dictionary<long, Queue<(long, long)>>();
-            private HashSet<long> fIdleDevices = new HashSet<long>();
-            public int IdleCount => fIdleDevices.Count;
-            public (long X, long Y)? Memory { get; private set; }
+            if (Memory.HasValue)
+                Send(0, Memory.Value.X, Memory.Value.Y);
+        }
 
-            public void ResumeNetwork()
+        private Queue<(long, long)> GetQueue(long addr)
+        {
+            if (fQueue.TryGetValue(addr, out var q))
+                return q;
+            return fQueue[addr] = new Queue<(long, long)>();
+        }
+
+        public bool TryFetch(long address, out long X, out long Y)
+        {
+            if (GetQueue(address).TryDequeue(out var res))
             {
-                if (Memory.HasValue)
-                    Send(0, Memory.Value.X, Memory.Value.Y);
+                (X, Y) = res;
+                FIdleDevices.Remove(address);
+                return true;
             }
-
-            private Queue<(long, long)> GetQueue(long addr)
+            FIdleDevices.Add(address);
+            (X, Y) = (-1, -1);
+            return false;
+        }
+        public void Send(long address, long X, long Y)
+        {
+            if (address == 255)
+                Memory = (X, Y);
+            else
             {
-                if (fQueue.TryGetValue(addr, out var q))
-                    return q;
-                return fQueue[addr] = new Queue<(long, long)>();
+                GetQueue(address).Enqueue((X, Y));
+                FIdleDevices.Remove(address);
             }
+        }
+    }
+    class Computer
+    {
+        private IntCodeVM fCurrent;
+        private readonly Queue<long> fInputQueue;
+        private readonly long fAddress;
+        private readonly long[] fPacket;
+        private int fIdx;
 
-            public bool TryFetch(long address, out long X, out long Y)
+        public Computer(IntCodeVM state, long address)
+        {
+            fCurrent = state;
+            fAddress = address;
+            fPacket = new long[3];
+            fIdx = 0;
+            fInputQueue = new Queue<long>();
+            fInputQueue.Enqueue(address);
+        }
+
+        public void Step(NAT nat)
+        {
+            var (data, next) = fCurrent.Step(() =>
             {
-                if (GetQueue(address).TryDequeue(out var res))
+                if (fInputQueue.Count == 0)
                 {
-                    (X, Y) = res;
-                    fIdleDevices.Remove(address);
-                    return true;
+                    if (!nat.TryFetch(fAddress, out long x, out long y))
+                        return -1;
+
+                    fInputQueue.Enqueue(x);
+                    fInputQueue.Enqueue(y);
                 }
-                fIdleDevices.Add(address);
-                (X, Y) = (-1, -1);
-                return false;
-            }
-            public void Send(long address, long X, long Y)
+                return fInputQueue.Dequeue();
+            });
+            fCurrent = next;
+            if (data.HasValue)
             {
-                if (address == 255)
-                    Memory = (X, Y);
-                else
+                fPacket[fIdx++] = data.Value;
+                if (fIdx == 3)
                 {
-                    GetQueue(address).Enqueue((X, Y));
-                    fIdleDevices.Remove(address);
+                    fIdx = 0;
+                    var (addr, (x, (y, _))) = fPacket;
+                    nat.Send(addr, x, y);
                 }
             }
         }
-        class Computer
+    }
+
+    private (NAT, List<Computer>) BuildNetwork()
+    {
+        var state = new IntCodeVM(Input);
+        return (new NAT(), Enumerable.Range(0, COMPUTER_COUNT).Select(a => new Computer(state, a)).ToList());
+    }
+
+    protected override long? Part1()
+    {
+        var (nat, comps) = BuildNetwork();
+        while (!nat.Memory.HasValue)
         {
-            private IntCodeVM fCurrent;
-            private readonly Queue<long> fInputQueue;
-            private readonly long fAddress;
-            private readonly long[] fPacket;
-            private int fIdx;
-
-            public Computer(IntCodeVM state, long address)
-            {
-                fCurrent = state;
-                fAddress = address;
-                fPacket = new long[3];
-                fIdx = 0;
-                fInputQueue = new Queue<long>();
-                fInputQueue.Enqueue(address);
-            }
-
-            public void Step(NAT nat)
-            {
-                var (data, next) = fCurrent.Step(() => {
-                    if (fInputQueue.Count == 0)
-                    {
-                        if (!nat.TryFetch(fAddress, out long x, out long y))
-                            return -1;
-
-                        fInputQueue.Enqueue(x);
-                        fInputQueue.Enqueue(y);
-                    }
-                    return fInputQueue.Dequeue();
-                });
-                fCurrent = next;
-                if (data.HasValue)
-                {
-                    fPacket[fIdx++] = data.Value;
-                    if (fIdx == 3)
-                    {
-                        fIdx = 0;
-                        var (addr, (x, (y, _))) = fPacket;
-                        nat.Send(addr, x, y);
-                    }
-                }
-            }
+            foreach (var c in comps)
+                c.Step(nat);
         }
+        return nat.Memory.Value.Y;
+    }
 
-        private (NAT, List<Computer>) BuildNetwork()
+    protected override long? Part2()
+    {
+        var (nat, comps) = BuildNetwork();
+        var seenPackets = new HashSet<long>();
+        while (true)
         {
-            var state = new IntCodeVM(Input);
-            return (new NAT(), Enumerable.Range(0, COMPUTER_COUNT).Select(a => new Computer(state, a)).ToList());
-        }
-
-        protected override long? Part1()
-        {
-            var (nat, comps) = BuildNetwork();
-            while (!nat.Memory.HasValue)
+            while (nat.IdleCount < COMPUTER_COUNT || !nat.Memory.HasValue)
             {
                 foreach (var c in comps)
                     c.Step(nat);
             }
-            return nat.Memory.Value.Y;
-        }
 
-        protected override long? Part2()
-        {
-            var (nat, comps) = BuildNetwork();
-            var seenPackets = new HashSet<long>();
-            while(true)
-            {
-                while(nat.IdleCount < COMPUTER_COUNT || !nat.Memory.HasValue)
-                {
-                    foreach (var c in comps)
-                        c.Step(nat);
-                }
-
-                if (!seenPackets.Add(nat.Memory.Value.Y))
-                    return nat.Memory.Value.Y;
-                nat.ResumeNetwork();
-            }
+            if (!seenPackets.Add(nat.Memory.Value.Y))
+                return nat.Memory.Value.Y;
+            nat.ResumeNetwork();
         }
     }
 }

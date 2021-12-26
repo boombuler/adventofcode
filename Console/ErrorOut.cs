@@ -1,84 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AdventOfCode.Console;
+
+using System;
 using System.IO;
 using System.Text;
 
-namespace AdventOfCode.Console
+class ErrorOut : OutputMode
 {
-    class ErrorOut : OutputMode
+    static int BoxWidth => Math.Min(System.Console.BufferWidth, 80);
+
+    public override void Enter()
     {
-        int BoxWidth => Math.Min(System.Console.BufferWidth, 80);
+        base.Enter();
+        SetBG(DEFAULT_BACKGROUND);
+        SetFG(COLOR_CRIMSON);
+        var hLine = new string('═', BoxWidth - 3);
+        base.WriteLine(" ╔" + hLine + "╗");
+    }
 
-        public override void Enter()
+    public override void Exit()
+    {
+        var hLine = new string('═', BoxWidth - 3);
+        base.Write(" ╚" + hLine + "╝");
+        base.Exit();
+    }
+
+    private void WriteTextLine(string line)
+    {
+        var words = line.Split(' ');
+
+        var maxLineLen = BoxWidth - 5;
+
+        var sb = new StringBuilder();
+
+        void WriteOutput()
         {
-            base.Enter();
-            SetBG(DEFAULT_BACKGROUND);
-            SetFG(COLOR_CRIMSON);
-            var hLine = new string('═', BoxWidth - 3);
-            base.WriteLine(" ╔" + hLine + "╗");
+            if (sb.Length == 0)
+                return;
+
+            sb.Append(new string(' ', maxLineLen - sb.Length));
+
+            base.Write(" ║ ");
+            base.Write(sb.ToString());
+            base.WriteLine(" ║");
+
+            sb.Clear();
         }
 
-        public override void Exit()
+        for (int i = 0; i < words.Length; i++)
         {
-            var hLine = new string('═', BoxWidth - 3);
-            base.Write(" ╚" + hLine + "╝");
-            base.Exit();
+            string word = words[i];
+
+            if (sb.Length + word.Length + 1 > maxLineLen)
+                WriteOutput();
+            else if (sb.Length > 0)
+                sb.Append(' ');
+
+            sb.Append(word);
         }
+        WriteOutput();
+    }
 
-        private void WriteTextLine(string line)
+    public override void WriteLine(string content)
+    {
+        Write(content);
+        Write(Environment.NewLine);
+    }
+
+    public override void Write(string content)
+    {
+        using var sr = new StringReader(content);
+        while (true)
         {
-            var words = line.Split(' ');
-
-            var maxLineLen = BoxWidth - 5;
-
-            var sb = new StringBuilder();
-
-            void WriteOutput()
-            {
-                if (sb.Length == 0)
-                    return;
-
-                sb.Append(new string(' ', maxLineLen - sb.Length));
-
-                base.Write(" ║ ");
-                base.Write(sb.ToString());
-                base.WriteLine(" ║");
-
-                sb.Clear();
-            }
-
-            for (int i = 0; i < words.Length; i++)
-            {
-                string word = words[i];
-
-                if (sb.Length + word.Length + 1 > maxLineLen)
-                    WriteOutput();
-                else if (sb.Length > 0)
-                    sb.Append(' ');
-                
-                sb.Append(word);
-            }
-            WriteOutput();
-        }
-
-        public override void WriteLine(string content)
-        {
-            Write(content);
-            Write(Environment.NewLine);
-        }
-
-        public override void Write(string content)
-        {
-            using (var sr = new StringReader(content))
-            {
-                while (true)
-                {
-                    var line = sr.ReadLine();
-                    if (line == null)
-                        return;
-                    WriteTextLine(line);
-                }
-            }
+            var line = sr.ReadLine();
+            if (line == null)
+                return;
+            WriteTextLine(line);
         }
     }
 }

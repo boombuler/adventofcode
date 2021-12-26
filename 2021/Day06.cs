@@ -1,33 +1,32 @@
-﻿using System;
+﻿namespace AdventOfCode._2021;
+
+using System;
 using System.Linq;
 
-namespace AdventOfCode._2021
+class Day06 : Solution
 {
-    class Day06 : Solution
+    const int COOLDOWN = 7;
+    const int BREED_COOLDOWN = COOLDOWN + 2;
+
+    private long Simulate(int Days)
     {
-        const int Cooldown = 7;
-        const int BreedCooldown = Cooldown + 2;
+        var state = new long[BREED_COOLDOWN];
+        var nextState = new long[BREED_COOLDOWN];
+        foreach (var grp in Input.Split(',').Select(int.Parse).GroupBy(n => n))
+            state[grp.Key] = grp.Count();
 
-        private long Simulate(int Days)
+        for (int day = 0; day < Days; day++)
         {
-            var state     = new long[BreedCooldown];
-            var nextState = new long[BreedCooldown];
-            foreach (var grp in Input.Split(',').Select(int.Parse).GroupBy(n => n))
-                state[grp.Key] = grp.Count();
-
-            for (int day = 0; day < Days; day++)
-            {
-                Array.Copy(state, 1, nextState, 0, state.Length - 1);
-                nextState[BreedCooldown - 1] = state[0];
-                nextState[Cooldown - 1] += state[0];
-                (state, nextState) = (nextState, state);
-            }
-
-            return state.Sum();
+            Array.Copy(state, 1, nextState, 0, state.Length - 1);
+            nextState[BREED_COOLDOWN - 1] = state[0];
+            nextState[COOLDOWN - 1] += state[0];
+            (state, nextState) = (nextState, state);
         }
 
-        protected override long? Part1() => Simulate(80);
-
-        protected override long? Part2() => Simulate(256);
+        return state.Sum();
     }
+
+    protected override long? Part1() => Simulate(80);
+
+    protected override long? Part2() => Simulate(256);
 }
