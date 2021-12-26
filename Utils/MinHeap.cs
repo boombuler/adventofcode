@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 class MinHeap<T>
 {
@@ -27,8 +28,11 @@ class MinHeap<T>
             Heapify(i);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int IParent(int idx) => (idx - 1) / 2;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int ILeft(int idx) => (idx * 2) + 1;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int IRight(int idx) => (idx * 2) + 2;
 
     public void Push(T value)
@@ -73,6 +77,7 @@ class MinHeap<T>
 
     private void Heapify(int idx)
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         bool LessThen(int ia, int ib) => fComparer.Compare(fData[ia], fData[ib]) < 0;
 
         while (ILeft(idx) < fCount)
