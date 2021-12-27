@@ -104,7 +104,7 @@ class Day19 : Solution
     protected override long? Part2()
     {
         static long MaxDistance(string scan)
-            => AlignAllScanners(scan).Combinations(2).Max(w => w.First().Offset.ManhattanDistance(w.Last().Offset));
+            => AlignAllScanners(scan).Pairs().Max(w => w.A.Offset.ManhattanDistance(w.B.Offset));
         Assert(MaxDistance(Sample()), 3621);
         return MaxDistance(Input);
     }

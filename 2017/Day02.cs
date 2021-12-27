@@ -8,8 +8,8 @@ class Day02 : Solution
     private static long CalcChecksum(string input)
         => input.Lines().Select(l =>
         {
-            var numbers = l.Split('\t', ' ').Select(int.Parse);
-            return numbers.Max() - numbers.Min();
+            var (min, max) = l.Split('\t', ' ').Select(int.Parse).MinMax();
+            return max - min;
         }).Sum();
 
     protected override long? Part1()
@@ -23,14 +23,14 @@ class Day02 : Solution
         var sum = 0L;
         foreach (var line in input.Lines().Select(l => l.Split('\t', ' ').Select(int.Parse).ToArray()))
         {
-            foreach (var nominator in line)
+            foreach (var (a, b) in line.Pairs())
             {
-                var denominator = line.Where(d => d != nominator && nominator % d == 0).FirstOrDefault();
-                if (denominator > 0)
-                {
-                    sum += (nominator / denominator);
-                    break;
-                }
+                if (a == b) 
+                    continue;
+                if (a > 0 && b % a == 0)
+                    sum += b / a;
+                if (b > 0 && a % b == 0)
+                    sum += a / b;
             }
         }
         return sum;

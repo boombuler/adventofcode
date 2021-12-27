@@ -12,12 +12,8 @@ class Day02 : Solution<long?, string>
     }
 
     protected override string Part2()
-        => Input.Lines().Combinations(2)
-            .Select(items => {
-                var (first, (second, _)) = items; 
-                return new { First= first, Second=second }; 
-            })
-            .Select(i => string.Concat(i.First.Zip(i.Second, (char ac, char bc) => ac == bc ? ac.ToString() : string.Empty)))
+        => Input.Lines().Pairs()
+            .Select(i => string.Concat(i.A.Zip(i.B, (char ac, char bc) => ac == bc ? ac.ToString() : string.Empty)))
             .OrderByDescending(s => s.Length)
             .First();
 }

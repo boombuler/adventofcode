@@ -103,6 +103,20 @@ public static class EnumerableHelper
     }
 
     /// <summary>
+    /// Like <see cref="Combinations{T}(IEnumerable{T}, int)"/> but only for two items.
+    /// </summary>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    public static IEnumerable<(T A, T B)> Pairs<T>(this IEnumerable<T> items)
+    {
+        if (items is not IList<T> lst)
+            lst = items.ToList();
+        for (int i = 0; i < lst.Count; i++)
+            for (int j = i + 1; j < lst.Count; j++)
+                yield return (lst[i], lst[j]);
+    }
+
+    /// <summary>
     /// returns a sliding window with <paramref name="windowSize"/> items from the <paramref name="items"/>
     /// </summary>
     /// <example>
