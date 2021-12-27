@@ -7,27 +7,30 @@ using AdventOfCode.Utils;
 
 class Day11 : Solution<int>
 {
-    private static (ImmutableDictionary<Point2D, int> NextState, int Flashes) StepRound(ImmutableDictionary<Point2D, int> cells)
+    private static (Dictionary<Point2D, int> NextState, int Flashes) StepRound(Dictionary<Point2D, int> cells)
     {
-        cells = cells.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value + 1);
+        cells = cells.ToDictionary(kvp => kvp.Key, kvp => kvp.Value + 1);
 
         var flashed = new HashSet<Point2D>();
-        IEnumerable<Point2D> Flashing(ImmutableDictionary<Point2D, int> cells)
+        IEnumerable<Point2D> Flashing(Dictionary<Point2D, int> cells)
             => cells.Where(kvp => kvp.Value > 9 && !flashed.Contains(kvp.Key)).Select(kvp => kvp.Key);
+
         while (Flashing(cells).Any())
         {
             foreach (var pt in Flashing(cells))
             {
                 flashed.Add(pt);
-                cells = cells.SetItems(pt.Neighbours(withDiagonal: true).Where(Point2D.InBounds((0, 0), (9, 9))).ToDictionary(p => p, p => cells[p] + 1));
+                foreach (var n in pt.Neighbours(withDiagonal: true).Where(Point2D.InBounds((0, 0), (9, 9))))
+                    cells[n]++;
             }
         }
-        cells = cells.SetItems(flashed.ToDictionary(p => p, _ => 0));
+        foreach (var f in flashed)
+            cells[f] = 0;
         return (cells, flashed.Count);
     }
 
     private static IEnumerable<int> Simulate(string input)
-        => (State: input.Cells(c => c - '0').ToImmutableDictionary(), Flashes: 0)
+        => (State: input.Cells(c => c - '0'), Flashes: 0)
             .Unfold(c => StepRound(c.State))
             .Select(n => n.Flashes);
 
