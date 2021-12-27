@@ -14,27 +14,37 @@ class Day12 : Solution
     {
         var edges = map.Lines().Select(l => l.Split('-'))
             .SelectMany(l => new[] { (A: l[0], B: l[1]), (A: l[1], B: l[0]) })
-            .Where(n => n.B != START) // don't revisit start cave
+            .Where(n => n.B != START && n.A != END) // don't revisit start cave
             .ToLookup(n => n.A, n => n.B);
-        var smallCaves = edges.Select(e => e.Key).Where(k => char.IsLower(k.First())).ToHashSet();
-        var paths = new HashSet<ImmutableList<string>>();
-        var open = new Queue<(int SmallCavesRevisited, ImmutableList<string> Path)>();
-        open.Enqueue((0, ImmutableList<string>.Empty.Add(START)));
+
+        var pathCount = 0;
+        var open = new Queue<(string Cave, int RevisitCount, ImmutableArray<string> SmallCaves)>();
+        open.Enqueue((START, 0, ImmutableArray<string>.Empty));
         while (open.TryDequeue(out var current))
         {
-            foreach (var segment in edges[current.Path.Last()])
+            foreach (var segment in edges[current.Cave])
             {
-                var count = current.SmallCavesRevisited + ((smallCaves.Contains(segment) && current.Path.Contains(segment)) ? +1 : 0);
-                if (count > smallCaveRevisitCount)
-                    continue;
-                var way = current.Path.Add(segment);
                 if (segment == END)
-                    paths.Add(way);
-                else
-                    open.Enqueue((count, way));
+                {
+                    pathCount++;
+                    continue;
+                }
+
+                var (_, count, smallCaves) = current;
+                if (char.IsLower(segment[0]))
+                {
+                    if (smallCaves.Contains(segment))
+                    {
+                        if (++count > smallCaveRevisitCount)
+                            continue;
+                    }
+                    else
+                        smallCaves = smallCaves.Add(segment);
+                }
+                open.Enqueue((segment, count, smallCaves));
             }
         }
-        return paths.Count;
+        return pathCount;
     }
 
     protected override long? Part1()
