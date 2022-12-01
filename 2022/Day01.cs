@@ -1,9 +1,6 @@
 ﻿namespace AdventOfCode._2022;
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AdventOfCode.Utils;
 
 class Day01 : Solution
