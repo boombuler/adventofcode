@@ -17,8 +17,8 @@ class Day02 : Solution
         (a, x) => x + 1 + ((a + 3 - x) % 3) switch
         {
             0 => DrawScore,
-            2 => WonScore,
-            _ => LossScore
+            1 => LossScore,
+            _ => WonScore
         });
 
     protected override long? Part2()
