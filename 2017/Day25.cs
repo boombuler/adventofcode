@@ -19,7 +19,7 @@ class Day25 : Solution
     private static readonly Regex ParseStateName = new(@"In state (?<Name>\w+):", RegexOptions.Compiled);
     private static StateMachine LoadStateMachine(string input)
     {
-        var parts = input.Replace("\r", "").Split("\n\n");
+        var parts = input.Split("\n\n");
         var initialState = ParseInitialState.Match(parts[0]).Groups["InitialState"].Value;
         var rounds = int.Parse(ParseRounds.Match(parts[0]).Groups["Rounds"].Value);
         var states = new List<State>();

@@ -53,7 +53,7 @@ class Day16 : Solution
         };
 
     private static List<SampleRow> ParseSamples(string input)
-        => input.Replace("\r", string.Empty).Split("\n\n").Select(SampleRow.Parse).Where(s => s != null).ToList();
+        => input.Split("\n\n").Select(SampleRow.Parse).Where(s => s != null).ToList();
 
     private OpCodeImpl[] RestoreOpCodeTable(string input)
     {
@@ -81,7 +81,7 @@ class Day16 : Solution
     {
         var opCodeTable = RestoreOpCodeTable(Input);
         var registers = new int[] { 0, 0, 0, 0 };
-        var program = Input.Replace("\r", string.Empty).Split("\n\n\n\n").Last();
+        var program = Input.Split("\n\n\n\n").Last();
         foreach (var line in program.Lines())
         {
             var (op, (a, (b, (c, _)))) = line.Split(' ').Select(int.Parse);

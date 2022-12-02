@@ -37,7 +37,7 @@ abstract class OCR
     private Dictionary<string, char> GetLookupTable()
     {
         var (letter, drawing) = GetAlphabet();
-        drawing = drawing.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        drawing = drawing.ReplaceLineEndings(string.Empty);
 
         int lineWidth = letter.Length * (CharWidth + Spacing) - Spacing;
         if (lineWidth != (drawing.Length / CharHeight))

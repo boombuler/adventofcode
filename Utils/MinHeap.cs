@@ -97,7 +97,12 @@ class MinHeap<T>
 class MaxHeap<T> : MinHeap<T>
 {
     public MaxHeap(IComparer<T> comparer = null)
-        : base((comparer ?? Comparer<T>.Default).Invert())
+        : this(Enumerable.Empty<T>(), comparer)
+    {
+    }
+
+    public MaxHeap(IEnumerable<T> items, IComparer<T> comparer = null)
+        : base(items, (comparer ?? Comparer<T>.Default).Invert())
     {
     }
 }

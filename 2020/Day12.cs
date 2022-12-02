@@ -43,7 +43,7 @@ class Day12 : Solution
         return Math.Abs(y) + Math.Abs(x);
     }
 
-    private long NavigateWP(string input)
+    private static long NavigateWP(string input)
     {
         (int yWP, int xWP) = (-1, 10);
         (int yS, int xS) = (0, 0);

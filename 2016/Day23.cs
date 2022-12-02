@@ -37,7 +37,7 @@ nop
 nop
 nop
 nop";
-            return input.Replace(PATTERN.Replace("\r", string.Empty), REPLACEMENT);
+            return input.Replace(PATTERN.ReplaceLineEndings("\n"), REPLACEMENT);
         }
 
         public long RunCode(long a = 0)

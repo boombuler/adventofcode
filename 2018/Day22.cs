@@ -66,7 +66,7 @@ class Day22 : Solution
         private readonly long fDepth;
         private readonly Point2D fTarget;
         private readonly Dictionary<Point2D, int> fErosionLevels = new();
-        public static readonly Func<string, Cave> Parse = new Regex(@"depth: (?<Depth>\d+)\r?\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
+        public static readonly Func<string, Cave> Parse = new Regex(@"depth: (?<Depth>\d+)\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
 
         public Cave(long Depth, long X, long Y)
         {

@@ -6,7 +6,7 @@ using System.Linq;
 class Day06 : Solution
 {
     private static IEnumerable<IEnumerable<string>> ReadGroups(string input)
-        => input.Replace("\r", string.Empty).Split("\n\n").Select(grp => grp.Split("\n"));
+        => input.Split("\n\n").Select(grp => grp.Split("\n"));
 
     private static int CollectUniqueResults(string input)
         => ReadGroups(input)

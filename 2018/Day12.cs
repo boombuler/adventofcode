@@ -20,7 +20,7 @@ class Day12 : Solution
         );
     }
 
-    private (string State, long Offset) Step(string state, long offset, Dictionary<string, char> rules)
+    private static (string State, long Offset) Step(string state, long offset, Dictionary<string, char> rules)
     {
         var res = new StringBuilder();
         const int PATTERN_WIDTH = 5;
@@ -35,7 +35,7 @@ class Day12 : Solution
         return (state[firstPlant..].TrimEnd(EMPTY), offset + (PATTERN_WIDTH - (PATTERN_WIDTH / 2)) - firstPlant);
     }
 
-    private long SumPlants(string data, long gen)
+    private static long SumPlants(string data, long gen)
     {
         var (state, rules) = ReadRulesAndState(data);
         long offset = 0;

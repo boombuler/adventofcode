@@ -46,7 +46,7 @@ abstract class Solution<TSolution1, TSolution2> : ISolution
                 inputData.CopyTo(fs);
             }
         }
-        return File.ReadAllText(relPath).TrimEnd('\r', '\n');
+        return File.ReadAllText(relPath).ReplaceLineEndings("\n").TrimEnd('\n');
     }
 
     private readonly Lazy<string> fInput;
@@ -67,7 +67,7 @@ abstract class Solution<TSolution1, TSolution2> : ISolution
         }
 
         using var sr = new StreamReader(stream);
-        return sr.ReadToEnd().TrimEnd('\r', '\n');
+        return sr.ReadToEnd().ReplaceLineEndings("\n").TrimEnd('\n');
     }
 
     #endregion
