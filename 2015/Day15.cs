@@ -8,7 +8,7 @@ using AdventOfCode.Utils;
 
 class Day15 : Solution
 {
-    struct Score
+    readonly struct Score
     {
         public int Capacity { get; }
         public int Durability { get; }
@@ -45,10 +45,7 @@ class Day15 : Solution
                 int.Parse(m.Groups[5].Value));
         }).ToList();
 
-        if (validate == null)
-            validate = s => true;
-
-        return GetBestScore(new Score(), allIngr, 100, validate);
+        return GetBestScore(new Score(), allIngr, 100, validate ?? (s => true));
     }
 
     private long GetBestScore(Score baseScore, IEnumerable<Score> ingredients, int remainingSpoons, Func<Score, bool> validate)

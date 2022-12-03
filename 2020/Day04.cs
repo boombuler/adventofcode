@@ -77,7 +77,7 @@ class Day04 : Solution
                 continue;
             }
 
-            foreach (Match match in ParseKeyValuePair.Matches(line))
+            foreach (var match in ParseKeyValuePair.Matches(line).Cast<Match>())
             {
                 result[match.Groups["key"].Value] = match.Groups["value"].Value;
             }

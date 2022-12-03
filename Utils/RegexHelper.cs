@@ -69,8 +69,8 @@ public static class RegexHelper
             {
                 if (fld != null)
                     fld.SetValue(target, value);
-                else if (prp != null)
-                    prp.SetValue(target, value);
+                else 
+                    prp?.SetValue(target, value);
             }
         };
     }
