@@ -146,6 +146,14 @@ public static class EnumerableHelper
         }
     }
 
+    public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
+    {
+        foreach (var itm in items)
+            action?.Invoke(itm);
+    }
+
+    public static T Identity<T>(T e) => e;
+
     public static void Deconstruct<T>(this IEnumerable<T> items, out T first, out IEnumerable<T> rest)
     {
         first = items.First();
