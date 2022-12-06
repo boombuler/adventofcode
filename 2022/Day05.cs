@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day05 : Solution<string>
 {
     record Command(int Count, int From, int To)
