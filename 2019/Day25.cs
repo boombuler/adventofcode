@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 class Day25 : Solution
 {
     private readonly ImmutableHashSet<string> ITEM_BLACKLIST = new string[]

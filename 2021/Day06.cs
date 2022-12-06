@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Linq;
-
 class Day06 : Solution
 {
     const int COOLDOWN = 7;

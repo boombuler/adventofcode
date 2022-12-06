@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 class Day23 : Solution
 {
     private const int CUPS_TO_PICKUP = 3;

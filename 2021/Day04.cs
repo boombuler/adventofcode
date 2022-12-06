@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day04 : Solution
 {
     const int BOARD_SIZE = 5;

@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day17 : Solution
 {
     private static long Emulate<T>(HashSet<T> activeCells, int rounds, GameOfLife.GetNeighbours<T> getNeighbours)

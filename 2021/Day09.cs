@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day09 : Solution
 {
     protected override long? Part1()

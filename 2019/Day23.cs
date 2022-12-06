@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day23 : Solution
 {
     const int COMPUTER_COUNT = 50;

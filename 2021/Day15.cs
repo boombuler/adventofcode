@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day15 : Solution
 {
     class PathFinder : AStar<Point2D>

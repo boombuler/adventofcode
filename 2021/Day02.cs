@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day02 : Solution
 {
     private long RunCommands(Func<Point3D, string, Point3D> getOffset)

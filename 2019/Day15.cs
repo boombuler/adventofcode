@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day15 : Solution
 {
     enum SensorInput { Wall = 0, Moved = 1, OxygenSystem = 2 };

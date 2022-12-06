@@ -1,9 +1,6 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Linq;
 using System.Numerics;
-using AdventOfCode.Utils;
 
 class Day22 : Solution<BigInteger>
 {

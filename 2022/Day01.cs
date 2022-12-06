@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-using System.Diagnostics;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day01 : Solution
 {
     private long GetCalorieSum(int elfCount)

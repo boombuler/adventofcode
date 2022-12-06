@@ -1,6 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
 using System.Text;
 
 ref struct AsciiCounter

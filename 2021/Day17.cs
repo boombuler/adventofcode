@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day17 : Solution
 {
     private static (long MaxY, int Count) ValidVelocities(string descrp)

@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     public static readonly Point2D DefaultSlope = new(3, 1);

@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public class GameOfLife
 {
     public delegate IEnumerable<T> GetNeighbours<T>(T item);

@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day24 : Solution
 {
     private static Func<long, IEnumerable<(long Z, int Digit)>> StepGenerator(int a, int b)

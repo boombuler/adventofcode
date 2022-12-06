@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day14 : Solution
 {
     record MatAmount(long Amount, string Material)

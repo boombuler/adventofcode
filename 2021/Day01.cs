@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day01 : Solution
 {
     private long Solve(int windowSize)

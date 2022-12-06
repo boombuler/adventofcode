@@ -1,6 +1,5 @@
 ﻿namespace AdventOfCode;
 
-using System;
 using AdventOfCode.Console;
 
 class SolutionExecutor : ScreenBase, IOutput

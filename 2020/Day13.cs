@@ -1,8 +1,6 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Linq;
 using System.Numerics;
-using AdventOfCode.Utils;
 
 class Day13 : Solution
 {

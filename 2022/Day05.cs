@@ -29,8 +29,8 @@ class Day05 : Solution<string>
 
     protected override string Part1()
     {
-        Assert("CMZ", BuildStacks(Sample(), EnumerableHelper.Identity));
-        return BuildStacks(Input, EnumerableHelper.Identity);
+        Assert("CMZ", BuildStacks(Sample(), Functional.Identity));
+        return BuildStacks(Input, Functional.Identity);
     }
 
     protected override string Part2()

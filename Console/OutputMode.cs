@@ -1,6 +1,5 @@
 ﻿namespace AdventOfCode.Console;
 
-using System;
 using Con = System.Console;
 
 abstract class OutputMode

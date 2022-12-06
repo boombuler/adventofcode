@@ -1,10 +1,8 @@
 ﻿namespace AdventOfCode;
 
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 
 abstract class Solution : Solution<long?> { }
 abstract class Solution<TSolution> : Solution<TSolution, TSolution> { }

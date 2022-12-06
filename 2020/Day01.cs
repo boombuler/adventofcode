@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day01 : Solution
 {
     private static int? Solve(int[] items, int factorCount, int targetSum = 2020)

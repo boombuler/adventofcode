@@ -1,6 +1,5 @@
 ﻿namespace AdventOfCode.Console;
 
-using System;
 using System.IO;
 using System.Text;
 

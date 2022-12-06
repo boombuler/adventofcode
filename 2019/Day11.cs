@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day11 : Solution<long, string>
 {
     enum TurnDirection

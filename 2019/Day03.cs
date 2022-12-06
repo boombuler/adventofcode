@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     private IEnumerable<Point2D> TracePath(string path)

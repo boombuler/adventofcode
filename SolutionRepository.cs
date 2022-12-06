@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 class SolutionRepository
 {
     private static readonly Lazy<List<ISolution>> FSolutions = new(FindSolutions);

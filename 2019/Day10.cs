@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day10 : Solution
 {
     private static Point2D Normalize(Point2D center, Point2D pt)

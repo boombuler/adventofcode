@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day18 : Solution
 {
     private static readonly Regex FindBraces = new(@"\([^\(\)]+\)", RegexOptions.Compiled);

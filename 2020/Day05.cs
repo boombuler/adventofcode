@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day05 : Solution
 {
     private int ToSeatId(string position)

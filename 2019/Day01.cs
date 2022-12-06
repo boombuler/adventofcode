@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day01 : Solution
 {
     private long FuelNeeded(long mass) => (mass / 3) - 2;

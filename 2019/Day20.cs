@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day20 : Solution
 {
     record Portal(string Name, Point2D OtherPortal, int Direction);

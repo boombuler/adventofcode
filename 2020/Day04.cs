@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day04 : Solution
 {
     private const string FLD_BIRTHYEAR = "byr";

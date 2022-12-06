@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     private static int GetPrioritySum(IEnumerable<IEnumerable<IEnumerable<char>>> input)

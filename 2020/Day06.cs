@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day06 : Solution
 {
     private static IEnumerable<IEnumerable<string>> ReadGroups(string input)

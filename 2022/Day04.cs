@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day04 : Solution
 {
     record Range(int Min, int Max) 

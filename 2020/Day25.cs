@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day25 : Solution
 {
     const long MODULUS = 20201227;

@@ -2,7 +2,7 @@
 
 class Day06 : Solution
 {
-    int PacketStart(string s, int cnt = 4)
+    private int PacketStart(string s, int cnt = 4)
         => s.SlidingWindow(cnt)
             .Select((c, i) => new { Count = c.Distinct().Count(), Index = i })
             .Where(c => c.Count == cnt)

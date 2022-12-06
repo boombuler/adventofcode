@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Linq;
-
 class Day21 : Solution
 {
     private long RunCode(params string[] springscript)

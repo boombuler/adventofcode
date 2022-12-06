@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AdventOfCode.Console;
 
 internal class Validator : ScreenBase

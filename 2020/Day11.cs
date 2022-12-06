@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day11 : Solution
 {
     private IEnumerable<bool?> LineOfSight(bool?[][] current, int x, int y)

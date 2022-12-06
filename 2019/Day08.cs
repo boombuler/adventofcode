@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day08 : Solution<long?, string>
 {
     const int LAYER_WIDTH = 25;

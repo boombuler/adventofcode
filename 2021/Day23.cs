@@ -1,12 +1,6 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using AdventOfCode.Utils;
 
 class Day23 : Solution
 {

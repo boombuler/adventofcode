@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day16 : Solution
 {
     class BITS

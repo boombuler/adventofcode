@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day19 : Solution
 {
     private IntCodeVM fVM;

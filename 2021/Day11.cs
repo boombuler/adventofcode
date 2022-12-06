@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day11 : Solution<int>
 {
     private static (Dictionary<Point2D, int> NextState, int Flashes) StepRound(Dictionary<Point2D, int> cells)

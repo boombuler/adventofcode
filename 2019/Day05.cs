@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Linq;
-
 class Day05 : Solution
 {
     private static long RunCode(string code, long input)

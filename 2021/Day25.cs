@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day25 : Solution
 {
     record Map(long Width, long Height)

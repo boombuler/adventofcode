@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day16 : Solution
 {
     record Rule(string Name, long Min1, long Min2, long Max1, long Max2)

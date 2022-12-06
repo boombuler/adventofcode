@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day07 : Solution
 {
     private long Solve(Func<int, long> GetFuel)

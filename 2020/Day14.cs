@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day14 : Solution
 {
     private static readonly Regex MASK = new(@"mask = (?<Mask>[\dX]{36})");

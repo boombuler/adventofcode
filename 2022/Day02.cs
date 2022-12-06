@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day02 : Solution
 {
     const int LOSS_SCORE = 0;

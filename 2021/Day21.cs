@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day21 : Solution
 {
     record GameState(Player Player1, Player Player2)

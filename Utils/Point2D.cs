@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-using System.Collections.Generic;
-
 public record Point2D(long X, long Y) : IComparable<Point2D>
 {
     public static readonly Point2D Origin = (0, 0);

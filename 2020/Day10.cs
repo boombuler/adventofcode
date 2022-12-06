@@ -1,11 +1,7 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using AdventOfCode.Utils;
 
 class Day10 : Solution
 {

@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day19 : Solution
 {
     private delegate IEnumerable<int> RuleTest(string input, IEnumerable<int> idx);

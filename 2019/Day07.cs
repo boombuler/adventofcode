@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day07 : Solution
 {
     private static long MaxThrusterSignal(string code)

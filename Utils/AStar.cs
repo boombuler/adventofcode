@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public abstract class AStar<T>
 {
     protected abstract long Distance(T one, T another);

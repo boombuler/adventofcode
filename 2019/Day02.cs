@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-
 class Day02 : Solution
 {
     private long RunIntCode(string code, long? noun = null, long? verb = null)

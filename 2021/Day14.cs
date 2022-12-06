@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day14 : Solution
 {
     private ImmutableDictionary<char, long> Add(ImmutableDictionary<char, long> a, ImmutableDictionary<char, long> b)

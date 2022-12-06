@@ -1,10 +1,6 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using AdventOfCode.Utils;
 
 class Day18 : Solution
 {

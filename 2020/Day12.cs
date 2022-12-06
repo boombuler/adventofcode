@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using AdventOfCode.Utils;
-
 class Day12 : Solution
 {
     enum Direction

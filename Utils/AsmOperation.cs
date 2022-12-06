@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-
 record AsmOperation<TOpCode>(TOpCode Kind, string X, string Y) where TOpCode : struct
 {
     public static AsmOperation<TOpCode> Parse(string line)

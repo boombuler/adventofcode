@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day15 : Solution
 {
     private static int CountNumbers(int turns, params int[] input)

@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-using System.Collections.Generic;
-
 static class ComparerBuilder<T>
 {
     public static IComparer<T> CompareBy<TVal>(Func<T, TVal> selector)

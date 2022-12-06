@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2020;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day02 : Solution
 {
     record PasswordLine(int I1, int I2, char C, string Test);

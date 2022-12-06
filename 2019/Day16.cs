@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 class Day16 : Solution<string>
 {
     private static int Factor(int digit, int idx)

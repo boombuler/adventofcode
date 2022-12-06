@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     private static bool IsCommonHi(List<string> Items, int Index)

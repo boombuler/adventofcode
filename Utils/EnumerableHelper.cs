@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public static class EnumerableHelper
 {
     public static void RotateRight<T>(this T[] array, int count)
@@ -151,8 +147,6 @@ public static class EnumerableHelper
         foreach (var itm in items)
             action?.Invoke(itm);
     }
-
-    public static T Identity<T>(T e) => e;
 
     public static void Deconstruct<T>(this IEnumerable<T> items, out T first, out IEnumerable<T> rest)
     {

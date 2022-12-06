@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day04 : Solution
 {
     private IEnumerable<IEnumerable<int>> GenDigits(int startingDigit, int count)

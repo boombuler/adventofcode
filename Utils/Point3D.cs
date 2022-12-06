@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System;
-
 public record Point3D(long X, long Y, long Z)
 {
     public static readonly Point3D Origin = (0, 0, 0);
