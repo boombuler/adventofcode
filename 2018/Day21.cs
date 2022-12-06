@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-
 class Day21 : Solution
 {
     class Registers : ElfCompiler.Registers

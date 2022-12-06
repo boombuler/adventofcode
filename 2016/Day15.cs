@@ -1,10 +1,6 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
 
 class Day15 : Solution
 {

@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day05 : Solution
 {
     private static int CountJumps(string input, int upperBound = int.MaxValue)

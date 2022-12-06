@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day07 : Solution
 {
     private static readonly Regex MatchABBA = new(@"(\w)((?:(?!\1).))\2\1", RegexOptions.Compiled);

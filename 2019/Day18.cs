@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Text;
-
 class Day18 : Solution
 {
     const char DOOR = '@';

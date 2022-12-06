@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day22 : Solution
 {
     record Spell(int ID, int Cost, int Damage = 0, int Heal = 0, int Armor = 0, int Mana = 0, int Duration = 0)

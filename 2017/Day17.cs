@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Collections.Generic;
-
 class Day17 : Solution
 {
     private static int GetValueAfterLastInsert(int steps)

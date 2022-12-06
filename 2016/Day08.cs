@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day08 : Solution<long?, string>
 {
     record Rect(int Width, int Height);

@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day03 : Solution
 {
     public static IEnumerable<(int x, int y)> Walk(IEnumerable<char> directions)

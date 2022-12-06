@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-
 class Day20 : Solution
 {
     private static int FindMinHouse(int minPresents, int presentsPerHouse, int? maxPerElv)

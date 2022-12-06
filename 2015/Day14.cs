@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day14 : Solution
 {
     record Reindeer(string Name, int Speed, int FlyTime, int RestTime)

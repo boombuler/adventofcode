@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day10 : Solution<string, int>
 {
     record Star

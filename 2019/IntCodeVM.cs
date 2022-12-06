@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Text;
-
 public record IntCodeVM(long PC, long RelativeBaseOffset, ImmutableSortedDictionary<long, long> Data)
 {
     private const long OC_HALT = 99;

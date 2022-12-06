@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AdventOfCode.Utils;
-
 class Day14 : Solution
 {
     const string SAMPLE = "flqrgnkx";

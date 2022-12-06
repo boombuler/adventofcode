@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day20 : Solution
 {
     public static IEnumerable<(long lower, long upper)> ParseRules(string ruleList)

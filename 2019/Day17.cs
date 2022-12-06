@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2019;
 
-using System.Text;
-
 class Day17 : Solution
 {
     private static readonly char[] DirectionImages = new char[] { '^', '<', 'v', '>' };

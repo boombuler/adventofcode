@@ -1,7 +1,6 @@
 ﻿namespace AdventOfCode.Utils;
 
 using System.Runtime.CompilerServices;
-using System.Text;
 
 class Mat4
 {

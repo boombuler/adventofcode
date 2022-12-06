@@ -1,11 +1,6 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
 
 class Day11 : Solution
 {

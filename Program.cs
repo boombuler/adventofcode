@@ -7,7 +7,7 @@ class Program
 {
     static int Main(string[] args)
     {
-        System.Console.OutputEncoding = System.Text.Encoding.UTF8;
+        System.Console.OutputEncoding = Encoding.UTF8;
         var command = new RootCommand
             {
                 new Option<int?>(new [] {"--year", "-y"}, "Specifies the year for the AoC puzzles"),

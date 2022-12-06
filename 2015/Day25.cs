@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day25 : Solution
 {
     private static IEnumerable<(int column, int row)> GeneratePositions()

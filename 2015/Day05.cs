@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day05 : Solution
 {
     private static readonly Regex Rule1 = new(@"(.*[aeiou]){3}", RegexOptions.Compiled);

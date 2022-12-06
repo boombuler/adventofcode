@@ -1,7 +1,6 @@
 ﻿namespace AdventOfCode;
 
 using System.Diagnostics;
-using System.Text;
 using AdventOfCode.Console;
 
 class Benchmarker : ScreenBase

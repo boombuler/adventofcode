@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day02 : Solution
 {
     class Package

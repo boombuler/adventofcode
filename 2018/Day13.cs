@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day13 : Solution<Point2D>
 {
     enum Direction { Up = 0, Right = 1, Down = 2, Left = 3, MASK = Left, Invalid = -1 }

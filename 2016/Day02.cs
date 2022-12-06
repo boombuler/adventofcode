@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using AdventOfCode.Utils;
-
 class Day02 : Solution<string>
 {
     private static string ReadInstructions(string text, string[] keypad)

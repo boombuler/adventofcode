@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day21 : Solution<string>
 {
     private static string Scramble(string password, string rules, bool reverse = false)

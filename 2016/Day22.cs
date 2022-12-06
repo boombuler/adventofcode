@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day22 : Solution
 {
     record Node(int X, int Y, int Used, int Avail, int Size, int UsePerc);

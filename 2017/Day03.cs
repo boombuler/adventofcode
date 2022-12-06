@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System;
-using System.Collections.Generic;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     private static long GetMDForCell(long number)

@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Linq;
-using System.Text.RegularExpressions;
-
 class Day11 : Solution<string>
 {
     private static string IncStr(string input)

@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day19 : Solution<string, long?>
 {
     private static readonly Point2D[] Offsets = new Point2D[]

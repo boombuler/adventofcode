@@ -1,12 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day07 : Solution<string, int>
 {
     record Dependency(char Name, char DependsOn);

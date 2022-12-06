@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day15 : Solution
 {
     private static (long A, long B) SAMPLE = (65, 8921);

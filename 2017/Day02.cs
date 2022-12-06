@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day02 : Solution
 {
     private static long CalcChecksum(string input)

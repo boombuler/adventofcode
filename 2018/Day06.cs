@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day06 : Solution
 {
     private static readonly Func<string, Point2D> ParsePt = new Regex(@"(?<X>\d+), (?<Y>\d+)", RegexOptions.Compiled).ToFactory<Point2D>();

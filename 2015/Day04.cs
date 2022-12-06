@@ -1,10 +1,6 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Text;
-using AdventOfCode.Utils;
 
 class Day04 : Solution
 {
@@ -25,27 +21,19 @@ class Day04 : Solution
             return true;
         }
 
-        var sw = Stopwatch.StartNew();
-        try
-        {
-            var md = MD5.Create();
-            var pk = Encoding.ASCII.GetBytes(privateKey);
-            int prefixLen = pk.Length;
-            Array.Resize(ref pk, pk.Length + 12);
+        
+        var md = MD5.Create();
+        var pk = Encoding.ASCII.GetBytes(privateKey);
+        int prefixLen = pk.Length;
+        Array.Resize(ref pk, pk.Length + 12);
 
-            var counter = new AsciiCounter(pk.AsSpan(prefixLen));
-            while (true)
-            {
-                var hash = md.ComputeHash(pk, 0, prefixLen + counter.Length);
-                if (IsMatch(hash))
-                    return counter.Value;
-                counter.Step();
-            }
-        }
-        finally
+        var counter = new AsciiCounter(pk.AsSpan(prefixLen));
+        while (true)
         {
-            sw.Stop();
-            Debug(sw.Elapsed);
+            var hash = md.ComputeHash(pk, 0, prefixLen + counter.Length);
+            if (IsMatch(hash))
+                return counter.Value;
+            counter.Step();
         }
     }
 

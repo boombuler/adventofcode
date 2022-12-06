@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 class Day10 : Solution<long?, string>
 {
     private static int SimpleKnotHash(int listLen, IEnumerable<int> knotLengths)

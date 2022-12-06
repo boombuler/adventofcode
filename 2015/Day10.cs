@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Linq;
-using System.Text;
-
 class Day10 : Solution
 {
     private static string Generate(string input)

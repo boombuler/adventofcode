@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-
 class Day16 : Solution<string>
 {
     private static string GenerateDataGetCheckSum(string input, int length)

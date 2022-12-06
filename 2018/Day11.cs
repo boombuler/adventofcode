@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day11 : Solution<Point2D, string>
 {
     const int GRIDSIZE = 300;

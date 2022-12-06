@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using AdventOfCode.Utils;
-
 class Day12 : Solution
 {
     enum OpCode

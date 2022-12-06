@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-
 class Day19 : Solution
 {
     private static long Circle(long n)

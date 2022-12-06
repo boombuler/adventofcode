@@ -1,10 +1,6 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using AdventOfCode.Utils;
 
 class Day17 : Solution<string, long?>
 {

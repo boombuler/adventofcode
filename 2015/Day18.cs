@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day18 : Solution
 {
     private static long Generate(string data, int generations, bool keepCornersActive = false)

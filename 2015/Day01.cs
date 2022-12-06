@@ -1,8 +1,4 @@
 ﻿namespace AdventOfCode._2015;
-
-using System.Collections.Generic;
-using System.Linq;
-
 class Day01 : Solution
 {
     public static IEnumerable<int> WalkLevels(string input)

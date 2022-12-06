@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day16 : Solution<string>
 {
     private IEnumerable<Action<char[]>> ParseDanceMoves()

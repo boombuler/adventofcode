@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day05 : Solution
 {
     private int React(IEnumerable<char> mol)

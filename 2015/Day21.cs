@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day21 : Solution
 {
     class Mob

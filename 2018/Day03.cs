@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     record Claim(int ID, int Top, int Left, int Width, int Height)

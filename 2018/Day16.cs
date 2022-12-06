@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day16 : Solution
 {
     record SampleRow(int OpCode, int A, int B, int C, int[] Before, int[] After)

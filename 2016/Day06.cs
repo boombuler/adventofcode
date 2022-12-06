@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day06 : Solution<string>
 {
     private static char MostCommon(IEnumerable<char> chars)

@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AdventOfCode.Utils;
-
 class Day21 : Solution
 {
     private const string STARTING_IMAGE = ".#./..#/###";

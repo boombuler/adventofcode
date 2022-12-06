@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.IO;
-using AdventOfCode.Utils;
-
 class Day09 : Solution
 {
     private static (long Score, long GarbageCount) ProcessStream(string str)

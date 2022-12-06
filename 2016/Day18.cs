@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Collections.Generic;
-using System.Linq;
-
 class Day18 : Solution
 {
     private static IEnumerable<string> GenerateTiles(string firstRow)

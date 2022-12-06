@@ -1,7 +1,6 @@
 ﻿namespace AdventOfCode.Console;
 
 using System.IO;
-using System.Text;
 
 class ErrorOut : OutputMode
 {

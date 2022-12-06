@@ -1,11 +1,6 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
 
 class Day04 : Solution
 {

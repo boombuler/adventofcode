@@ -1,8 +1,6 @@
 ﻿namespace AdventOfCode._2016;
 
 using System.IO;
-using System.Text;
-using AdventOfCode.Utils;
 
 class Day09 : Solution
 {

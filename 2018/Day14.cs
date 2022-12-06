@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 class Day14 : Solution<string, int>
 {
     private static IEnumerable<int> Generate()

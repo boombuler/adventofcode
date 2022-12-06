@@ -1,7 +1,6 @@
 ﻿namespace AdventOfCode._2020;
 
 using System.Buffers;
-using System.Text;
 
 class Day10 : Solution
 {

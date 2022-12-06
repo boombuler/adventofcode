@@ -1,8 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day08 : Solution
 {
     private static long CountChars(string input)

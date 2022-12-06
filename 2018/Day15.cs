@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day15 : Solution
 {
     static readonly Point2D[] ReadingOrder = new Point2D[] { (0, -1), (-1, 0), (1, 0), (0, 1) };

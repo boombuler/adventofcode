@@ -1,10 +1,6 @@
 ﻿namespace AdventOfCode._2018;
 
-using System;
-using System.Linq;
 using System.Reflection.Emit;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
 
 static class ElfCompiler
 {

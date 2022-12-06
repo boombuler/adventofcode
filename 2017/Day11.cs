@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2017;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 /* 
       \ n  /
     nw +--+ ne

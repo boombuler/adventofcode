@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System.Text;
-
 abstract class OCR
 {
     public delegate bool IsSetDelegate(int x, int y);

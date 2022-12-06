@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode.Utils;
 
-using System.Text;
-
 ref struct AsciiCounter
 {
     private readonly Span<byte> fBuffer;

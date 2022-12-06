@@ -1,10 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day03 : Solution
 {
     private static bool TriangleValid(long A, long B, long C) => (A + B) > C && (A + C) > B && (B + C) > A;

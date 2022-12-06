@@ -1,11 +1,5 @@
 ﻿namespace AdventOfCode._2015;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode.Utils;
-
 class Day16 : Solution
 {
     private static readonly Regex LinePattern = new(@"^Sue (?<n>\d+):\W(?<values>.*)$", RegexOptions.Compiled);

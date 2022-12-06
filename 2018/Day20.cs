@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2018;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day20 : Solution
 {
     enum Direction

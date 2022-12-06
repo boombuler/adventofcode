@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Collections.Generic;
-using System.Linq;
-using AdventOfCode.Utils;
-
 class Day13 : Solution
 {
     private static int NumberOfSetBits(ulong i)
