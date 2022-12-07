@@ -2,44 +2,37 @@
 
 class Day07 : Solution
 {
-    private Dictionary<string, long> GetDirSizes(string input)
+    private IEnumerable<long> GetDirSizes(string input)
     {
         var curPath = ImmutableStack<string>.Empty;
         var sizes = new Dictionary<ImmutableStack<string>, long>();
-        var console = new StringReader(input);
 
-        while (console.TryReadLine(out var cmd)) 
+        foreach(var line in input.Lines())
         {
-            if (cmd == "$ cd ..")
-                curPath = curPath.Pop();
-            else if (cmd.StartsWith("$ cd "))
-                curPath = curPath.Push(cmd.Substring(5));
-            else if (cmd == "$ ls")
+            switch (line.Split(' '))
             {
-                while (console.Peek() is not ((< 0) or '$'))
-                {
-                    if (!long.TryParse(console.ReadLine().Split(' ')[0], out long fileSize))
-                        fileSize += 0;
-
-                    for(var p = curPath; !p.IsEmpty; p = p.Pop())
-                        sizes[p] = sizes.GetValueOrDefault(p, 0) + fileSize;
-                }
+                case ["$", "cd", ".."]:
+                    curPath = curPath.Pop(); break;
+                case ["$", "cd", var dir]:
+                    curPath = curPath.Push(dir); break;
+                case [var size, _] when long.TryParse(size, out var fileSize):
+                    for (var p = curPath; !p.IsEmpty; p = p.Pop())
+                        sizes[p] = sizes.GetValueOrDefault(p) + fileSize;
+                    break;
             }
         }
 
-        return sizes.ToDictionary(
-            kvp => string.Join("/", kvp.Key.Reverse()), 
-            kvp => kvp.Value);
+        return sizes.Values;
     }
     
     private long GetSumOfSmallDirs(string input) 
-        => GetDirSizes(input).Values.Where(d => d < 100000).Sum();
+        => GetDirSizes(input).Where(d => d < 100000).Sum();
 
     private long SizeOfDirToDelete(string input)
     {
         var sizes = GetDirSizes(input);
-        var requiredSize = sizes["/"] - 40000000;
-        return sizes.Values.OrderBy(Functional.Identity).First(s => s >= requiredSize);
+        var requiredSize = sizes.Max() - 40000000;
+        return sizes.Where(s => s >= requiredSize).Min();
     }
 
     protected override long? Part1()
