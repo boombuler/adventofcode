@@ -11,6 +11,12 @@ public static class TextReaderHelper
         return (val >= 0);
     }
 
+    public static bool TryReadLine(this TextReader tr, out string line)
+    {
+        line = tr.ReadLine();
+        return (line != null);
+    }
+
     public static string ReadToTerm(this TextReader tr, char term)
     {
         var result = new StringBuilder();
