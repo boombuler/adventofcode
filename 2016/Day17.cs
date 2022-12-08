@@ -28,7 +28,9 @@ class Day17 : Solution<string, long?>
 
         public IEnumerable<State> ValidMoves()
         {
-            var hash = MD5.Create().ComputeHash(Encoding.ASCII.GetBytes(fSeed + Directions));
+            var md = new MD5Managed();
+            Span<byte> hash = stackalloc byte[md.HashSize / 8];
+            md.TryComputeHash(Encoding.ASCII.GetBytes(fSeed + Directions), hash, out _);
             // up, down, left, and right
             var doorStates = new[]
             {

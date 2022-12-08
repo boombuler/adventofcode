@@ -6,7 +6,7 @@ class Day04 : Solution
 {
     private long FindLowestHash(string privateKey, int leadingZeros = 5)
     {
-        bool IsMatch(byte[] hash)
+        bool IsMatch(ReadOnlySpan<byte> hash)
         {
             for (int i = 0; i < leadingZeros / 2; i++)
             {
@@ -22,15 +22,17 @@ class Day04 : Solution
         }
 
         
-        var md = MD5.Create();
+        var md = new MD5Managed();
         var pk = Encoding.ASCII.GetBytes(privateKey);
         int prefixLen = pk.Length;
         Array.Resize(ref pk, pk.Length + 12);
 
         var counter = new AsciiCounter(pk.AsSpan(prefixLen));
+        Span<byte> hash = stackalloc byte[md.HashSize];
         while (true)
         {
-            var hash = md.ComputeHash(pk, 0, prefixLen + counter.Length);
+            md.TryComputeHash(pk.AsSpan(0, prefixLen + counter.Length), hash, out _);
+            
             if (IsMatch(hash))
                 return counter.Value;
             counter.Step();

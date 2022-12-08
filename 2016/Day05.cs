@@ -1,23 +1,21 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Security.Cryptography;
-
 class Day05 : Solution<string>
 {
     static bool IsValidHash(ReadOnlySpan<byte> hash)
         => hash[0] == 0 && hash[1] == 0 && (hash[2] & 0xF0) == 0;
 
+
     private static IEnumerable<byte[]> GenerateValidHashes(string doorId)
     {
-        var md = MD5.Create();
+        var md = new MD5Managed();
         var inputBuf = Encoding.ASCII.GetBytes(doorId);
         int prefixLen = inputBuf.Length;
         Array.Resize(ref inputBuf, inputBuf.Length + 12);
         inputBuf[prefixLen] = (byte)'0';
         var counterLen = 1;
-        const int MD5_LEN = 32;
-        var hashBuf = new byte[MD5_LEN];
-
+        
+        var hashBuf = new byte[md.HashSize / 8];
         while (true)
         {
             md.TryComputeHash(inputBuf.AsSpan(0, prefixLen + counterLen), hashBuf, out _);
@@ -35,23 +33,20 @@ class Day05 : Solution<string>
     private static string GetPassword2(string doorId)
     {
         char?[] pwd = new char?[8];
-        var md5 = MD5.Create();
 
-        while (true)
+        foreach (var hash in GenerateValidHashes(doorId))
         {
-            foreach (var hash in GenerateValidHashes(doorId))
+            int pos = hash[2] & 0x0F;
+            if (pos < 8 && !pwd[pos].HasValue)
             {
-                int pos = hash[2] & 0x0F;
-                if (pos < 8 && !pwd[pos].HasValue)
-                {
-                    int val = (hash[3] & 0xF0) >> 4;
-                    pwd[pos] = val.ToString("x")[0];
+                int val = (hash[3] & 0xF0) >> 4;
+                pwd[pos] = val.ToString("x")[0];
 
-                    if (pwd.All(c => c.HasValue))
-                        return new string(pwd.Select(c => c.Value).ToArray());
-                }
+                if (pwd.All(c => c.HasValue))
+                    return new string(pwd.Select(c => c.Value).ToArray());
             }
         }
+        throw new InvalidDataException("No valid solution");
     }
 
     protected override string Part1()
