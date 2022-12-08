@@ -37,13 +37,13 @@ class Day07 : Solution
 
     protected override long? Part1()
     {
-        Assert(95437, GetSumOfSmallDirs(Sample()));
+        Assert(GetSumOfSmallDirs(Sample()), 95437);
         return GetSumOfSmallDirs(Input);
     }
 
     protected override long? Part2()
     {
-        Assert(24933642, SizeOfDirToDelete(Sample()));
+        Assert(SizeOfDirToDelete(Sample()), 24933642);
         return  SizeOfDirToDelete(Input);
     }
 }

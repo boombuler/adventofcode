@@ -19,13 +19,13 @@ class Day04 : Solution
 
     protected override long? Part1()
     {
-        Assert(2, CountRanges(Sample(), Range.Contains));
+        Assert(CountRanges(Sample(), Range.Contains), 2);
         return CountRanges(Input, Range.Contains);
     }
 
     protected override long? Part2()
     {
-        Assert(4, CountRanges(Sample(), Range.Overlaps));
+        Assert(CountRanges(Sample(), Range.Overlaps), 4);
         return CountRanges(Input, Range.Overlaps);
     }
 }

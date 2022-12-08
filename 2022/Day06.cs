@@ -10,11 +10,11 @@ class Day06 : Solution
 
     protected override long? Part1()
     {
-        Assert(7, PacketStart("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
-        Assert(5, PacketStart("bvwbjplbgvbhsrlpgdmjqwftvncz"));
-        Assert(6, PacketStart("nppdvjthqldpwncqszvftbrmjlhg"));
-        Assert(10, PacketStart("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));
-        Assert(11, PacketStart("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"));
+        Assert(PacketStart("mjqjpqmgbljsphdztnvjfqwrcgsmlb"), 7);
+        Assert(PacketStart("bvwbjplbgvbhsrlpgdmjqwftvncz"), 5);
+        Assert(PacketStart("nppdvjthqldpwncqszvftbrmjlhg"), 6);
+        Assert(PacketStart("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 10);
+        Assert(PacketStart("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 11);
         return PacketStart(Input);
     }
 

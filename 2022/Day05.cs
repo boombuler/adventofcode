@@ -29,13 +29,13 @@ class Day05 : Solution<string>
 
     protected override string Part1()
     {
-        Assert("CMZ", BuildStacks(Sample(), Functional.Identity));
+        Assert(BuildStacks(Sample(), Functional.Identity), "CMZ");
         return BuildStacks(Input, Functional.Identity);
     }
 
     protected override string Part2()
     {
-        Assert("MCD", BuildStacks(Sample(), Enumerable.Reverse));
+        Assert(BuildStacks(Sample(), Enumerable.Reverse), "MCD");
         return BuildStacks(Input, Enumerable.Reverse);
     }
 }

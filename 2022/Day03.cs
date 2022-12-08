@@ -12,7 +12,7 @@ class Day03 : Solution
         static int GetSum(string s) 
             => GetPrioritySum(s.Lines().Select(l => l.Chunk(l.Length / 2)));
 
-        Assert(157, GetSum(Sample()));
+        Assert(GetSum(Sample()), 157);
         return GetSum(Input);
     }
 
@@ -21,7 +21,7 @@ class Day03 : Solution
         static int SumBadges(string s) 
             => GetPrioritySum(s.Lines().Chunk(3));
 
-        Assert(70, SumBadges(Sample()));
+        Assert(SumBadges(Sample()), 70);
         return SumBadges(Input);
     }
 }
