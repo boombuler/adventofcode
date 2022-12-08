@@ -148,6 +148,16 @@ public static class EnumerableHelper
             action?.Invoke(itm);
     }
 
+    public static IEnumerable<T> TakeUntil<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+    {
+        foreach(var i in items)
+        {
+            yield return i;
+            if (predicate(i))
+                break;
+        }
+    }
+
     public static void Deconstruct<T>(this IEnumerable<T> items, out T first, out IEnumerable<T> rest)
     {
         first = items.First();
