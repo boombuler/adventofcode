@@ -42,7 +42,7 @@ class Day23 : Solution
 
     protected override long? Part2()
     {
-        long b = long.Parse(Input.Lines().Select(l => AsmOperation<OpCode>.Parse(l)).First().Y);
+        long b = long.Parse(Input.Lines().Select(AsmOperation<OpCode>.Parse).First().Y);
 
         long result = 0;
         b = (b * 100) + 100000;
