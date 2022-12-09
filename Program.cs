@@ -5,7 +5,7 @@ using System.CommandLine.Invocation;
 
 class Program
 {
-    static int Main(string[] args)
+    static async Task<int> Main(string[] args)
     {
         System.Console.OutputEncoding = Encoding.UTF8;
         var command = new RootCommand
@@ -17,16 +17,16 @@ class Program
                 new Command("benchmark", "measures the execution time for the given puzzles") { Handler = CommandHandler.Create(Benchmark) },
             };
         command.Handler = CommandHandler.Create(RunPuzzle);
-        return command.InvokeAsync(args).Result;
+        return await command.InvokeAsync(args);
     }
 
-    private static void Benchmark(int? year, int? day)
+    private static Task Benchmark(int? year, int? day)
         => new Benchmarker().Run(new SolutionRepository().All(year, day));
 
-    private static void Validate(int? year, int? day)
+    private static Task Validate(int? year, int? day)
         => new Validator().Run(new SolutionRepository().All(year, day));
 
-    private static void RunPuzzle(int? year, int? day)
+    private static async Task RunPuzzle(int? year, int? day)
     {
         var solutions = new SolutionRepository();
         year ??= solutions.GetIncompleteOrMostRecentYear();
@@ -41,6 +41,6 @@ class Program
             eo.Exit();
         }
         else
-            new SolutionExecutor().Run(target);
+            await new SolutionExecutor().Run(target);
     }
 }

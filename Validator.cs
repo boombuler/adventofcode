@@ -48,7 +48,7 @@ internal class Validator : ScreenBase
 
     private const int RESULT_WIDTH = 25 + 2;
 
-    public void Run(IEnumerable<ISolution> solutions)
+    public async Task Run(IEnumerable<ISolution> solutions)
     {
         var years = solutions.GroupBy(s => s.Year).OrderBy(g => g.Key);
 
@@ -65,12 +65,12 @@ internal class Validator : ScreenBase
                 Console<Default>().WriteLine("");
             }
 
-            RunYear(year.Key, year, col);
+            await RunYear(year.Key, year, col);
             col = (col + 1) % columns;
         }
     }
 
-    private void RunYear(int year, IEnumerable<ISolution> solutions, int column)
+    private async Task RunYear(int year, IEnumerable<ISolution> solutions, int column)
     {
         var (x, y) = System.Console.GetCursorPosition();
         y -= 4;
@@ -87,24 +87,24 @@ internal class Validator : ScreenBase
         {
             var offset = solution.Day - day++;
             Console<ValidateOut>().Write(new string(' ', offset));
-            Console<ValidateOut>().Write(Validate(solution));
+            Console<ValidateOut>().Write(await Validate(solution));
         }
         Console<Default>().WriteLine("");
     }
 
-    private bool Validate(ISolution solution)
+    private async Task<bool> Validate(ISolution solution)
     {
         try
         {
             var output = new Output();
             var (res1, res2) = fResults.GetResults(solution);
 
-            var p1 = solution.Part1(output);
+            var p1 = await solution.Part1(output);
             if (output.Failed || (!string.IsNullOrEmpty(res1) && Convert.ToString(p1) != res1))
                 return false;
             if (solution.Day < 25)
             {
-                var p2 = solution.Part2(output);
+                var p2 = await solution.Part2(output);
                 if (output.Failed | (!string.IsNullOrEmpty(res2) && Convert.ToString(p2) != res2))
                     return false;
             }

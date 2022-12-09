@@ -8,12 +8,12 @@ class Benchmarker : ScreenBase
     private void WriteLine(string s)
         => Console<DefaultOut>().WriteLine(s);
 
-    private static TimeSpan Measure(Action actn)
+    private static async Task<TimeSpan> Measure(Func<Task<string>> actn)
     {
         var sw = Stopwatch.StartNew();
         try
         {
-            actn();
+            await actn();
         }
         finally
         {
@@ -22,7 +22,7 @@ class Benchmarker : ScreenBase
         return sw.Elapsed;
     }
 
-    public void Run(IEnumerable<ISolution> solutions)
+    public async Task Run(IEnumerable<ISolution> solutions)
     {
         solutions = solutions.OrderBy(s => s.Year).ThenBy(s => s.Day);
         if (!solutions.Any())
@@ -48,7 +48,7 @@ class Benchmarker : ScreenBase
             }
 
             var sb = new StringBuilder();
-            var e1 = Measure(() => solution.Part1(null));
+            var e1 = await Measure(() => solution.Part1(null));
             total += e1;
             sb.Append("│  ")
                 .AppendFormat("{0,2}", solution.Day)
@@ -57,7 +57,7 @@ class Benchmarker : ScreenBase
                 .Append(" │ ");
             if (solution.Day != 25)
             {
-                var e2 = Measure(() => solution.Part2(null));
+                var e2 = await Measure(() => solution.Part2(null));
                 total += e2;
                 sb.Append(e2.ToString("mm\\:ss\\.fff"));
             }

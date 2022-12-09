@@ -6,15 +6,34 @@ using System.Net.Http;
 
 abstract class Solution : Solution<long?> { }
 abstract class Solution<TSolution> : Solution<TSolution, TSolution> { }
-abstract class Solution<TSolution1, TSolution2> : ISolution
+
+abstract class Solution<TSolution1, TSolution2> : AsyncSolution<TSolution1, TSolution2>, ISolution
+{
+    #region ISolution
+
+    protected abstract TSolution1 Part1();
+    protected virtual TSolution2 Part2() => default;
+
+    Task<string> ISolution.Part1(IOutput output) => Run(output, Part1);
+    Task<string> ISolution.Part2(IOutput output) => Run(output, Part2);
+
+    private async Task<string> Run<T>(IOutput o, Func<T> actn)
+    {
+        using (UseOutput(o))
+            return Convert.ToString(actn());
+    }
+
+    #endregion
+}
+abstract class AsyncSolution<TSolution1, TSolution2> 
 {
     private static readonly Regex TrailingInt = new(@"\d+$", RegexOptions.Compiled);
     public virtual int Year => int.Parse(TrailingInt.Match(GetType().Namespace).Value); // Override when this throws an exception
     public virtual int Day => int.Parse(TrailingInt.Match(GetType().Name).Value); // Override when this throws an exception
 
-    private IOutput fOutput;
+    private readonly AsyncLocal<IOutput> fOutput = new AsyncLocal<IOutput>();
 
-    public Solution()
+    public AsyncSolution()
     {
         fInput = new Lazy<string>(() => LoadInput());
     }
@@ -25,7 +44,7 @@ abstract class Solution<TSolution1, TSolution2> : ISolution
     {
         const string SESSION_COOKIE_FILE = "Session.user";
         string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
-        if (!File.Exists(relPath) && File.Exists(SESSION_COOKIE_FILE))
+        if (!File.Exists(relPath) && File.Exists(SESSION_COOKIE_FILE) && DateTime.Today >= new DateTime(Year, 12, Day))
         {
             var baseAddress = new Uri("https://adventofcode.com");
             var cookieContainer = new CookieContainer();
@@ -43,7 +62,15 @@ abstract class Solution<TSolution1, TSolution2> : ISolution
                 using var fs = File.Create(relPath);
                 inputData.CopyTo(fs);
             }
+            else
+                Error($"Failed to load input: {response.Content.ReadAsStringAsync().Result}");
         }
+        if (!File.Exists(relPath))
+        {
+            Error("No Input available!");
+            return string.Empty;
+        }
+
         return File.ReadAllText(relPath).ReplaceLineEndings("\n").TrimEnd('\n');
     }
 
@@ -70,46 +97,26 @@ abstract class Solution<TSolution1, TSolution2> : ISolution
 
     #endregion
 
-    #region Execution
-    protected abstract TSolution1 Part1();
-    protected virtual TSolution2 Part2() => default;
-
-    #endregion
-
-    #region ISolution
-
-    string ISolution.Part1(IOutput output) => Run(output, Part1);
-    string ISolution.Part2(IOutput output) => Run(output, Part2);
-
-    private string Run<T>(IOutput o, Func<T> actn)
-    {
-        var oldOut = fOutput;
-        try
-        {
-            fOutput = o;
-            return Convert.ToString(actn());
-        }
-        finally
-        {
-            fOutput = oldOut;
-        }
-    }
-
-    #endregion
-
     #region Assertions
 
+    protected IDisposable UseOutput(IOutput output)
+    {
+        var old = fOutput.Value;
+        fOutput.Value = output;
+        return new Disposable(() => fOutput.Value = old);
+    }
+
     protected void Error(string msg)
-        => fOutput?.Error(msg);
+        => fOutput.Value?.Error(msg);
 
     protected void Debug(object msg)
-        => fOutput?.Debug(msg);
+        => fOutput.Value?.Debug(msg);
 
     protected void Assert<T>(T actual, T target, string name = null)
-        => fOutput?.Assertion(name, Equals(actual, target), $"expected {target} got {actual}");
+        => fOutput.Value?.Assertion(name, Equals(actual, target), $"expected {target} got {actual}");
 
     protected void Assert(bool result, string name = null)
-        => fOutput?.Assertion(name, result, null);
+        => fOutput.Value?.Assertion(name, result, null);
 
     #endregion
 }

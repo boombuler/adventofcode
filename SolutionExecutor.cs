@@ -14,7 +14,7 @@ class SolutionExecutor : ScreenBase, IOutput
 
     #endregion
 
-    public void Run(ISolution solution)
+    public async Task Run(ISolution solution)
     {
         try
         {
@@ -24,7 +24,7 @@ class SolutionExecutor : ScreenBase, IOutput
             WriteLn<DefaultOut>(null);
 
             WriteLn<DefaultOut>("-- Part 1 --");
-            var p1 = solution.Part1(this);
+            var p1 = await solution.Part1(this);
             WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
             WriteLn<DefaultOut>(null);
             WriteLn<DefaultOut>(null);
@@ -35,7 +35,7 @@ class SolutionExecutor : ScreenBase, IOutput
                 fAssertionCounter = 1;
                 WriteLn<DefaultOut>("-- Part 2 --");
 
-                p2 = solution.Part2(this);
+                p2 = await solution.Part2(this);
                 if (!string.IsNullOrEmpty(p2))
                     WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
                 WriteLn<DefaultOut>(string.Empty);
