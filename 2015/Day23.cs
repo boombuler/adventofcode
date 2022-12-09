@@ -2,63 +2,50 @@
 
 class Day23 : Solution
 {
-    enum OpCode
+    record VM(long A, long B, int PC)
     {
-        hlf,
-        tpl,
-        inc,
-        jmp,
-        jie,
-        jio
-    }
-    enum Register { a, b }
+        public static readonly VM Empty = new VM(0, 0, 0);
 
-    class VM : AsmVM<OpCode>
-    {
-        public VM(string code)
-            : base(code)
+        public VM Run(string input)
         {
-        }
-
-        private long this[Register r]
-        {
-            get => base[r.ToString()];
-            set => base[r.ToString()] = value;
-        }
-
-        public long RunProgram(Register reg, long initialA = 0)
-        {
-            this[Register.a] = initialA;
-            while (!Finished)
+            var code = input.Lines().Select(Compile).ToList();
+            var s = this;
+            while (s.PC < code.Count)
             {
-                switch (OpCode)
-                {
-                    case OpCode.hlf: X /= 2; break;
-                    case OpCode.tpl: X *= 3; break;
-                    case OpCode.inc: X += 1; break;
-                    case OpCode.jmp:
-                        PC = (PC - 1) + (int)X;
-                        break;
-                    case OpCode.jie:
-                        if (X % 2 == 0)
-                            PC = (PC - 1) + (int)Y;
-                        break;
-                    case OpCode.jio:
-                        if (X == 1)
-                            PC = (PC - 1) + (int)Y;
-                        break;
-                }
-                PC++;
+                s = code[s.PC](s);
+                s = s with { PC = s.PC + 1 };
             }
-            return this[reg];
+            return s;
+        }
+
+        private static Func<VM, VM> Compile(string operation)
+        {
+            static Func<VM, VM> Jump(int offset, Func<VM, bool> condition = null) 
+                => s => (condition?.Invoke(s) ?? true) ? s with { PC = s.PC - 1 + offset } : s;
+
+            return operation.Replace(",", string.Empty).Split(' ') switch
+            {
+                ["hlf", "a"] => s => s with { A = s.A / 2 },
+                ["hlf", "b"] => s => s with { B = s.B / 2 },
+                ["tpl", "a"] => s => s with { A = s.A * 3 },
+                ["tpl", "b"] => s => s with { B = s.B * 3 },
+                ["inc", "a"] => s => s with { A = s.A + 1 },
+                ["inc", "b"] => s => s with { B = s.B + 1 },
+                ["jmp", var off] when int.TryParse(off, out int offset) => Jump(offset),
+                ["jie", "a", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.A % 2 == 0),
+                ["jie", "b", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.B % 2 == 0),
+                ["jio", "a", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.A == 1),
+                ["jio", "b", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.B == 1),
+                _ => throw new NotImplementedException()
+            };
         }
     }
 
     protected override long? Part1()
     {
-        Assert(new VM(Sample()).RunProgram(Register.a), 2);
-        return new VM(Input).RunProgram(Register.b);
+        Assert(VM.Empty.Run(Sample()).A, 2);
+        return VM.Empty.Run(Input).B;
     }
 
-    protected override long? Part2() => new VM(Input).RunProgram(Register.b, 1);
+    protected override long? Part2() => new VM(1,0,0).Run(Input).B;
 }

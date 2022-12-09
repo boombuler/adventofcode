@@ -4,11 +4,8 @@ using System.Threading.Channels;
 
 class Day25 : Solution
 {
-    enum OpCode { cpy, inc, dec, jnz, @out };
-
     class VM : AssembunnyVM
     {
-        
         public VM(string code)
             : base(code)
         {
