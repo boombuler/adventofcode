@@ -10,7 +10,7 @@ class Day24 : Solution
     record Bridge
     {
         public int Tip { get; private init; }
-        public ImmutableHashSet<Connector> Connections { get; private init; } = ImmutableHashSet<Connector>.Empty;
+        public ImmutableList<Connector> Connections { get; private init; } = ImmutableList<Connector>.Empty;
 
         public int Strength { get; private init; }
         public int Length => Connections.Count;
@@ -35,7 +35,7 @@ class Day24 : Solution
         while (open.TryPop(out var bridge))
         {
             bool done = true;
-            foreach (var option in connections[bridge.Tip].Where(i => !bridge.Connections.Contains(i)))
+            foreach (var option in connections[bridge.Tip].Except(bridge.Connections))
             {
                 open.Push(bridge.Push(option));
                 done = false;
