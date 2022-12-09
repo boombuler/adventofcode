@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2016;
 
-using System.Security.Cryptography;
-
 class Day17 : Solution<string, long?>
 {
     private static readonly Point2D Target = new(3, 3);

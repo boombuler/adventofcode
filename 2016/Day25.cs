@@ -1,39 +1,33 @@
 ﻿namespace AdventOfCode._2016;
 
+using System.Threading.Channels;
+
 class Day25 : Solution
 {
     enum OpCode { cpy, inc, dec, jnz, @out };
 
-    class VM : AsmVM<OpCode>
+    class VM : AssembunnyVM
     {
+        
         public VM(string code)
             : base(code)
-        { }
+        {
+        }
 
         public IEnumerable<int> RunCode(int a)
         {
-            this["a"] = a;
-
+            Registers[0] = a;
             var prevStates = new HashSet<(long a, long b, long c, long d, int pc)>();
 
             while (!Finished)
             {
-                if (!prevStates.Add((this["a"], this["b"], this["c"], this["d"], PC)))
+                if (!prevStates.Add((Registers[0], Registers[1], Registers[2], Registers[3], PC)))
                     yield break; // since this state was already reached, everything after this would repeat the pattern.
 
-                switch (OpCode)
-                {
-                    case OpCode.cpy: Y = X; break;
-                    case OpCode.inc: X++; break;
-                    case OpCode.dec: X--; break;
-                    case OpCode.jnz: // jnz x y jumps to an instruction y away(positive means forward; negative means backward), but only if x is not zero.
-                        if (X != 0)
-                            PC += (int)(Y - 1);
-                        break;
-                    case OpCode.@out:
-                        yield return (int)X;
-                        break;
-                }
+                Operation(this);
+                if (Output.TryRead(out var value))
+                    yield return (int)value;
+
                 PC++;
             }
         }
