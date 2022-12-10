@@ -33,6 +33,8 @@ abstract class AsyncSolution<TSolution1, TSolution2>
 
     private readonly AsyncLocal<IOutput> fOutput = new AsyncLocal<IOutput>();
 
+    private DateTime PuzzleStartTime => new DateTime(Year, 12, Day, 5, 0, 0, DateTimeKind.Utc);
+
     public AsyncSolution()
     {
         fInput = new Lazy<string>(() => LoadInput());
@@ -44,7 +46,7 @@ abstract class AsyncSolution<TSolution1, TSolution2>
     {
         const string SESSION_COOKIE_FILE = "Session.user";
         string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
-        if (!File.Exists(relPath) && File.Exists(SESSION_COOKIE_FILE) && DateTime.Today >= new DateTime(Year, 12, Day))
+        if (!File.Exists(relPath) && File.Exists(SESSION_COOKIE_FILE) && DateTime.UtcNow >= PuzzleStartTime)
         {
             var baseAddress = new Uri("https://adventofcode.com");
             var cookieContainer = new CookieContainer();
