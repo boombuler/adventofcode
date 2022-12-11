@@ -54,18 +54,7 @@ class Day12 : Solution
         return moons.Sum(m => m.TotalEnergy);
     }
 
-    private static long LCM(long a, long b)
-    {
-        long mult = a * b;
-        while (a != b)
-        {
-            if (a > b)
-                a -= b;
-            else
-                b -= a;
-        }
-        return mult / a;
-    }
+
 
     private static long GetLoopCount(string input)
     {
@@ -85,7 +74,7 @@ class Day12 : Solution
             loop++;
 
             if (directions.RemoveAll(d => d()) > 0)
-                result = LCM(result, loop);
+                result = MathExt.LCM(result, loop);
         }
         return result * 2;
     }

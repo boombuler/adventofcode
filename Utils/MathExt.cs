@@ -10,6 +10,18 @@ class MathExt
             (a, b) = (b, a % b);
         return a;
     }
+    public static long LCM(long a, long b)
+    {
+        long mult = a * b;
+        while (a != b)
+        {
+            if (a > b)
+                a -= b;
+            else
+                b -= a;
+        }
+        return mult / a;
+    }
 
     public static BigInteger Mod(BigInteger a, BigInteger m) => ((a % m) + m) % m;
 
