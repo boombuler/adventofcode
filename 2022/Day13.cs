@@ -4,80 +4,75 @@ using System.Diagnostics;
 
 class Day13 : Solution
 {
-    class Node : IComparable<Node>
+    class Packet : IComparable<Packet>
     {
         public int? Value { get; }
-        public ImmutableList<Node> Children { get; }
+        public ImmutableList<Packet> Children { get; }
 
-        public Node(int value) 
-            : this(value, ImmutableList<Node>.Empty) { }
-        public Node(ImmutableList<Node> children) 
+        public Packet(int value) 
+            : this(value, ImmutableList<Packet>.Empty) { }
+        public Packet(ImmutableList<Packet> children) 
             : this(null, children) { }
-        private Node(int? value, ImmutableList<Node> children)
+        private Packet(int? value, ImmutableList<Packet> children)
         { 
             Value = value;
             Children = children;
         }
         
-        public int CompareTo(Node node)
+        public int CompareTo(Packet node)
         {
             if (Value.HasValue && node.Value.HasValue)
-                return Value.Value.CompareTo(node.Value);
+                return this.Value.Value - node.Value.Value;
 
-            var self = this.Value.HasValue ? ImmutableList<Node>.Empty.Add(this) : this.Children;
-            var other = node.Value.HasValue ? ImmutableList<Node>.Empty.Add(node) : node.Children;
+            var self = this.Value.HasValue ? ImmutableList<Packet>.Empty.Add(this) : this.Children;
+            var other = node.Value.HasValue ? ImmutableList<Packet>.Empty.Add(node) : node.Children;
 
-            foreach(var (a,b) in self.Zip(other))
-            {
-                var cmp = a.CompareTo(b);
-                if (cmp != 0) 
-                    return cmp;
-            }
-            return self.Count.CompareTo(other.Count);
+            return self.Zip(other)
+                .Select((n) => n.First.CompareTo(n.Second))
+                .FirstOrDefault(c => c != 0, self.Count - other.Count);
         }
    
-        public static Node Parse(string text)
+        public static Packet Parse(string text)
         {
-            Node ParseFrom(StringReader sr)
+            Packet ReadNum(StringReader sr)
+                => sr.TryReadWhile(char.IsDigit, out var n) ? new Packet(int.Parse(n)) : null;
+
+            Packet ReadList(StringReader sr)
             {
-                var items = ImmutableList<Node>.Empty;
-                while(sr.TryRead(out char c) && c != ']')
+                var items = ImmutableList<Packet>.Empty;
+                sr.Read();// Skip leading [
+                while (true)
                 {
-                    if (c == ',')
-                        continue;
-                    if (c == '[')
-                        items = items.Add(ParseFrom(sr));
-                    else 
+                    switch(sr.Peek())
                     {
-                        var num = new StringBuilder().Append(c);
-                        while (sr.TryRead(out var o) && char.IsDigit(o))
-                            num.Append(o);
-                        items = items.Add(new Node(int.Parse(num.ToString())));
-                    } 
+                        case ',': sr.Read(); break;
+                        case ']':
+                            sr.Read(); 
+                            return new Packet(items);
+                        case '[':
+                            items = items.Add(ReadList(sr)); break;
+                        default:
+                            items = items.Add(ReadNum(sr)); break;
+                    }
                 }
-                return new Node(items);
             }
             using var sr = new StringReader(text);
-            sr.Read(); // Skip leading [
-            return ParseFrom(sr);
+            return ReadList(sr);
         }
     }
 
+    private IEnumerable<Packet> ReadPackets(string input)
+        => input.Lines().Where(x => !string.IsNullOrEmpty(x)).Select(Packet.Parse);
+
     private long SumIndicesOfSortedPairs(string input)
-        => input.Split("\n\n")
-            .Select(grp => grp.Lines().Select(Node.Parse).ToArray())
+        => ReadPackets(input).Chunk(2)
             .Select((p, i) => (Ordered: p[0].CompareTo(p[1]) < 0, Idx: i + 1))
             .Where(n => n.Ordered).Sum(n => n.Idx);
 
     private long GetDividerIndices(string input)
     {
-        var dividers = new List<Node>()
-        {
-            Node.Parse("[[2]]"), 
-            Node.Parse("[[6]]")
-        };
-        var nodes = input.Split("\n\n").SelectMany(grp => grp.Lines().Select(Node.Parse)).Concat(dividers)
-            .OrderBy(Functional.Identity).ToList();
+        var dividers = new [] { Packet.Parse("[[2]]"),  Packet.Parse("[[6]]") };
+        var nodes = ReadPackets(input).Concat(dividers).OrderBy(Functional.Identity).ToList();
         return dividers.Select(d => nodes.IndexOf(d) + 1).Aggregate((a, b) => a * b);
     }
 
