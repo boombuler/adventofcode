@@ -1,7 +1,6 @@
 ﻿namespace AdventOfCode._2022;
-using System;
+
 using System.Collections;
-using System.Linq;
 
 class Day14 : Solution
 {
