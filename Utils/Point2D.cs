@@ -62,4 +62,10 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
         var (minY, maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
         return (pt) => pt.X >= minX && pt.X <= maxX && pt.Y >= minY && pt.Y <= maxY;
     }
+
+    public static Point2D Parse(string s)
+    {
+        var parts = s.Split(',');
+        return new Point2D(long.Parse(parts[0]), long.Parse(parts[1]));
+    }
 }
