@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2022;
 
+using System;
+
 class Day15 : Solution
 {
     record Range(long Min, long Max);
@@ -8,8 +10,8 @@ class Day15 : Solution
     {
         public Range ScanOnLine(long y)
         {
-            var dLine = Location.ManhattanDistance(Beacon) - Math.Abs(Location.Y - y);
-            return (dLine < 0) ? null : new Range(Location.X - dLine, Location.X + dLine);
+            var dx = Location.ManhattanDistance(Beacon) - Math.Abs(Location.Y - y);
+            return (dx < 0) ? null : new Range(Location.X - dx, Location.X + dx);
         }
     }
 
@@ -22,23 +24,11 @@ class Day15 : Solution
            );
 
     private IEnumerable<Range> Ranges(IEnumerable<Sensor> Sensors, int y)
-    {
-        Range cur = null;
-        foreach(var range in Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min))
-        {
-            if (cur == null) 
-                cur = range;
-            else if (cur.Min <= range.Min && cur.Max >= range.Min)
-                cur = new Range(cur.Min, Math.Max(cur.Max, range.Max));
-            else
-            {
-                yield return cur;
-                cur = range;
-            }
-        }
-        if (cur != null)
-            yield return cur;
-    }
+        => Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min)
+            .Aggregate(ImmutableStack<Range>.Empty,
+                (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) : 
+                    s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))))
+            .Reverse();
     
     private long CountScannedPoints(string input, int y) 
         => Ranges(Sensors(input), y).Sum(r => r.Max-r.Min);
