@@ -17,7 +17,7 @@ class Day07 : Solution<string, int>
 
         public bool TryDequeueTask(out char task)
         {
-            task = fOpen.Where(n => !fDependencies.Any(x => x.Name == n)).OrderBy(n => n).FirstOrDefault();
+            task = fOpen.Where(n => !fDependencies.Any(x => x.Name == n)).Order().FirstOrDefault();
             if (task != '\0')
             {
                 fOpen.Remove(task);

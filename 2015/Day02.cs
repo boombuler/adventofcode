@@ -28,7 +28,7 @@ class Day02 : Solution
         }
 
         public long GetRibbonLength() =>
-            new[] { Width, Length, Height }.OrderBy(x => x).Take(2).Select(s => s * 2).Sum()
+            new[] { Width, Length, Height }.Order().Take(2).Select(s => s * 2).Sum()
             + (Width * Length * Height);
 
     }

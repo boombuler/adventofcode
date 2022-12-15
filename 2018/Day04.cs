@@ -12,7 +12,7 @@ class Day04 : Solution
         var curMinute = 0;
         bool awake = true;
         var result = new List<SleepingMinutes>();
-        foreach (var log in input.Lines().OrderBy(l => l))
+        foreach (var log in input.Lines().Order())
         {
             var t = DateTime.ParseExact(log.Substring(1, 16), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             var action = log[19..];

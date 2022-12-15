@@ -72,7 +72,7 @@ class Day13 : Solution
     private long GetDividerIndices(string input)
     {
         var dividers = new [] { Packet.Parse("[[2]]"),  Packet.Parse("[[6]]") };
-        var nodes = ReadPackets(input).Concat(dividers).OrderBy(Functional.Identity).ToList();
+        var nodes = ReadPackets(input).Concat(dividers).Order().ToList();
         return dividers.Select(d => nodes.IndexOf(d) + 1).Aggregate((a, b) => a * b);
     }
 

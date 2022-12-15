@@ -74,14 +74,14 @@ public static class RegexHelper
 
     private static bool TryCreateConstructorFactory<T>(Regex regex, out Func<string, (bool, T)> factory)
     {
-        var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).OrderBy(n => n).ToList();
+        var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).Order().ToList();
         var constructor =
             typeof(T).GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance)
                 .FirstOrDefault(ctor =>
                     ctor
                         .GetParameters()
                         .Select(p => p.Name)
-                        .OrderBy(n => n)
+                        .Order()
                         .SequenceEqual(groupNames, StringComparer.OrdinalIgnoreCase)
                 );
         factory = null;

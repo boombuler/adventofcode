@@ -59,7 +59,7 @@ class Day11 : Solution
                 }
             }
         }
-        return activity.OrderByDescending(Functional.Identity).Take(2).Aggregate((a,b) => a*b);
+        return activity.OrderDescending().Take(2).Aggregate((a,b) => a*b);
     }
 
     protected override long? Part1() 

@@ -10,7 +10,7 @@ class Day04 : Solution
     protected override long? Part2()
         => Input.Lines()
             .Select(l => l.Split(' ')
-                .Select(w => new string(w.OrderBy(c => c).ToArray()))
+                .Select(w => new string(w.Order().ToArray()))
                 .ToArray()
             )
             .Where(words => words.Length == words.Distinct().Count())

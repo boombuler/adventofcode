@@ -31,7 +31,7 @@ class Day10 : Solution
         var completionLines = input.Lines().Select(CheckLine)
             .Where(r => r.AutoComplete.HasValue)
             .Select(r => r.AutoComplete.Value)
-            .OrderBy(v => v)
+            .Order()
             .ToList();
         return completionLines[completionLines.Count / 2];
     }

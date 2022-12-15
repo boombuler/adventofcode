@@ -25,7 +25,7 @@ class Day10 : Solution
 
     private static long[] GetDifferences(string inputs)
     {
-        var adapterChain = inputs.Lines().Select(long.Parse).OrderBy(x => x);
+        var adapterChain = inputs.Lines().Select(long.Parse).Order();
         var result = new long[4] { 0, 0, 0, 1 }; // Add last adapter to device
         long lastJoltage = 0;
         foreach (var adapter in adapterChain)
@@ -41,7 +41,7 @@ class Day10 : Solution
 
     private long CoundValidAdapterChains(string inputs)
     {
-        var adapterChain = inputs.Lines().Select(long.Parse).OrderBy(x => x).ToArray();
+        var adapterChain = inputs.Lines().Select(long.Parse).Order().ToArray();
         return CoundValidAdapterChains(adapterChain, 0, adapterChain.Length, new ChainCache());
     }
 
