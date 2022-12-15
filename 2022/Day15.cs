@@ -27,30 +27,22 @@ class Day15 : Solution
         => Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min)
             .Aggregate(ImmutableStack<Range>.Empty,
                 (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) : 
-                    s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))))
-            .Reverse();
+                    s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))));
     
     private long CountScannedPoints(string input, int y) 
         => Ranges(Sensors(input), y).Sum(r => r.Max-r.Min);
 
-    private long FindFreq(string input, int max)
+    private long? FindFreq(string input, int max)
     {
         var sens = Sensors(input).ToList();
-        
-        for (int y = 0; y <= max; y++)
-        {
-            long x = 0;
-            foreach(var r in Ranges(sens, y))
-            {
-                if (r.Min > x)
-                    return (x * 4000000) + y;
-                if (x < r.Max)
-                    x = r.Max + 1;
-                if (x > max)
-                    break;
-            }
-        }
-        throw new InvalidDataException("No Solution!");
+
+        return Enumerable.Range(0, max + 1)
+            .Select(y => y + (4000000 * (
+                Ranges(sens, y)
+                    .Where(r => r.Min <= max && r.Max >= 0)
+                    .OrderBy(r => r.Min)
+                    .Skip(1).FirstOrDefault()?.Min - 1))
+            ).First(r => r.HasValue);
     }
 
     protected override long? Part1()
