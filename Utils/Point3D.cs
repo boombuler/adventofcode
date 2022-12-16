@@ -26,4 +26,15 @@ public record Point3D(long X, long Y, long Z)
 
     public void Deconstruct(out Point2D pt, out long z)
         => (pt, z) = ((X, Y), Z);
+
+    public static IEnumerable<Point3D> Range(Point3D min, Point3D max)
+    {
+        (var minX, var maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
+        (var minY, var maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
+        (var minZ, var maxZ) = min.Z < max.Z ? (min.Z, max.Z) : (max.Z, min.Z);
+        for (long x = minX; x <= maxX; x++)
+            for (long y = minY; y <= maxY; y++)
+                for (long z = minZ; z <= maxZ; z++)
+                    yield return new Point3D(x, y, z);
+    }
 }

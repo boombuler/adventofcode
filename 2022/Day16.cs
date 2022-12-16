@@ -10,46 +10,24 @@ class Day16 : Solution
 
     private int[,] Distances(List<Valve> valves)
     {
+
         int[,] distances = new int[valves.Count, valves.Count];
-        for (int s = 0; s < valves.Count; s++)
+        foreach (var p in Point2D.Range((0, 0), (valves.Count - 1, valves.Count - 1)))
+            distances[p.X, p.Y] = (p.X == p.Y) ? 0 :
+                (valves[(int)p.X].Tunnels.Contains(valves[(int)p.Y].Name) ? 1 : int.MaxValue);
+
+        foreach(var (k, i, j) in Point3D.Range((0, 0, 0), (valves.Count - 1, valves.Count - 1, valves.Count - 1)))
         {
-            var sVal = valves[s];
-            for (int t = 0; t < valves.Count; t++)
-            {
-                if (s == t)
-                    distances[s, t] = 0;
-                else
-                {
-                    var tVal = valves[t];
-                    if (sVal.Tunnels.Contains(tVal.Name))
-                        distances[s, t] = 1;
-                    else
-                        distances[s, t] = int.MaxValue;
-                }
-            }
-        }
-
-        for (int k = 0; k < valves.Count; k++)
-        {
-            for (int i = 0; i < valves.Count; i++)
-            {
-                if (k == i || distances[i, k] == int.MaxValue)
-                    continue;
-
-                for (int j = 0; j < valves.Count; j++)
-                {
-                    if (k == j || distances[k, j] == int.MaxValue)
-                        continue;
-
-                    var d = distances[i, k] + distances[k, j];
-                    if (distances[i, j] > d)
-                        distances[i, j] = d;
-                }
-            }
+            if (k == i || k == j || distances[k, j] == int.MaxValue || distances[i, k] == int.MaxValue)
+                continue;
+            var d = distances[i, k] + distances[k, j];
+            if (distances[i, j] > d)
+                distances[i, j] = d;
         }
         return distances;
     }
 
+    record struct State(int Time, int Location);
 
     public long GetTotalFlowAmount(string input, int maxMinutes, bool withElephant)
     {
@@ -58,27 +36,22 @@ class Day16 : Solution
         var dists = Distances(valves);
         var startPt = valves.FindIndex(v => v.Name == "AA");        
         
-        ((int, int) a, (int, int)? b) SortArgs((int Time, int Location) a, (int Time, int Location)? b)
-        {
-            if (b.HasValue && (b.Value.Time > a.Time || (b.Value.Time == a.Time && b.Value.Location > a.Location)))
-                return (b.Value, a);
-            return (a, b);
-        }
+        (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location ) ? (a, b) : (b, a);
 
-        Func<(int, int), (int, int)?, long, long> getFlowAmount = null;
-        long CalcFlowAmount((int Time, int Location) a, (int, int)? b, long openValves)
+        Func<State, State, long, long> getFlowAmount = null;
+        long CalcFlowAmount(State a, State b, long openValves)
             => (
                 from target in targetValves
                 where (target.Mask & openValves) == 0
                 let flowTime = a.Time - dists[a.Location, target.Index] - 1
                 where flowTime > 0
-                let args = SortArgs((flowTime, target.Index), b)
+                let args = SortArgs(new State(flowTime, target.Index), b)
                 select (flowTime * valves[target.Index].FlowRate) + getFlowAmount(args.a, args.b, openValves | target.Mask)
              ).DefaultIfEmpty(0).Max();
 
-        getFlowAmount = new Func<(int, int), (int, int)?, long, long>(CalcFlowAmount).Memorize();
+        getFlowAmount = new Func<State, State, long, long>(CalcFlowAmount).Memorize();
 
-        return CalcFlowAmount((maxMinutes, startPt), withElephant ? (maxMinutes, startPt) : null, 0);
+        return CalcFlowAmount(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt) , 0);
     }
 
     protected override long? Part1()
