@@ -37,4 +37,39 @@ public record Point3D(long X, long Y, long Z)
                 for (long z = minZ; z <= maxZ; z++)
                     yield return new Point3D(x, y, z);
     }
+
+    public static Func<Point3D, bool> InBounds(Point3D min, Point3D max)
+    {
+        var (minX, maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
+        var (minY, maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
+        var (minZ, maxZ) = min.Z < max.Z ? (min.Z, max.Z) : (max.Z, min.Z);
+        return (pt) => 
+            pt.X >= minX && pt.X <= maxX && 
+            pt.Y >= minY && pt.Y <= maxY &&
+            pt.Z >= minZ && pt.Z <= maxZ;
+    }
+
+    public IEnumerable<Point3D> Neighbours()
+    {
+        yield return this + (0, 0, 1);
+        yield return this - (0, 0, 1);
+        yield return this + (0, 1, 0);
+        yield return this - (0, 1, 0);
+        yield return this + (1, 0, 0);
+        yield return this - (1, 0, 0);
+    }
+
+    public static Point3D Parse(string s)
+    {
+        var parts = s.Split(',');
+        return new Point3D(long.Parse(parts[0]), long.Parse(parts[1]), long.Parse(parts[2]));
+    }
+
+    public static (Point3D Min, Point3D Max) Bounds(IEnumerable<Point3D> points)
+    {
+        var (minX, maxX) = points.MinMax(p => p.X);
+        var (minY, maxY) = points.MinMax(p => p.Y);
+        var (minZ, maxZ) = points.MinMax(p => p.Z);
+        return (new Point3D(minX, minY, minZ), new Point3D(maxX, maxY, maxZ));
+    }
 }
