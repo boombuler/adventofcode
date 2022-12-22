@@ -17,6 +17,10 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
         => new(a.X * b, a.Y * b);
     public static Point2D operator *(long a, Point2D b)
         => b * a;
+    public static Point2D operator /(Point2D a, long b)
+        => new(a.X/b, a.Y / b);
+    public static Point2D operator %(Point2D a, long b)
+        => new(a.X % b, a.Y % b);
 
     public IEnumerable<Point2D> Neighbours(bool withDiagonal = false)
     {
