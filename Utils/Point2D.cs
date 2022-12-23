@@ -72,4 +72,11 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
         var parts = s.Split(',');
         return new Point2D(long.Parse(parts[0]), long.Parse(parts[1]));
     }
+    
+    public static (Point2D Min, Point2D Max) Bounds(IEnumerable<Point2D> points)
+    {
+        var (minX, maxX) = points.MinMax(p => p.X);
+        var (minY, maxY) = points.MinMax(p => p.Y);
+        return (new Point2D(minX, minY), new Point2D(maxX, maxY));
+    }
 }
