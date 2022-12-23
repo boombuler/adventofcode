@@ -7,113 +7,109 @@ partial class Day21 : Solution
 
     interface IMonkey
     {
-        string Name { get; }
-        long CalcValue(IDictionary<string, IMonkey> monkeys);
-        bool RequiresHumanInput(IDictionary<string, IMonkey> monkeys);
+        long CalcValue();
+        bool RequiresHumanInput();
+        long SolveForHuman(long result);
     }
 
     partial record ValueMonkey(string Name, long Value) : IMonkey
     {
-        public bool RequiresHumanInput(IDictionary<string, IMonkey> monkeys) => Name == HUMAN;
-        public long CalcValue(IDictionary<string, IMonkey> monkeys) => Value;
-        
+        public bool RequiresHumanInput() => Name == HUMAN;
+        public long CalcValue() => Value;
+        public long SolveForHuman(long result) => result;
+
         [GeneratedRegex("(?<Name>\\w+): (?<Value>-?\\d+)")]
         public static partial Regex GetParser();
     }
 
-    partial record ExpressionMonkey(string Name, string Left, string Right, char Operation) : IMonkey
+    partial record MonkeyExpression(string Name, string Left, string Right, char Operation)
     {
         [GeneratedRegex(@"(?<Name>\w+): (?<Left>\w+) (?<Operation>[+\-*/]) (?<Right>\w+)")]
         public static partial Regex GetParser();
+    }
 
-        public long CalcValue(IDictionary<string, IMonkey> monkeys)
+    class ExpressionMonkey : IMonkey
+    {
+        public IMonkey Left { get; set; }
+        public IMonkey Right { get; set; }
+        public MonkeyExpression Expression { get; init; }
+        
+        public long CalcValue()
         {
-            var l = monkeys[Left].CalcValue(monkeys);
-            var r = monkeys[Right].CalcValue(monkeys);
-            return Operation switch
+            var l = Left.CalcValue();
+            var r = Right.CalcValue();
+            return Expression.Operation switch
             {
                 '+' => l + r,
                 '-' => l - r,
-                '*' => l* r,
+                '*' => l * r,
                 '/' => l / r,
                 _ => throw new NotImplementedException()
             };
         }
-        public bool RequiresHumanInput(IDictionary<string, IMonkey> monkeys)
-            => monkeys[Left].RequiresHumanInput(monkeys) || monkeys[Right].RequiresHumanInput(monkeys);
+        
+        public bool RequiresHumanInput()
+            => Left.RequiresHumanInput() || Right.RequiresHumanInput();
+
+        public long SolveForHuman(long result)
+        {
+            var humanLeft = Left.RequiresHumanInput();
+            if (Expression.Name == ROOT)
+                return humanLeft ? Left.SolveForHuman(Right.CalcValue()) : Right.SolveForHuman(Left.CalcValue());
+            switch (Expression.Operation)
+            {
+                case '+':
+                    {
+                        var (hum, fix) = humanLeft ? (Left, Right) : (Right, Left);
+                        return hum.SolveForHuman(result - fix.CalcValue());
+                    }
+                case '*':
+                    {
+                        var (hum, fix) = humanLeft ? (Left, Right) : (Right, Left);
+                        return hum.SolveForHuman(result / fix.CalcValue());
+                    }
+                case '/' when humanLeft:
+                    return Left.SolveForHuman(result * Right.CalcValue());
+                case '/':
+                    return Right.SolveForHuman(Left.CalcValue() / result);
+                case '-' when humanLeft:
+                    return Left.SolveForHuman(result + Right.CalcValue());
+                case '-':
+                    return Right.SolveForHuman(Left.CalcValue() - result);
+            }
+            throw new InvalidOperationException();
+        }
     }
 
-    private IEnumerable<IMonkey> GetMonkeys(string input)
+    private Dictionary<string, IMonkey> GetMonkeys(string input)
     {
+        var result = new Dictionary<string, IMonkey>();
+        
         foreach (var line in input.Lines())
         {
             if (ValueMonkey.GetParser().TryMatch(line, out ValueMonkey vm))
-                yield return vm;
-            else if (ExpressionMonkey.GetParser().TryMatch(line, out ExpressionMonkey em))
-                yield return em;
-            else
-                throw new InvalidOperationException("Unknown Monkey");
+                result[vm.Name] = vm;
+            else if (MonkeyExpression.GetParser().TryMatch(line, out MonkeyExpression me))
+                result[me.Name] = new ExpressionMonkey() { Expression = me };
         }
-    }
-
-    private long GetRootValue(string input)
-    {
-        var monkeys = GetMonkeys(input).ToDictionary(m => m.Name);
-        return monkeys[ROOT].CalcValue(monkeys);
-    }
-
-    private long GetHumanValue(string input)
-    {
-        var monkeys = GetMonkeys(input).ToDictionary(m => m.Name);
-        var root = monkeys[ROOT] as ExpressionMonkey;
-        var (hum, fixVal) = monkeys[root.Left].RequiresHumanInput(monkeys) ? (root.Left, root.Right) : (root.Right, root.Left);
-        var targetValue = monkeys[fixVal].CalcValue(monkeys);
-        var current = monkeys[hum];
-        while (current is ExpressionMonkey em)
+        foreach(var em in result.Values.OfType<ExpressionMonkey>())
         {
-            var (l, r) = (monkeys[em.Left], monkeys[em.Right]);
-            var humanLeft = l.RequiresHumanInput(monkeys);
-            switch (em.Operation)
-            {
-                case '+':
-                    (l, r) = humanLeft ? (l, r) : (r, l);
-                    targetValue -= r.CalcValue(monkeys);
-                    current = l;
-                    break;
-                case '*':
-                    (l, r) = humanLeft ? (l, r) : (r, l);
-                    targetValue /= r.CalcValue(monkeys);
-                    current = l;
-                    break;
-                case '/' when humanLeft:
-                    targetValue *= r.CalcValue(monkeys);
-                    current = l;
-                    break;
-                case '/':
-                    targetValue = l.CalcValue(monkeys) / targetValue;
-                    current = r;
-                    break;
-                case '-' when humanLeft:
-                    targetValue += r.CalcValue(monkeys);
-                    current = l;
-                    break;
-                case '-':
-                    targetValue = l.CalcValue(monkeys) - targetValue;
-                    current = r;
-                    break;
-            }
+            em.Left = result[em.Expression.Left];
+            em.Right = result[em.Expression.Right];
         }
-        return targetValue;
+        return result;
     }
 
     protected override long? Part1()
     {
+        long GetRootValue(string input) => GetMonkeys(input)[ROOT].CalcValue();
         Assert(GetRootValue(Sample()), 152);
         return GetRootValue(Input);
     }
 
     protected override long? Part2()
     {
+        long GetHumanValue(string input) => GetMonkeys(input)[ROOT].SolveForHuman(0);
         Assert(GetHumanValue(Sample()), 301);
         return GetHumanValue(Input);
     }
