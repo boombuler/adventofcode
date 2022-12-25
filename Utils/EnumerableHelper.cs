@@ -63,13 +63,16 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator)
+    public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator, Func<TSeed, bool> @continue = null)
     {
         while (true)
         {
             var (value, nextSeed) = generator(seed);
             yield return value;
-            seed = nextSeed;
+            if (@continue?.Invoke(nextSeed) ?? true)
+                seed = nextSeed;
+            else
+                break;
         }
     }
 
