@@ -37,8 +37,8 @@ class Day16 : Solution
         var startPt = valves.FindIndex(v => v.Name == "AA");        
         
         (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location ) ? (a, b) : (b, a);
-
-        Func<State, State, long, long> getFlowAmount = null;
+        var cache = new Dictionary<(State, State, long), long>();
+        Func<State, State, long, long> getFlowAmount = null; 
         long CalcFlowAmount(State a, State b, long openValves)
             => (
                 from target in targetValves
@@ -48,8 +48,12 @@ class Day16 : Solution
                 let args = SortArgs(new State(flowTime, target.Index), b)
                 select (flowTime * valves[target.Index].FlowRate) + getFlowAmount(args.a, args.b, openValves | target.Mask)
              ).DefaultIfEmpty(0).Max();
-
-        getFlowAmount = new Func<State, State, long, long>(CalcFlowAmount).Memorize();
+        getFlowAmount = (a, b, v) =>
+        {
+            if (!cache.TryGetValue((a, b, v), out var res))
+                res = cache[(a, b, v)] = CalcFlowAmount(a, b, v);
+            return res;
+        };
 
         return CalcFlowAmount(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt) , 0);
     }

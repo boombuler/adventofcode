@@ -82,7 +82,6 @@ class Day19 : Solution
                     return true;
                 }
 
-
                 if (state.TimeLeft <= 1)
                     return 0;
 
