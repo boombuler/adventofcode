@@ -18,27 +18,27 @@ class Day23 : Solution
         int r;
         for (r = 0; r < maxRounds; r++)
         {
-            var proposedMoves = new Dictionary<Point2D, Point2D>();
-            foreach(var elf in elves.Where(e => e.Neighbours(true).Any(elves.Contains)))
-            {
-                for (int m = 0; m < Moves.Length; m++)
-                {
-                    var mv = Moves[(m + r) % Moves.Length];
-                    if (mv.CheckDirections.Select(d => elf + d).Any(elves.Contains))
-                        continue;
-                    var newPos = elf + mv.MoveDirection;
-                    if (!proposedMoves.TryAdd(newPos, elf))
-                        proposedMoves.Remove(newPos);
-                    break;
-                }
-            }
-            if (proposedMoves.Count == 0)
-                break;
-            foreach (var (newPos, oldPos) in proposedMoves)
+            var moves =
+                from elf in elves
+                where elf.Neighbours(true).Any(elves.Contains)
+                let newPos = (
+                    from move in Enumerable.Range(0, Moves.Length).Select(m => Moves[(m + r) % Moves.Length])
+                    where !move.CheckDirections.Select(d => d + elf).Any(elves.Contains)
+                    select elf + move.MoveDirection
+                ).FirstOrDefault(elf)
+                where newPos != elf
+                group (elf, newPos) by newPos into targetPositions
+                where targetPositions.Count() == 1
+                select targetPositions.First();
+            bool moved = false;
+            foreach(var (oldPos, newPos) in moves)
             {
                 elves.Remove(oldPos);
                 elves.Add(newPos);
+                moved = true;
             }
+            if (!moved)
+                break;
         }
         var b = Point2D.Bounds(elves);
         var dx = b.Max.X - b.Min.X + 1;
