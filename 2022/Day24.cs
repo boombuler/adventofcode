@@ -17,7 +17,7 @@ class Day24 : Solution
             'v' => (0, 1),
             _ => Point2D.Origin
         })).Where(b=> b.Direction != Point2D.Origin).ToList();
-        var (_, max) = Point2D.Bounds(map.Keys);
+        var (_, max) = Rect2D.AABB(map.Keys);
 
         var blizLoop = (int)MathExt.LCM(max.X - 1, max.Y - 1);
         var mapSize = max - (1, 1);

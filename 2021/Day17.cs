@@ -7,7 +7,7 @@ class Day17 : Solution
         var coords = descrp.Split("x=")[1].Split(", y=").SelectMany(n => n.Split("..").Select(long.Parse)).ToArray();
         var tMin = new Point2D(coords[0], coords[2]);
         var tMax = new Point2D(coords[1], coords[3]);
-        var isInBounds = Point2D.InBounds(tMin, tMax);
+        var aabb = Rect2D.AABB(tMin, tMax);
 
         var peek = 0L;
         var count = 0;
@@ -21,7 +21,7 @@ class Day17 : Solution
             var max = 0L;
             while (pt.Y >= tMin.Y && pt.X <= tMax.X)
             {
-                if (isInBounds(pt))
+                if (aabb.Contains(pt))
                 {
                     peek = Math.Max(peek, max);
                     count++;

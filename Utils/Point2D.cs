@@ -62,23 +62,9 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
 
     public Point3D WithZ(long z) => new(X, Y, z);
 
-    public static Func<Point2D, bool> InBounds(Point2D min, Point2D max)
-    {
-        var (minX, maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
-        var (minY, maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
-        return (pt) => pt.X >= minX && pt.X <= maxX && pt.Y >= minY && pt.Y <= maxY;
-    }
-
     public static Point2D Parse(string s)
     {
         var parts = s.Split(',');
         return new Point2D(long.Parse(parts[0]), long.Parse(parts[1]));
-    }
-    
-    public static (Point2D Min, Point2D Max) Bounds(IEnumerable<Point2D> points)
-    {
-        var (minX, maxX) = points.MinMax(p => p.X);
-        var (minY, maxY) = points.MinMax(p => p.Y);
-        return (new Point2D(minX, minY), new Point2D(maxX, maxY));
     }
 }

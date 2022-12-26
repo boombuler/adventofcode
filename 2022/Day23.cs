@@ -40,10 +40,8 @@ class Day23 : Solution
             if (!moved)
                 break;
         }
-        var b = Point2D.Bounds(elves);
-        var dx = b.Max.X - b.Min.X + 1;
-        var dy = b.Max.Y - b.Min.Y + 1;
-        return (r+1, (dx * dy) - elves.Count);
+        var b = Rect2D.AABB(elves);
+        return (r+1, (b.Width * b.Height) - elves.Count);
     }
 
     protected override long? Part1()

@@ -10,12 +10,13 @@ class Day11 : Solution<int>
         IEnumerable<Point2D> Flashing(Dictionary<Point2D, int> cells)
             => cells.Where(kvp => kvp.Value > 9 && !flashed.Contains(kvp.Key)).Select(kvp => kvp.Key);
 
+        var bounds = new Rect2D((0, 0), (9, 9));
         while (Flashing(cells).Any())
         {
             foreach (var pt in Flashing(cells))
             {
                 flashed.Add(pt);
-                foreach (var n in pt.Neighbours(withDiagonal: true).Where(Point2D.InBounds((0, 0), (9, 9))))
+                foreach (var n in pt.Neighbours(withDiagonal: true).Where(bounds.Contains))
                     cells[n]++;
             }
         }
