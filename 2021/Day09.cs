@@ -19,7 +19,8 @@ class Day09 : Solution
     {
         var map = Input.Cells().Where(kvp => kvp.Value != '9').Select(kvp => kvp.Key).ToHashSet();
         var open = new Stack<Point2D>();
-        var basins = new MaxHeap<int>();
+        var basins = new PriorityQueue<long, long>();
+        basins.EnqueueRange([(0, -1), (0, -1), (0, -1)]);
 
         while (map.Count > 0)
         {
@@ -34,8 +35,8 @@ class Day09 : Solution
                 foreach (var n in c.Neighbours())
                     open.Push(n);
             }
-            basins.Push(count);
+            basins.EnqueueDequeue(count, count);
         }
-        return basins.Pop() * basins.Pop() * basins.Pop();
+        return basins.Dequeue() * basins.Dequeue() * basins.Dequeue();
     }
 }

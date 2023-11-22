@@ -119,13 +119,10 @@ class Day23 : Solution
         }
 
         var seen = new HashSet<ImmutableArray<Amphipod>>(new AmphipodArrayComparer());
-        var open = new MinHeap<(ImmutableArray<Amphipod> Positions, int TotalCost)>(
-            Comparer<(ImmutableArray<Amphipod>, int TotalCost)>.Create((a,b) => a.TotalCost - b.TotalCost)
-        );
-        open.Push((amphipods, 0));
-        while (open.TryPop(out var current))
+        var open = new PriorityQueue<ImmutableArray<Amphipod>, int>();
+        open.Enqueue(amphipods, 0);
+        while (open.TryDequeue(out var pos, out var totalCost))
         {
-            var (pos, totalCost) = current;
             if (!seen.Add(pos))
                 continue;
 
@@ -133,7 +130,7 @@ class Day23 : Solution
                 return totalCost;
 
             foreach (var (newPos, extraCost) in GetPossibleStates(pos))
-                open.Push((newPos, extraCost + totalCost));
+                open.Enqueue(newPos, extraCost + totalCost);
         }
 
         return null;

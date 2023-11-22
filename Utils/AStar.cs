@@ -13,14 +13,14 @@ public abstract class AStar<T>
 
     public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
     {
-        var open = new MinHeap<(T, long)>(ComparerBuilder<(T Item, long Cost)>.CompareBy(x => x.Cost));
-        open.Push((fSrc, 0));
+        var open = new PriorityQueue<T, long>();
+        open.Enqueue(fSrc, 0);
         var costs = new Dictionary<T, long>() { [fSrc] = 0 };
         var paths = new Dictionary<T, T> { [fSrc] = fSrc };
 
         while (open.Count > 0)
         {
-            var (current, _) = open.Pop();
+            var current = open.Dequeue();
             var curCost = costs[current];
             if (Equals(current, dest))
                 return (curCost, new Lazy<IEnumerable<T>>(() => BuildPath(dest, paths)));
@@ -32,7 +32,7 @@ public abstract class AStar<T>
                 {
                     costs[next] = newCost;
                     var priority = newCost + Distance(next, dest);
-                    open.Push((next, priority));
+                    open.Enqueue(next, priority);
                     paths[next] = current;
                 }
             }

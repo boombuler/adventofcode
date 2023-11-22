@@ -29,12 +29,11 @@ class Day24 : Solution
         {
             var initialState = new State(startTime, from);
             var closed = new HashSet<State>();
-            var open = new MinHeap<(State, long)>(ComparerBuilder<(State Item, long Cost)>.CompareBy(x => x.Cost));
-            open.Push((initialState, 0));
+            var open = new PriorityQueue<State, long>();
+            open.Enqueue(initialState, 0);
             
-            while (open.TryPop(out var current))
+            while (open.TryDequeue(out var curState, out _))
             {
-                var (curState, _) = current;
                 if (curState.Position == to)
                     return curState.Time;
 
@@ -42,7 +41,7 @@ class Day24 : Solution
                 {
                     var newCost = next.Time + next.Position.ManhattanDistance(endPos);
                     if (closed.Add(next with { Time = next.Time % blizLoop }))
-                        open.Push((next, newCost));
+                        open.Enqueue(next, newCost);
                 }
             }
 

@@ -70,21 +70,23 @@ class Day23 : Solution
         var min = new Point3D(minX, minY, minZ);
         var max = new Point3D(maxX, maxY, maxZ);
 
-        var q = new MaxHeap<(BoundingBox BBox, NanoBot[] Bots)>(
-            ComparerBuilder<(BoundingBox BBox, NanoBot[] Bots)>
-                .CompareBy(x => x.Bots.Length)
-                .ThenByDesc(x => x.BBox.DistanceToOrigin)
+        var q = new PriorityQueue<(BoundingBox BBox, NanoBot[] Bots), (int Count, long Distance)>(
+            ComparerBuilder<(int Count, long Distance)>
+                .CompareByDesc(x => x.Count)
+                .ThenBy(x => x.Distance)
         );
+        void Push(BoundingBox bb, NanoBot[] bots)
+            => q.Enqueue((bb, bots), (bots.Length, bb.DistanceToOrigin));
 
-        q.Push((new BoundingBox(min, max - min + (1, 1, 1)), bots));
+        Push(new BoundingBox(min, max - min + (1, 1, 1)), bots);
 
-        while (q.TryPop(out var cur))
+        while (q.TryDequeue(out var cur, out _))
         {
             if (cur.BBox.IsPoint)
                 return cur.BBox.DistanceToOrigin;
 
             foreach (var box in cur.BBox.Divide())
-                q.Push((box, cur.Bots.Where(b => b.Intersects(box)).ToArray()));
+                Push(box, cur.Bots.Where(b => b.Intersects(box)).ToArray());
         }
 
         return -1;

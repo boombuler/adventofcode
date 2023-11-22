@@ -128,14 +128,13 @@ class Day18 : Solution
         var mapsByKey = maps.SelectMany((map, i) => map.Keys.Select(k => (k, i))).ToDictionary(x => x.k, x => x.i);
 
         var visited = new HashSet<(string Locations, string Keys)>();
-        var open = new MinHeap<(string Locations, string Keys, long Distance)>(
-            ComparerBuilder<(string Locations, string Keys, long Distance)>.CompareBy(x => x.Distance)
-        );
-        open.Push((new string(DOOR, maps.Length), string.Empty, 0));
+        var open = new PriorityQueue<(string Locations, string Keys), long>();
+            
+        open.Enqueue((new string(DOOR, maps.Length), string.Empty), 0);
 
-        while (open.TryPop(out var currentItem))
+        while (open.TryDequeue(out var currentItem, out var distance))
         {
-            var (location, collectedKeys, distance) = currentItem;
+            var (location, collectedKeys) = currentItem;
             if (collectedKeys.Length == dependencies.Count)
                 return distance;
             if (!visited.Add((location, collectedKeys)))
@@ -149,7 +148,9 @@ class Day18 : Solution
                 for (int i = 0; i < location.Length; i++)
                     newLocations.Append(i == mapId ? candidate : location[i]);
 
-                open.Push((newLocations.ToString(), AppendKey(collectedKeys, candidate), distance + maps[mapId].GetPath(location[mapId], candidate).Distance));
+                open.Enqueue(
+                    (newLocations.ToString(), AppendKey(collectedKeys, candidate)),
+                    distance + maps[mapId].GetPath(location[mapId], candidate).Distance);
             }
         }
 
