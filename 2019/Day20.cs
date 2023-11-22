@@ -1,16 +1,18 @@
 ﻿namespace AdventOfCode._2019;
 
+using System.Collections.Frozen;
+
 class Day20 : Solution
 {
     record Portal(string Name, Point2D OtherPortal, int Direction);
 
-    private static (ImmutableDictionary<Point2D, Portal> Portals, ImmutableHashSet<Point2D> WalkableTiles) ParseMap(string map)
+    private static (FrozenDictionary<Point2D, Portal> Portals, FrozenSet<Point2D> WalkableTiles) ParseMap(string map)
     {
         var mapLines = map.Lines().ToArray();
         char GetCh(Point2D pt) => mapLines[(int)pt.Y][(int)pt.X];
         var width = mapLines.Max(l => l.Length) - 2;
         var height = mapLines.Length - 2;
-        var walkable = ImmutableHashSet<Point2D>.Empty;
+        var walkable = new HashSet<Point2D>();
         var innerPortals = new Dictionary<string, Point2D>();
         var outerPortals = new Dictionary<string, Point2D>();
         var portPos = new Dictionary<Point2D, (string Name, Dictionary<string, Point2D> Other)>();
@@ -24,7 +26,7 @@ class Day20 : Solution
                 case '#':
                     continue;
                 case '.':
-                    walkable = walkable.Add(pos); break;
+                    walkable.Add(pos); break;
                 default:
                     var waypoint = pos.Neighbours().FirstOrDefault(p => GetCh(p) == '.');
                     if (waypoint == null)
@@ -40,10 +42,10 @@ class Day20 : Solution
             }
         }
 
-        return (portPos.ToImmutableDictionary(
+        return (portPos.ToFrozenDictionary(
                 kvp => kvp.Key,
                 kvp => new Portal(kvp.Value.Name, kvp.Value.Other.GetValueOrDefault(kvp.Value.Name), kvp.Value.Other == innerPortals ? -1 : 1)
-            ), walkable);
+            ), walkable.ToFrozenSet());
     }
 
     private static int ShortestPath(string mapStr, bool recursive)

@@ -1,11 +1,13 @@
 ﻿namespace AdventOfCode._2019;
 
+using System.Collections.Frozen;
+
 class Day25 : Solution
 {
-    private readonly ImmutableHashSet<string> ITEM_BLACKLIST = new string[]
+    private readonly FrozenSet<string> ITEM_BLACKLIST = new string[]
     {
-            "molten lava", "photons", "giant electromagnet", "infinite loop", "escape pod"
-    }.ToImmutableHashSet();
+        "molten lava", "photons", "giant electromagnet", "infinite loop", "escape pod"
+    }.ToFrozenSet();
     private const string CHECKPOINT = "Security Checkpoint";
 
     [Flags]

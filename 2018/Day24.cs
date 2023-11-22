@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode._2018;
 
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 
 class Day24 : Solution
@@ -9,8 +10,8 @@ class Day24 : Solution
         public static readonly Func<string, Group> Parse = new Regex(@"(?<units>\d+) units each with (?<hp>\d+) hit points (\(((; )?((immune to ((, )?(?<immune>\w+))+)|(weak to ((, )?(?<weak>\w+))+)))+\) )?with an attack that does (?<damage>\d+) (?<damageType>\w+) damage at initiative (?<initiative>\d+)").ToFactory<Group>();
         public int Units { get; private set; }
         public int HP { get; private set; }
-        public ImmutableHashSet<string> Weaknesses { get; }
-        public ImmutableHashSet<string> Immunities { get; }
+        public FrozenSet<string> Weaknesses { get; }
+        public FrozenSet<string> Immunities { get; }
         public int Damage { get; private set; }
         public string DamageType { get; private set; }
         public int Initiative { get; private set; }
@@ -22,8 +23,8 @@ class Day24 : Solution
         {
             Units = units;
             HP = hp;
-            Weaknesses = new HashSet<string>(weak ?? Enumerable.Empty<string>()).ToImmutableHashSet();
-            Immunities = new HashSet<string>(immune ?? Enumerable.Empty<string>()).ToImmutableHashSet();
+            Weaknesses = new HashSet<string>(weak ?? Enumerable.Empty<string>()).ToFrozenSet();
+            Immunities = new HashSet<string>(immune ?? Enumerable.Empty<string>()).ToFrozenSet();
             Damage = damage;
             DamageType = damageType;
             Initiative = initiative;
