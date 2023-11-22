@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode._2021;
 
-using static System.Math;
-
 internal class Day22 : Solution
 {
     record Region(Point3D Min, Point3D Max)
@@ -16,8 +14,8 @@ internal class Day22 : Solution
                 return null;
 
             return new Region(
-                (Max(Min.X, other.Min.X), Max(Min.Y, other.Min.Y), Max(Min.Z, other.Min.Z)),
-                (Min(Max.X, other.Max.X), Min(Max.Y, other.Max.Y), Min(Max.Z, other.Max.Z))
+                (Math.Max(Min.X, other.Min.X), Math.Max(Min.Y, other.Min.Y), Math.Max(Min.Z, other.Min.Z)),
+                (Math.Min(Max.X, other.Max.X), Math.Min(Max.Y, other.Max.Y), Math.Min(Max.Z, other.Max.Z))
             );
         }
     }
