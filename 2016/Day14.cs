@@ -26,7 +26,7 @@ class Day14 : Solution
 
         private static string DoHash(string value, int rounds)
         {
-            var md = new MD5Managed();
+            var md = MD5.Create();
 
             Span<byte> inBuf = stackalloc byte[32];
             Span<byte> hashBuf = stackalloc byte[16];

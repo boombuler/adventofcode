@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2016;
 
+using System.Security.Cryptography;
+
 class Day05 : Solution<string>
 {
     static bool IsValidHash(ReadOnlySpan<byte> hash)
@@ -8,7 +10,7 @@ class Day05 : Solution<string>
 
     private static IEnumerable<byte[]> GenerateValidHashes(string doorId)
     {
-        var md = new MD5Managed();
+        var md = MD5.Create();
         var inputBuf = Encoding.ASCII.GetBytes(doorId);
         int prefixLen = inputBuf.Length;
         Array.Resize(ref inputBuf, inputBuf.Length + 12);

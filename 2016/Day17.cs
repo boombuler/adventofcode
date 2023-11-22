@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2016;
 
+using System.Security.Cryptography;
+
 class Day17 : Solution<string, long?>
 {
     private static readonly Point2D Target = new(3, 3);
@@ -26,7 +28,7 @@ class Day17 : Solution<string, long?>
 
         public IEnumerable<State> ValidMoves()
         {
-            var md = new MD5Managed();
+            var md = MD5.Create();
             Span<byte> hash = stackalloc byte[md.HashSize / 8];
             md.TryComputeHash(Encoding.ASCII.GetBytes(fSeed + Directions), hash, out _);
             // up, down, left, and right

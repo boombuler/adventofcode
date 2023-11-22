@@ -21,8 +21,8 @@ class Day04 : Solution
             return true;
         }
 
-        
-        var md = new MD5Managed();
+
+        var md = MD5.Create(); 
         var pk = Encoding.ASCII.GetBytes(privateKey);
         int prefixLen = pk.Length;
         Array.Resize(ref pk, pk.Length + 12);
