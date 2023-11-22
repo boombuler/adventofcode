@@ -193,24 +193,6 @@ public static class EnumerableHelper
         return (min, max);
     }
 
-    public static T Min<T>(this IEnumerable<T> items, IComparer<T> comparer)
-    {
-        T result = default;
-        bool first = true;
-
-        foreach (var itm in items)
-        {
-            if (first)
-            {
-                result = itm;
-                first = false;
-            }
-            else if (comparer.Compare(result, itm) > 0)
-                result = itm;
-        }
-        return result;
-    }
-
     public static (T min, T max) MinMaxBy<T, TVal>(this IEnumerable<T> items, Func<T, TVal> selector, IComparer<TVal> comparer = null)
     {
         comparer ??= Comparer<TVal>.Default;

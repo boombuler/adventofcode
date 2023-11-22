@@ -10,8 +10,8 @@ class Program
         System.Console.OutputEncoding = Encoding.UTF8;
         var command = new RootCommand
             {
-                new Option<int?>(new [] {"--year", "-y"}, "Specifies the year for the AoC puzzles"),
-                new Option<int?>(new [] {"--day", "-d"}, "Specifies a puzzle day"),
+                new Option<int?>(["--year", "-y"], "Specifies the year for the AoC puzzles"),
+                new Option<int?>(["--day", "-d"], "Specifies a puzzle day"),
 
                 new Command("validate", "checks if all puzzle solvers work correctly") { Handler = CommandHandler.Create(Validate) },
                 new Command("benchmark", "measures the execution time for the given puzzles") { Handler = CommandHandler.Create(Benchmark) },
