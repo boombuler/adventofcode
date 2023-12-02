@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode.Utils;
 
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 public static class RegexHelper
 {
@@ -74,6 +75,25 @@ public static class RegexHelper
 
     private static bool TryCreateConstructorFactory<T>(Regex regex, out Func<string, (bool, T)> factory)
     {
+        var fromMatch = CreateMatchFactory<T>(regex);
+        if (fromMatch == null)
+        {
+            factory = null;
+            return false;
+        }
+
+        factory = (s) =>
+        {
+            var match = regex.Match(s);
+            if (!match.Success)
+                return (false, default(T));
+            return (true, fromMatch(match));
+        };
+        return true;
+    }
+
+    public static Func<Match, T> CreateMatchFactory<T>(this Regex regex)
+    {
         var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).Order().ToList();
         var constructor =
             typeof(T).GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance)
@@ -84,9 +104,8 @@ public static class RegexHelper
                         .Order()
                         .SequenceEqual(groupNames, StringComparer.OrdinalIgnoreCase)
                 );
-        factory = null;
         if (constructor == null)
-            return false;
+            return null;
 
         Func<Match, object> BinderOrDefault(ParameterInfo arg)
         {
@@ -97,16 +116,11 @@ public static class RegexHelper
 
         Func<Match, object>[] arguments = constructor.GetParameters().Select(BinderOrDefault).ToArray();
 
-        factory = (s) =>
+        return (match) =>
         {
-            var match = regex.Match(s);
-            if (!match.Success)
-                return (false, default(T));
             var args = arguments.Select(a => a(match)).ToArray();
-            return (true, (T)constructor.Invoke(args));
+            return (T)constructor.Invoke(args);
         };
-
-        return true;
     }
 
     private static Func<string, (bool, T)> ToFactoryImpl<T>(this Regex self)

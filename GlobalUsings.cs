@@ -7,4 +7,5 @@ global using System.Linq;
 global using System.Text;
 global using System.Text.RegularExpressions;
 global using AdventOfCode.Utils;
+global using AdventOfCode.Utils.Parser;
 #pragma warning restore IDE0065

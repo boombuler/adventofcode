@@ -1,14 +1,20 @@
 ﻿namespace AdventOfCode._2023;
 
+using P = Parser;
 class Day02 : Solution
 {
-    private static readonly Func<string, Move> MoveFactory = new Regex(@"(?<Amount>\d+) (?<Color>[a-z]+)").ToFactory<Move>();
     record Move(int Amount, Color Color)
     {
         public bool IsIllegal => Amount > MaxCubes[Color];
     }
 
     enum Color { red, green, blue };
+    record Game(int Id, Move[] Moves);
+
+    private static readonly Func<string, Game> ParseGame = 
+        P.Str("Game ").ThenR(P.Int).ThenL(P.Str(":"))
+            .Then(P.Regex<Move>(@"(?<Amount>\d+) (?<Color>[a-z]+)").List(',', ';', ' '),
+                (id, moves) => new Game(id, moves)).MustParse;
 
     private static readonly FrozenDictionary<Color, int> MaxCubes = new Dictionary<Color, int>()
     {
@@ -17,34 +23,22 @@ class Day02 : Solution
         [Color.blue] = 14,
     }.ToFrozenDictionary();
 
-    private static (int Id, Move[] Moves) ParseGame(string gameStr)
-    {
-        var (g, (roundsStr, _)) = gameStr.Split(':');
-        var rounds = roundsStr.Split([';', ',']).Select(m => MoveFactory(m.Trim())).ToArray();
-        return (int.Parse(g.Split(' ').Last()), rounds);
-    }
-
     protected override long? Part1()
     {
-        static int GetIdIfLegal(string game)
-        {
-            var (id, moves) = ParseGame(game);
-            return moves.Any(m => m.IsIllegal) ? 0 : id;
-        }
+        static long SumValidIds(string input)
+            => input.Lines().Select(ParseGame).Where(g => !g.Moves.Any(m => m.IsIllegal)).Sum(g => g.Id);
 
-        Assert(Sample().Lines().Sum(GetIdIfLegal), 8);
-        return Input.Lines().Sum(GetIdIfLegal);
+        Assert(SumValidIds(Sample()), 8);
+        return SumValidIds(Input);
     }
 
     protected override long? Part2()
     {
-        static int GetPower(string game)
-        {
-            var (_, moves) = ParseGame(game);
-            return moves.GroupBy(m => m.Color).Select(g => g.Max(m => m.Amount)).Aggregate((a, b) => a * b);
-        }
+        static long GetPower(string input)
+            => input.Lines().Select(ParseGame)
+            .Sum(game => game.Moves.GroupBy(m => m.Color).Select(g => g.Max(m => m.Amount)).Aggregate((a, b) => a * b));
 
-        Assert(Sample().Lines().Sum(GetPower), 2286);
-        return Input.Lines().Sum(GetPower);
+        Assert(GetPower(Sample()), 2286);
+        return GetPower(Input);
     }
 }
