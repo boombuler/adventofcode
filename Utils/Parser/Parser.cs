@@ -98,9 +98,23 @@ class Parser<T>
         => Parser.Str(s).ThenR(p);
     public static Parser<T> operator +(Parser<T> p, string s)
         => p.ThenL(Parser.Str(s));
-}
 
-static class Parser 
+    public Parser<R> SelectMany<U, R>(Func<T, Parser<U>> selector, Func<T, U, R> result)
+        => new Parser<R>((input) =>
+        {
+            var curRes = fFn(input);
+            if (!curRes.HasValue)
+                return curRes.Error;
+
+            var nextRes = selector(curRes.Value).Parse(curRes.Input);
+            if (!nextRes.HasValue)
+                return nextRes.Error;
+
+            var res = result(curRes.Value, nextRes.Value);
+            return new Result<R>(res, nextRes.Input);
+        });
+}
+static class Parser
 { 
     static Parser<char> Expect(Func<char, bool> predicate)
         => new Parser<char>((input) =>

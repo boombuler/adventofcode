@@ -11,10 +11,11 @@ class Day02 : Solution
     enum Color { red, green, blue };
     record Game(int Id, Move[] Moves);
 
-    private static readonly Func<string, Game> ParseGame = 
-            ("Game " + P.Int + ":")
-            .Then(P.Regex<Move>(@"(?<Amount>\d+) (?<Color>[a-z]+)").List(',', ';', ' '),
-                (id, moves) => new Game(id, moves)).MustParse;
+    private static readonly Func<string, Game> ParseGame = (
+        from id in ("Game " + P.Int + ":")
+        from moves in P.Regex<Move>(@"(?<Amount>\d+) (?<Color>[a-z]+)").List(',', ';', ' ')
+        select new Game(id, moves)
+    ).MustParse;
 
     private static readonly FrozenDictionary<Color, int> MaxCubes = new Dictionary<Color, int>()
     {
