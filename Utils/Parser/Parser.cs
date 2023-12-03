@@ -93,6 +93,11 @@ class Parser<T>
                 return r1;
             return other.Parse(input);
         });
+
+    public static Parser<T> operator +(string s, Parser<T> p)
+        => Parser.Str(s).ThenR(p);
+    public static Parser<T> operator +(Parser<T> p, string s)
+        => p.ThenL(Parser.Str(s));
 }
 
 static class Parser 

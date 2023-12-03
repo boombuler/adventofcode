@@ -12,7 +12,7 @@ class Day02 : Solution
     record Game(int Id, Move[] Moves);
 
     private static readonly Func<string, Game> ParseGame = 
-        P.Str("Game ").ThenR(P.Int).ThenL(P.Str(":"))
+            ("Game " + P.Int + ":")
             .Then(P.Regex<Move>(@"(?<Amount>\d+) (?<Color>[a-z]+)").List(',', ';', ' '),
                 (id, moves) => new Game(id, moves)).MustParse;
 
