@@ -58,7 +58,7 @@ class Parser<T>
     public T MustParse(string s)
         => Parse(new Input(s)).Value;
 
-    public Parser<T> Assert(Predicate<T> condition, string error)
+    public Parser<T> Assert(Func<T, bool> condition, string error)
         => new Parser<T>((input) =>
         {
             var res = fFn(input);
@@ -113,6 +113,10 @@ class Parser<T>
             var res = result(curRes.Value, nextRes.Value);
             return new Result<R>(res, nextRes.Input);
         });
+    public Parser<R> Select<R>(Func<T, R> selector)
+        => Map(selector);
+    public Parser<T> Where(Func<T, bool> predicate)
+        => Assert(predicate, "Filter failed");
 }
 static class Parser
 { 
