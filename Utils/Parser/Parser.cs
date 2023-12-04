@@ -117,6 +117,14 @@ class Parser<T>
         => Map(selector);
     public Parser<T> Where(Func<T, bool> predicate)
         => Assert(predicate, "Filter failed");
+
+    public Parser<T> Except<U>(Parser<U> except)
+        => new Parser<T>((input) =>
+        {
+            if (except.Parse(input).HasValue)
+                return "Except!";
+            return fFn(input);
+        });
 }
 static class Parser
 { 
@@ -136,6 +144,17 @@ static class Parser
     public static Parser<char> AnyChar(params char[] input)
         => Expect(SearchValues.Create(input).Contains);
 
+    public static Parser<char> CharExcept(params char[] input)
+    {
+        var values = SearchValues.Create(input);
+        return Expect(c => !values.Contains(c));
+    }
+
+    public static Parser<T[]> Until<T>(this Parser<T> parser, string s)
+        => Until(parser, Str(s));
+    public static Parser<T[]> Until<T, U>(this Parser<T> parser, Parser<U> until)
+        => parser.Except(until).Many().ThenL(until);
+
     public static Parser<TValue[]> List<TValue>(this Parser<TValue> parser, params char[] separators)
         => AnyChar(separators).Many().ThenR(parser).Many();
 
@@ -154,6 +173,7 @@ static class Parser
             return new Result<TValue[]>(values, input);
         });
 
+    public static Parser<char> Any => Expect(_ => true);
     public static Parser<string> Str(string s)
         => Sequence(s.Select(Char).ToArray()).Text();
 
@@ -165,6 +185,9 @@ static class Parser
     public static Parser<int> Int
         => (Char('-').Map(_ => -1).Opt(1))
             .Then(Digits, (sign, digits) => sign * int.Parse(digits));
+
+    public static Parser<T> Token<T>(this Parser<T> t)
+        => Char(' ').Many().ThenR(t).ThenL(Char(' ').Many());
 
     public static Parser<T> Enum<T>() where T : struct, Enum
         => System.Enum.GetValues<T>()

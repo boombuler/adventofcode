@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode._2023;
 
-using P = Parser;
+using static Parser;
+
 class Day02 : Solution
 {
     record Move(int Amount, Color Color)
@@ -12,10 +13,10 @@ class Day02 : Solution
     record Game(int Id, Move[] Moves);
 
     private static readonly Func<string, Game> ParseGame = (
-        from id in ("Game " + P.Int + ":")
+        from id in ("Game " + Int + ":")
         from moves in (
-            from amount in P.Int 
-            from color in " " + P.Enum<Color>()
+            from amount in Int 
+            from color in " " + Enum<Color>()
             select new Move(amount, color)
         ).List(',', ';', ' ')
         select new Game(id, moves)
