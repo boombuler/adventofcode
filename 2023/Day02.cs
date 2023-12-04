@@ -13,7 +13,11 @@ class Day02 : Solution
 
     private static readonly Func<string, Game> ParseGame = (
         from id in ("Game " + P.Int + ":")
-        from moves in P.Regex<Move>(@"(?<Amount>\d+) (?<Color>[a-z]+)").List(',', ';', ' ')
+        from moves in (
+            from amount in P.Int 
+            from color in " " + P.Enum<Color>()
+            select new Move(amount, color)
+        ).List(',', ';', ' ')
         select new Game(id, moves)
     ).MustParse;
 
