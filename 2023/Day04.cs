@@ -8,11 +8,11 @@ using static Parser;
 
 class Day04 : Solution
 {
-    private static readonly Func<string, int> CardParser =(
+    private static readonly Func<string, int> CardParser =
         from _ in Any.Until(":")
         from winning in Int.Token().Until("|")
         from own in Int.Token().Many()
-        select winning.Intersect(own).Count()).MustParse;
+        select winning.Intersect(own).Count();
 
     private static IEnumerable<int> WinningNumberCount(string input)
         => input.Lines().Select(CardParser);

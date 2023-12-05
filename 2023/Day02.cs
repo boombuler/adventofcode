@@ -4,13 +4,13 @@ using static Parser;
 
 class Day02 : Solution
 {
-    record Move(int Amount, Color Color)
+    record Move(long Amount, Color Color)
     {
         public bool IsIllegal => Amount > MaxCubes[Color];
     }
 
     enum Color { red, green, blue };
-    record Game(int Id, Move[] Moves);
+    record Game(long Id, Move[] Moves);
 
     private static readonly Func<string, Game> ParseGame = (
         from id in ("Game " + Int + ":")
@@ -20,7 +20,7 @@ class Day02 : Solution
             select new Move(amount, color)
         ).List(',', ';', ' ')
         select new Game(id, moves)
-    ).MustParse;
+    );
 
     private static readonly FrozenDictionary<Color, int> MaxCubes = new Dictionary<Color, int>()
     {
