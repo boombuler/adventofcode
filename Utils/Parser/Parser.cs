@@ -2,6 +2,7 @@
 
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 
 static class Parser
 {
@@ -62,6 +63,11 @@ static class Parser
     public static Parser<long> Int
         => (Char('-').Select(_ => -1).Opt(1))
             .Then(Digits, (sign, digits) => sign * long.Parse(digits));
+
+    public static Parser<BigInteger> BigInt
+        => from sign in (Char('-').Select(_ => -1).Opt(1))
+           from digits in Digit.Many1().Select(d => d.Select(n => new BigInteger(n - '0')).Aggregate((a, b) => (a * 10) + b))
+           select sign * digits;
 
     public static Parser<T> Enum<T>() where T : struct, Enum
         => System.Enum.GetValues<T>()
