@@ -1,23 +1,23 @@
 ﻿namespace AdventOfCode._2023;
 
-using System.Numerics;
 using static Parser;
 
 class Day06 : Solution
 {
-    private static long RunRace(BigInteger time, BigInteger dist)
+    private static long RunRace(long time, long dist)
     {
-        bool WouldWin(BigInteger t) => 
-            ((time - t) * t) > dist;
+        var d = Math.Sqrt((time * time) - (4 * dist));
 
-        BigInteger left = (time / 2).Unfold(i => i-1).TakeWhile(WouldWin).Last();
-        BigInteger right = (time / 2).Unfold(i => i+1).TakeWhile(WouldWin).Last();
-        return (long)(right - left)+1;
+        var z1 = (long)((time + d) / 2);
+        var z2 = (long)((time - d) / 2);
+        if (d == (long)d)
+            z1--;
+        return z1 - z2;
     }
 
-    private static long Solve(string input, Parser<BigInteger> NumberParser)
+    private static long Solve(string input, Parser<long> NumberParser)
     {
-        Func<string, BigInteger[]> getNumbers = Any.Until(":").ThenR(NumberParser.Many1());
+        Func<string, long[]> getNumbers = Any.Until(":").ThenR(NumberParser.Token().Many());
         var (times, (distances, _)) = input.Lines().Select(getNumbers);
         long total = 1;
         for (int race = 0; race < times.Length; race++)
@@ -28,16 +28,16 @@ class Day06 : Solution
 
     protected override long? Part1()
     {
-        var parser = BigInt.Token();
-        Assert(Solve(Sample(), parser), 288);
-        return Solve(Input, parser);
+        Assert(Solve(Sample(), Int), 288);
+        return Solve(Input, Int);
     }
 
     protected override long? Part2()
     {
         var parser = Digit.Token().Many1().Select(
-            d => d.Select(n => new BigInteger(n - '0')).Aggregate((a, b) => (a * 10) + b)
+            d => d.Aggregate(0L, MathExt.AppendDigit)
         );
+
         Assert(Solve(Sample(), parser), 71503);
         return Solve(Input, parser);
     }

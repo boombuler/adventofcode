@@ -72,4 +72,7 @@ class MathExt
         var y = (p2.a * m1 * p1.n) % n;
         return (Mod(x + y, n), n);
     }
+
+    public static long AppendDigit(long num, char digit)
+        => num * 10 + (digit - '0');
 }

@@ -1,8 +1,4 @@
 ﻿namespace AdventOfCode._2023;
-
-using System.Buffers;
-using System.CommandLine;
-
 class Day03 : Solution
 {
     private static readonly Point2D Left = (-1, 0);
@@ -19,8 +15,8 @@ class Day03 : Solution
 
         long ReadNumber(Point2D pt)
             => WalkDigits(WalkDigits(pt, Left).Last(), Right)
-                .Select(p => map[p] - '0')
-                .Aggregate((a, b) => (a * 10) + b);
+                .Select(map.GetValueOrDefault)
+                .Aggregate(0L, MathExt.AppendDigit);
 
         return (
             from kvp in map
