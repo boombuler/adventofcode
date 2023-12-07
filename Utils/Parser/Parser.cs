@@ -10,7 +10,7 @@ static class Parser
 
     public static Parser<char> NL { get; } = Char('\n');
 
-    public static Parser<char> WS { get; } = AnyChar(' ', '\t');
+    public static Parser<char> WS { get; } = AnyChar([' ', '\t']);
 
     static Parser<char> Expect(Func<char, bool> predicate)
         => new Parser<char>((input) =>
@@ -25,7 +25,7 @@ static class Parser
     public static Parser<char> Char(char input)
         => Expect(c => c == input);
 
-    public static Parser<char> AnyChar(params char[] input)
+    public static Parser<char> AnyChar(ReadOnlySpan<char> input)
         => Expect(SearchValues.Create(input).Contains);
 
     public static Parser<char> CharExcept(params char[] input)
