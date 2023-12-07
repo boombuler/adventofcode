@@ -4,23 +4,27 @@ using static Parser;
 
 class Day07 : Solution
 {
+    private const int HandSize = 5;
     private static int Ranking(int[] hand, bool withJoker)
     {
-        int handSize = hand.Length;
         if (withJoker && hand.Any(n => n > 0))
             hand = hand.Where(n => n > 0).ToArray();
-        var grps = hand.GroupBy(i => i).Select(g => g.Count()).OrderDescending().ToList();
-        return (grps[0] + (handSize - hand.Length)) * handSize 
-            + (handSize - grps.Count);
+        var grps = hand.GroupBy(i => i).Select(Enumerable.Count).ToArray();
+        return (grps.Max() + (HandSize - hand.Length)) * HandSize
+            + (HandSize - grps.Length);
     }
 
     private static long RateHands(string input, string cardOrder, bool withJoker)
         => input.Lines().Select((
-            from hand in AnyChar(cardOrder).Select(cardOrder.IndexOf).Many1() + " "
-            from bid in Int
-            select (hand, bid)).MustParse
-        ).OrderBy(n => Ranking(n.hand, withJoker)).ThenBy(n => n.hand.Aggregate((a,b) => (a*cardOrder.Length)+b))
-        .Select((n, i) => (i + 1) * n.bid).Sum();
+            from hand in AnyChar(cardOrder).Select(cardOrder.IndexOf).Take(HandSize)
+            from bid in Int.Token()
+            select new {
+                Bid = bid,
+                Ranking = Ranking(hand, withJoker),
+                Value = hand.Aggregate((a, b) => (a * cardOrder.Length) + b) 
+            }).MustParse
+        ).OrderBy(n => n.Ranking).ThenBy(n => n.Value)
+        .Select((n, i) => (i + 1) * n.Bid).Sum();
 
     protected override long? Part1()
     {

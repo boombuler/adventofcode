@@ -99,6 +99,21 @@ sealed class Parser<T>
     public Parser<T[]> Many1()
         => Many().Assert(itms => itms.Any(), "Expected at least one item");
 
+    public Parser<T[]> Take(int count)
+        => new Parser<T[]>(input =>
+        {
+            T[] result = new T[count];
+            for (int i = 0; i < count; i++)
+            {
+                var res = fFn(input);
+                if (!res.HasValue)
+                    return res.Error;
+                result[i] = res.Value;
+                input = res.Input;
+            }
+            return new Result<T[]>(result, input);
+        });
+
     public Parser<T> Or(Parser<T> other)
         => new Parser<T>((input) =>
         {
