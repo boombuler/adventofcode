@@ -1,27 +1,12 @@
 ﻿namespace AdventOfCode._2015;
 
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 class Day04 : Solution
 {
-    private long FindLowestHash(string privateKey, int leadingZeros = 5)
+    private long FindLowestHash(string privateKey, int mask = 0xF0FFFF)
     {
-        bool IsMatch(ReadOnlySpan<byte> hash)
-        {
-            for (int i = 0; i < leadingZeros / 2; i++)
-            {
-                if (hash[i] != 0)
-                    return false;
-            }
-            if (leadingZeros % 2 != 0)
-            {
-                var v = hash[leadingZeros / 2];
-                return (v & 0xF0) == 0;
-            }
-            return true;
-        }
-
-
         var md = MD5.Create(); 
         var pk = Encoding.ASCII.GetBytes(privateKey);
         int prefixLen = pk.Length;
@@ -33,7 +18,7 @@ class Day04 : Solution
         {
             md.TryComputeHash(pk.AsSpan(0, prefixLen + counter.Length), hash, out _);
             
-            if (IsMatch(hash))
+            if ((MemoryMarshal.Read<int>(hash) & mask) == 0)
                 return counter.Value;
             counter.Step();
         }
@@ -46,5 +31,5 @@ class Day04 : Solution
         return FindLowestHash(Input);
     }
 
-    protected override long? Part2() => FindLowestHash(Input, 6);
+    protected override long? Part2() => FindLowestHash(Input, 0xFFFFFF);
 }

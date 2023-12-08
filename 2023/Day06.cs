@@ -4,26 +4,18 @@ using static Parser;
 
 class Day06 : Solution
 {
-    private static long RunRace(long time, long dist)
+    private static long RunRace(long time, long distance)
     {
-        var d = Math.Sqrt((time * time) - (4 * dist));
-
-        var z1 = (long)((time + d) / 2);
-        var z2 = (long)((time - d) / 2);
-        if (d == (long)d)
-            z1--;
-        return z1 - z2;
+        var d = Math.Sqrt(time * time - 4 * (distance + 1));
+        var z = (long)Math.Ceiling((time - d) / 2);
+        return time - 2*z + 1;
     }
 
     private static long Solve(string input, Parser<long> NumberParser)
     {
         Func<string, long[]> getNumbers = Any.Until(":").ThenR(NumberParser.Token().Many());
         var (times, (distances, _)) = input.Lines().Select(getNumbers);
-        long total = 1;
-        for (int race = 0; race < times.Length; race++)
-            total *= RunRace(times[race], distances[race]);
-
-        return total;
+        return times.Zip(distances, RunRace).Aggregate((a, b) => a * b);
     }
 
     protected override long? Part1()

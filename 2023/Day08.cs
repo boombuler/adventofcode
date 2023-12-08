@@ -4,9 +4,9 @@ using static Parser;
 
 class Day08 : Solution
 {
-    private static readonly Parser<string> Name = Letter.Take(3).Text();
     private static readonly Func<string, (int[] Directions, FrozenDictionary<string, string[]> Map)> ParseInput =
         from directions in (Char('L', 0) | Char('R', 1)).Many1()
+        let Name = Letter.Take(3).Text()
         from _ in NL.Many()
         from portals in (
             from src in Name + " = ("
