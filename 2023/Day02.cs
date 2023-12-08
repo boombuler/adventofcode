@@ -13,12 +13,12 @@ class Day02 : Solution
     record Game(long Id, Move[] Moves);
 
     private static readonly Func<string, Game> ParseGame = (
-        from id in ("Game " + Int + ":")
+        from id in "Game " + Int + ":"
         from moves in (
             from amount in Int 
             from color in " " + Enum<Color>()
             select new Move(amount, color)
-        ).List(',', ';', ' ')
+        ).Token().List(',', ';')
         select new Game(id, moves)
     );
 

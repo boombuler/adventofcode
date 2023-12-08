@@ -17,10 +17,10 @@ abstract class Solution<TSolution1, TSolution2> : AsyncSolution<TSolution1, TSol
     Task<string> ISolution.Part1(IOutput output) => Run(output, Part1);
     Task<string> ISolution.Part2(IOutput output) => Run(output, Part2);
 
-    private async Task<string> Run<T>(IOutput o, Func<T> actn)
+    private Task<string> Run<T>(IOutput o, Func<T> actn)
     {
         using (UseOutput(o))
-            return Convert.ToString(actn());
+            return Task.FromResult(Convert.ToString(actn()));
     }
 
     #endregion
