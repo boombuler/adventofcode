@@ -151,4 +151,7 @@ sealed class Parser<T>
 
     public static implicit operator Func<string, T>(Parser<T> p)
         => p.MustParse;
+
+    public static Parser<T> operator |(Parser<T> a, Parser<T> b)
+        => a.Or(b);
 }

@@ -1,56 +1,41 @@
 ﻿namespace AdventOfCode._2023;
 
 using static Parser;
-using Input = (int[] Directions, FrozenDictionary<string, string[]> Map);
 
 class Day08 : Solution
 {
-    private static readonly Func<string, Input> ParseInput =
-        from directions in AnyChar("LR").Select(c => c == 'L' ? 0 : 1).Many1().Token()
+    private static readonly Parser<string> Name = Letter.Take(3).Text();
+    private static readonly Func<string, (int[] Directions, FrozenDictionary<string, string[]> Map)> ParseInput =
+        from directions in (Char('L', 0) | Char('R', 1)).Many1()
         from _ in NL.Many()
         from portals in (
-            from src in Word + " = ("
-            from l in Word + ", "
-            from r in Word + ")"
+            from src in Name + " = ("
+            from l in Name + ", "
+            from r in Name + ")"
             select (src, dirs: new[] { l, r })
         ).List(NL)
         select (directions, portals.ToFrozenDictionary(p => p.src, p => p.dirs));
 
-    private static IEnumerable<long> WalkMap(Input m, string loc, Predicate<string> isTarget)
+    private static long WalkMap(string input, Func<string, bool> isStart, Func<string, bool> isTarget)
     {
-        var seenTargets = new HashSet<string>();
-        long steps = 0;
-        while (true)
-        {
-            loc = m.Map[loc][m.Directions[steps++ % m.Directions.Length]];
-            if (isTarget(loc))
-            {
-                yield return steps;
-                if (!seenTargets.Add(loc))
-                    yield break;
-            }
-        }
+        var (directions, map) = ParseInput(input);
+        return map.Keys.Where(isStart)
+            .Select(start =>
+                (Steps: 0L, Location: start)
+                    .Unfold(n => (n.Steps + 1, map[n.Location][directions[n.Steps % directions.Length]]))
+                    .First(n => isTarget(n.Location)).Steps
+            ).Aggregate(MathExt.LCM);
     }
 
-    
     protected override long? Part1()
     {
         static long Solve(string input)
-            => WalkMap(ParseInput(input), "AAA", n => n == "ZZZ").First();
+            => WalkMap(input, n => n == "AAA", n => n == "ZZZ");
 
         Assert(Solve(Sample()), 2);
         return Solve(Input);
     }
 
-
     protected override long? Part2()
-    {
-        var m = ParseInput(Input);
-
-        return m.Map.Keys.Where(k => k.EndsWith("A"))
-            .Select(s => WalkMap(m, s, n => n.EndsWith("Z")).ToList())
-            .Aggregate(new HashSet<long> { 1 },
-                (solutions, way) => solutions.SelectMany(s => way.Select(w => MathExt.LCM(s, w))).ToHashSet())
-            .Min();
-    }
+        => WalkMap(Input, n => n[2] == 'A', n => n[2] == 'Z');
 }

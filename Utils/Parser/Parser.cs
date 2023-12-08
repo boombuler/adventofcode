@@ -26,6 +26,8 @@ static class Parser
     
     public static Parser<char> Char(char input)
         => Expect(c => c == input);
+    public static Parser<T> Char<T>(char input, T value)
+        => Expect(c => c == input).Select(_ => value);
 
     public static Parser<char> AnyChar(ReadOnlySpan<char> input)
         => Expect(SearchValues.Create(input).Contains);
@@ -53,11 +55,21 @@ static class Parser
 
 
     public static Parser<string> Str(string s)
-        => Sequence(s.Select(Char).ToArray()).Text();
+        => new Parser<string>(input =>
+        {
+            foreach(var c in s)
+            {
+                if (input.Current != c)
+                    return "Unexpected character";
+                input = input.Next();
+            }
+            return new Result<string>(s, input);
+        });
 
     public static Parser<string> Text(this Parser<char[]> parser)
         => parser.Select(chars => new string(chars));
 
+    public static Parser<char> Letter => Expect(char.IsAsciiLetter);
     public static Parser<char> Digit => Expect(char.IsAsciiDigit);
 
     public static Parser<string> Digits => Digit.Many1().Text();

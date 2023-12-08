@@ -12,15 +12,8 @@ class MathExt
     }
     public static long LCM(long a, long b)
     {
-        long mult = a * b;
-        while (a != b)
-        {
-            if (a > b)
-                a -= b;
-            else
-                b -= a;
-        }
-        return mult / a;
+        var gcd = GCD(a, b);
+        return (a / gcd) * b;
     }
 
     public static BigInteger Mod(BigInteger a, BigInteger m) => ((a % m) + m) % m;

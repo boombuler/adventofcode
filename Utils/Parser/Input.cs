@@ -3,7 +3,6 @@
 ref struct Input
 {
     private readonly ReadOnlySpan<char> fSource;
-    private readonly int fPos;
     
     public Input(ReadOnlySpan<char> input)
     {
@@ -20,7 +19,7 @@ ref struct Input
     public Input Seek(int offset)
         => new Input(fSource.Slice(offset));
 
-    public char Current => fSource[fPos];
+    public char Current => fSource[0];
 
     public bool EOF => fSource.Length == 0;
 
