@@ -12,6 +12,8 @@ static class Parser
 
     public static Parser<char> WS { get; } = AnyChar([' ', '\t']);
 
+    public static Parser<string> Word { get; } = Expect(char.IsAsciiLetter).Many1().Text();
+
     static Parser<char> Expect(Func<char, bool> predicate)
         => new Parser<char>((input) =>
         {
