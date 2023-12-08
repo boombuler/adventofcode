@@ -1,12 +1,12 @@
 ﻿namespace AdventOfCode._2023;
 
 using static Parser;
-using Input = (char[] Directions, FrozenDictionary<string, string[]> Map);
+using Input = (int[] Directions, FrozenDictionary<string, string[]> Map);
 
 class Day08 : Solution
 {
     private static readonly Func<string, Input> ParseInput =
-        from directions in AnyChar("LR").Many1().Token()
+        from directions in AnyChar("LR").Select(c => c == 'L' ? 0 : 1).Many1().Token()
         from _ in NL.Many()
         from portals in (
             from src in Word + " = ("
@@ -22,8 +22,7 @@ class Day08 : Solution
         long steps = 0;
         while (true)
         {
-            var d = m.Directions[steps++ % m.Directions.Length] == 'L' ? 0 : 1;
-            loc = m.Map[loc][d];
+            loc = m.Map[loc][m.Directions[steps++ % m.Directions.Length]];
             if (isTarget(loc))
             {
                 yield return steps;
