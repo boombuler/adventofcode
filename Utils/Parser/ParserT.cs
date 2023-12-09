@@ -44,6 +44,9 @@ sealed class Parser<T>(Parser<T>.ParseDelegate fn)
     public Parser<TResult> Select<TResult>(Func<T, TResult> map)
         => new((input) => fn(input).Map(map));
 
+    public Parser<TResult> Return<TResult>(TResult value)
+        => new((input) => fn(input).Map(_ => value));
+
     public Parser<R> SelectMany<U, R>(Func<T, Parser<U>> selector, Func<T, U, R> result)
         => new((input) =>
         {

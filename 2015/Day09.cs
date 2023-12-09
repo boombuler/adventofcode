@@ -1,24 +1,21 @@
 ﻿namespace AdventOfCode._2015;
 
+using static Parser;
+
 class Day09 : Solution
 {
     record Instruction(string From, string To, long Dist);
-    private static readonly Func<string, Instruction> ParseInstruction
-        = new Regex(@"(?<From>\w+) to (?<To>\w+) = (?<Dist>\d+)", RegexOptions.Compiled).ToFactory<Instruction>();
+    private static readonly Func<string, Instruction> ParseInstruction =
+        from f in Word.Token() + "to"
+        from t in Word.Token() + "="
+        from d in Int.Token()
+        select new Instruction(f, t, d);
 
-    private static IEnumerable<Instruction> ReadInstructions(string instructions)
-    {
-        foreach (var line in instructions.Lines())
-        {
-            var itm = ParseInstruction(line);
-            yield return itm;
-            yield return itm with { To = itm.From, From = itm.To };
-        }
-    }
 
-    private static IEnumerable<long> PermutateRoutes(string fileName)
+    private static IEnumerable<long> PermutateRoutes(string input)
     {
-        var instructions = ReadInstructions(fileName).ToList();
+        var instructions = input.Lines().Select(ParseInstruction)
+            .SelectMany<Instruction, Instruction>(i => [i, new(i.To, i.From, i.Dist)]).ToList();
 
         var cities = instructions.Select(i => i.From).Distinct();
         var distances = instructions.ToDictionary(v => (v.From, v.To), v => v.Dist);
@@ -36,8 +33,6 @@ class Day09 : Solution
                     valid = false;
                     break;
                 }
-                if (!valid)
-                    break;
             }
             if (valid)
                 yield return val;

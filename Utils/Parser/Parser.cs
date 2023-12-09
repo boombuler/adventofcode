@@ -27,7 +27,7 @@ static class Parser
     public static Parser<char> Char(char input)
         => Expect(c => c == input);
     public static Parser<T> Char<T>(char input, T value)
-        => Expect(c => c == input).Select(_ => value);
+        => Expect(c => c == input).Return(value);
 
     public static Parser<char> AnyChar(ReadOnlySpan<char> input)
         => Expect(SearchValues.Create(input).Contains);
@@ -58,6 +58,8 @@ static class Parser
         {
             foreach(var c in s)
             {
+                if (input.EOF)
+                    return "Unexpected end of input";
                 if (input.Current != c)
                     return "Unexpected character";
                 input = input.Next();
@@ -66,7 +68,7 @@ static class Parser
         });
 
     public static Parser<T> Str<T>(string s, T value)
-        => Str(s).Select(_ => value);
+        => Str(s).Return(value);
 
     public static Parser<string> Text(this Parser<char[]> parser)
         => parser.Select(chars => new string(chars));
@@ -77,17 +79,17 @@ static class Parser
     public static Parser<string> Digits => Digit.Many1().Text();
 
     public static Parser<long> Int
-        => (Char('-').Select(_ => -1).Opt(1))
+        => (Char('-').Return(-1).Opt(1))
             .Then(Digits, (sign, digits) => sign * long.Parse(digits));
 
     public static Parser<BigInteger> BigInt
-        => from sign in (Char('-').Select(_ => -1).Opt(1))
+        => from sign in (Char('-').Return(-1).Opt(1))
            from digits in Digit.Many1().Select(d => d.Select(n => new BigInteger(n - '0')).Aggregate((a, b) => (a * 10) + b))
            select sign * digits;
 
     public static Parser<T> Enum<T>() where T : struct, Enum
         => System.Enum.GetValues<T>()
-            .Select(e => Str(e.ToString()).Select(_ => e))
+            .Select(e => Str(e.ToString()).Return(e))
             .Aggregate((a, b) => a.Or(b));
 
     public static Parser<T> Regex<T>([StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
