@@ -4,13 +4,8 @@ using System.Threading.Channels;
 
 class Day25 : Solution
 {
-    class VM : AssembunnyVM
+    class VM(string code) : AssembunnyVM(code)
     {
-        public VM(string code)
-            : base(code)
-        {
-        }
-
         public IEnumerable<int> RunCode(int a)
         {
             Registers[0] = a;

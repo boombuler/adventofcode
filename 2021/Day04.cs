@@ -6,7 +6,7 @@ class Day04 : Solution
     class BingoBoard
     {
         private readonly Dictionary<long, Point2D> fCells;
-        private readonly HashSet<Point2D> fMarked = new();
+        private readonly HashSet<Point2D> fMarked = [];
 
         public BingoBoard(IEnumerable<string> rows)
         {

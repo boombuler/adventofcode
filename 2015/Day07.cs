@@ -13,47 +13,33 @@ class Day07 : Solution
 
     private static ushort TestWire(string instructions, string wire, (string wire, ushort value)? wireOverride = null)
     {
-        var wireNet = new Dictionary<string, Func<ushort>>();
+        var wireNet = new Dictionary<string, Lazy<ushort>>();
 
         Func<ushort> ValueOf(string v)
         {
-            v ??= string.Empty;
             if (ushort.TryParse(v, out ushort val))
                 return () => val;
-            return () => wireNet[v]();
+            return () => wireNet[v].Value;
         }
+            
 
         foreach (var instruction in instructions.Lines().Select(Instruction.Parse))
         {
-            void CalcLazy(Func<ushort> generator)
-            {
-                var val = new Lazy<ushort>(generator);
-                wireNet[instruction.Wire] = () => val.Value;
-            }
-
             var arg0 = ValueOf(instruction.Arg0);
             var arg1 = ValueOf(instruction.Arg1);
-
-            switch (instruction.Op)
-            {
-                case Operation.Intermediate:
-                    CalcLazy(arg0); break;
-                case Operation.AND:
-                    CalcLazy(() => (ushort)(arg1() & arg0())); break;
-                case Operation.OR:
-                    CalcLazy(() => (ushort)(arg1() | arg0())); break;
-                case Operation.NOT:
-                    CalcLazy(() => (ushort)(~arg0())); break;
-                case Operation.LSHIFT:
-                    CalcLazy(() => (ushort)(arg1() << arg0())); break;
-                case Operation.RSHIFT:
-                    CalcLazy(() => (ushort)(arg1() >> arg0())); break;
-            }
+            wireNet[instruction.Wire] = new Lazy<ushort>(instruction.Op switch {
+                Operation.AND => () => (ushort)(arg1() & arg0()),
+                Operation.OR => () => (ushort)(arg1() | arg0()),
+                Operation.NOT => () => (ushort)(~arg0()),
+                Operation.LSHIFT => () => (ushort)(arg1() << arg0()),
+                Operation.RSHIFT => () => (ushort)(arg1() >> arg0()),
+                _ => arg0
+            });
         }
-        if (wireOverride.HasValue)
-            wireNet[wireOverride.Value.wire] = () => wireOverride.Value.value;
+        if (wireOverride is (string w, ushort v))
+            wireNet[w] = new Lazy<ushort>(() => v);
 
-        return wireNet[wire]();
+        return wireNet[wire].Value;
     }
 
     protected override long? Part1()

@@ -8,7 +8,7 @@ class Day05 : Solution<string>
             = new Regex(@"move (?<Count>\d+) from (?<From>\d+) to (?<To>\d+)").ToFactory<Command>();
     }
 
-    private string BuildStacks(string input, Func<IEnumerable<char>, IEnumerable<char>> stackBehavior)
+    private static string BuildStacks(string input, Func<IEnumerable<char>, IEnumerable<char>> stackBehavior)
     {
         var stackCount = (input.Lines().First().Length + 1) / 4;
         var stacks = Enumerable.Range(1, stackCount).Select(_ => new Stack<char>()).ToArray();

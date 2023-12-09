@@ -2,18 +2,18 @@
 
 class Day18 : Solution
 {
-    private long CountSurfacePlanes(string input)
+    private static long CountSurfacePlanes(string input)
     {
         var droplets = input.Lines().Select(Point3D.Parse).ToHashSet();
         return droplets.SelectMany(d => d.Neighbours()).Count(d => !droplets.Contains(d));
     }
 
-    private long CountExteriorSurfacePlanes(string input)
+    private static long CountExteriorSurfacePlanes(string input)
     {
         var points = input.Lines().Select(Point3D.Parse).ToHashSet();
         var (min, max) = Point3D.Bounds(points);
-        min = min - (1, 1, 1);
-        max = max + (1, 1, 1);
+        min -= (1, 1, 1);
+        max += (1, 1, 1);
         var inBounds = Point3D.InBounds(min, max);
         
         var water = new HashSet<Point3D>();

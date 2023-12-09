@@ -25,7 +25,7 @@ class Day12 : Solution
                     open.Enqueue(id);
             }
             yield return group;
-            group = new HashSet<int>();
+            group = [];
         }
     }
 

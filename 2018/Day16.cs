@@ -42,9 +42,9 @@ class Day16 : Solution
     private static int[] Eqri(int a, int b, int c, int[] registers) => Set(registers, c, registers[a] == b ? 1 : 0);
     private static int[] Eqrr(int a, int b, int c, int[] registers) => Set(registers, c, registers[a] == registers[b] ? 1 : 0);
 
-    private readonly OpCodeImpl[] AllOpCodes = new OpCodeImpl[] {
-            Addr, Addi, Mulr, Muli, Banr, Bani, Borr, Bori, Setr, Seti, Gtir, Gtri, Gtrr, Eqir, Eqri, Eqrr
-        };
+    private readonly OpCodeImpl[] AllOpCodes = [
+        Addr, Addi, Mulr, Muli, Banr, Bani, Borr, Bori, Setr, Seti, Gtir, Gtri, Gtrr, Eqir, Eqri, Eqrr
+    ];
 
     private static List<SampleRow> ParseSamples(string input)
         => input.Split("\n\n").Select(SampleRow.Parse).Where(s => s != null).ToList();

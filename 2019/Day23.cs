@@ -5,8 +5,8 @@ class Day23 : Solution
     const int COMPUTER_COUNT = 50;
     class NAT
     {
-        private readonly Dictionary<long, Queue<(long, long)>> fQueue = new();
-        private readonly HashSet<long> fIdleDevices = new ();
+        private readonly Dictionary<long, Queue<(long, long)>> fQueue = [];
+        private readonly HashSet<long> fIdleDevices = [];
         public int IdleCount => FIdleDevices.Count;
         public (long X, long Y)? Memory { get; private set; }
 

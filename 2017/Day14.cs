@@ -9,7 +9,7 @@ class Day14 : Solution
         var numbers = Enumerable.Range(0, 256).ToList();
         var lengths = Encoding.ASCII.GetBytes(prefix)
             .Select(b => (int)b)
-            .Concat(new int[] { 17, 31, 73, 47, 23 })
+            .Concat([17, 31, 73, 47, 23])
             .ToArray();
         int current = 0, skipSize = 0;
         for (int round = 0; round < 64; round++)

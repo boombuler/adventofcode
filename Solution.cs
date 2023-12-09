@@ -31,9 +31,9 @@ abstract class AsyncSolution<TSolution1, TSolution2>
     public virtual int Year => int.Parse(TrailingInt.Match(GetType().Namespace).Value); // Override when this throws an exception
     public virtual int Day => int.Parse(TrailingInt.Match(GetType().Name).Value); // Override when this throws an exception
 
-    private readonly AsyncLocal<IOutput> fOutput = new AsyncLocal<IOutput>();
+    private readonly AsyncLocal<IOutput> fOutput = new();
 
-    private DateTime PuzzleStartTime => new DateTime(Year, 12, Day, 5, 0, 0, DateTimeKind.Utc);
+    private DateTime PuzzleStartTime => new(Year, 12, Day, 5, 0, 0, DateTimeKind.Utc);
 
     public AsyncSolution()
     {

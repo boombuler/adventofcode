@@ -1,9 +1,9 @@
 ﻿namespace AdventOfCode.Utils;
 
-abstract class AsmVM<TOpCode>
+abstract class AsmVM<TOpCode>(string code)
     where TOpCode : struct
 {
-    private readonly List<AsmOperation<TOpCode>> fOpCodes;
+    private readonly List<AsmOperation<TOpCode>> fOpCodes = code.Lines().Select(o => AsmOperation<TOpCode>.Parse(o)).ToList();
     private readonly Dictionary<string, long> fRegisters = new(StringComparer.OrdinalIgnoreCase);
     private AsmOperation<TOpCode> CurOpCode => !Finished ? fOpCodes[PC] : null;
     protected int PC { get; set; } = 0;
@@ -39,10 +39,5 @@ abstract class AsmVM<TOpCode>
     {
         get => fRegisters.GetValueOrDefault(register);
         set => fRegisters[register] = value;
-    }
-
-    public AsmVM(string code)
-    {
-        fOpCodes = code.Lines().Select(o => AsmOperation<TOpCode>.Parse(o)).ToList();
     }
 }

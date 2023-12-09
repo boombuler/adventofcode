@@ -20,7 +20,7 @@ class Day16 : Solution<string>
 
     private static string FTT(string input, int rounds, int digits = 8)
     {
-        char[] inchars = input.ToArray();
+        char[] inchars = [.. input];
         char[] outchars = new char[inchars.Length];
 
         for (int round = 0; round < rounds; round++)

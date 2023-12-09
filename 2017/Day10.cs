@@ -30,7 +30,7 @@ class Day10 : Solution<long?, string>
         var numbers = Enumerable.Range(0, 256).ToList();
         var lengths = Encoding.ASCII.GetBytes(prefix)
             .Select(b => (int)b)
-            .Concat(new int[] { 17, 31, 73, 47, 23 })
+            .Concat([17, 31, 73, 47, 23])
             .ToArray();
         int current = 0, skipSize = 0;
         for (int round = 0; round < 64; round++)
@@ -45,7 +45,7 @@ class Day10 : Solution<long?, string>
 
     protected override long? Part1()
     {
-        Assert(SimpleKnotHash(5, new[] { 3, 4, 1, 5 }), 12);
+        Assert(SimpleKnotHash(5, [3, 4, 1, 5]), 12);
         return SimpleKnotHash(256, Input.Split(',').Select(int.Parse).ToArray());
     }
 

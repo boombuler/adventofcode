@@ -50,7 +50,7 @@ class Day19 : Solution
         }
 
         var rule0 = BuildRule(0);
-        bool isMatch(string line) => rule0(line, new int[] { 0 }).Any(l => l == line.Length);
+        bool isMatch(string line) => rule0(line, [0]).Any(l => l == line.Length);
 
         var startIdx = new int[] { 0 };
 

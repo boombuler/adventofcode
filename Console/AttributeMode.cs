@@ -1,10 +1,10 @@
 ﻿namespace AdventOfCode.Console;
 
-class AttributeMode : OutputMode
+class AttributeMode(int color) : OutputMode
 {
     const int COLOR_SELECTED = 0x25243E;
     private bool fSelected;
-    private readonly int fColor;
+    private readonly int fColor = color;
     public bool Selected
     {
         get => fSelected;
@@ -16,11 +16,6 @@ class AttributeMode : OutputMode
                 fSelected = value;
             }
         }
-    }
-
-    public AttributeMode(int color)
-    {
-        fColor = color;
     }
 
     public override void Enter()

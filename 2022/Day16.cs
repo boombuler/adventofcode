@@ -8,7 +8,7 @@ class Day16 : Solution
             new Regex(@"Valve (?<Name>\w+) has flow rate=(?<FlowRate>\d+); tunnels? leads? to valves? ((, )?(?<Tunnels>\w+))*").ToFactory<Valve>();
     }
 
-    private int[,] Distances(List<Valve> valves)
+    private static int[,] Distances(List<Valve> valves)
     {
 
         int[,] distances = new int[valves.Count, valves.Count];

@@ -7,21 +7,21 @@ class Day19 : Solution
     record struct Amounts(int Ore, int Clay, int Obsidian) : IEnumerable<int>
     {
         public static Amounts operator +(Amounts m1, Amounts m2)
-            => new Amounts(m1.Ore + m2.Ore, m1.Clay + m2.Clay, m1.Obsidian + m2.Obsidian);
+            => new (m1.Ore + m2.Ore, m1.Clay + m2.Clay, m1.Obsidian + m2.Obsidian);
         public static Amounts operator -(Amounts m1, Amounts m2)
-            => new Amounts(m1.Ore - m2.Ore, m1.Clay - m2.Clay, m1.Obsidian - m2.Obsidian);
+            => new (m1.Ore - m2.Ore, m1.Clay - m2.Clay, m1.Obsidian - m2.Obsidian);
         public static Amounts operator *(Amounts m, int t)
-            => new Amounts(m.Ore * t, m.Clay * t, m.Obsidian * t);
+            => new (m.Ore * t, m.Clay * t, m.Obsidian * t);
 
-        private IEnumerable<int> Enumerate()
+        private readonly IEnumerable<int> Enumerate()
         {
             yield return Ore;
             yield return Clay;
             yield return Obsidian;
         }
 
-        public IEnumerator<int> GetEnumerator() => Enumerate().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => Enumerate().GetEnumerator();
+        public readonly IEnumerator<int> GetEnumerator() => Enumerate().GetEnumerator();
+        readonly IEnumerator IEnumerable.GetEnumerator() => Enumerate().GetEnumerator();
     }
 
     record State(int TimeLeft, Amounts Resources, Amounts Robots);
@@ -30,7 +30,7 @@ class Day19 : Solution
     {
         public int ID { get; }
 
-        private readonly List<(Amounts Costs, Amounts Robots)> fBuildOptions = new();
+        private readonly List<(Amounts Costs, Amounts Robots)> fBuildOptions = [];
         private readonly Amounts fGeodeBotCost;
         private readonly Amounts fMaxRates;
 
@@ -101,13 +101,13 @@ class Day19 : Solution
                         });
                 }
 
-                foreach (var build in fBuildOptions)
+                foreach (var (costs, robots) in fBuildOptions)
                 {
-                    var newRobots = state.Robots + build.Robots;
+                    var newRobots = state.Robots + robots;
                     if (newRobots.Zip(fMaxRates).Any(t => t.First > t.Second))
                         continue;
 
-                    if (TryBuild(build.Costs, out timeLeft, out newResources))
+                    if (TryBuild(costs, out timeLeft, out newResources))
                     {
                         var geodes = DFS(new State(
                             timeLeft,

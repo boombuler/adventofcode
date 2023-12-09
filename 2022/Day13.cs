@@ -10,7 +10,7 @@ class Day13 : Solution
         public ImmutableList<Packet> Children { get; }
 
         public Packet(int value) 
-            : this(value, ImmutableList<Packet>.Empty) { }
+            : this(value, []) { }
         public Packet(ImmutableList<Packet> children) 
             : this(null, children) { }
         private Packet(int? value, ImmutableList<Packet> children)
@@ -24,8 +24,8 @@ class Day13 : Solution
             if (Value.HasValue && node.Value.HasValue)
                 return this.Value.Value - node.Value.Value;
 
-            var self = this.Value.HasValue ? ImmutableList<Packet>.Empty.Add(this) : this.Children;
-            var other = node.Value.HasValue ? ImmutableList<Packet>.Empty.Add(node) : node.Children;
+            var self = this.Value.HasValue ? [this] : this.Children;
+            var other = node.Value.HasValue ? [node] : node.Children;
 
             return self.Zip(other)
                 .Select((n) => n.First.CompareTo(n.Second))
@@ -61,15 +61,15 @@ class Day13 : Solution
         }
     }
 
-    private IEnumerable<Packet> ReadPackets(string input)
+    private static IEnumerable<Packet> ReadPackets(string input)
         => input.Lines().Where(x => !string.IsNullOrEmpty(x)).Select(Packet.Parse);
 
-    private long SumIndicesOfSortedPairs(string input)
+    private static long SumIndicesOfSortedPairs(string input)
         => ReadPackets(input).Chunk(2)
             .Select((p, i) => (Ordered: p[0].CompareTo(p[1]) < 0, Idx: i + 1))
             .Where(n => n.Ordered).Sum(n => n.Idx);
 
-    private long GetDividerIndices(string input)
+    private static long GetDividerIndices(string input)
     {
         var dividers = new [] { Packet.Parse("[[2]]"),  Packet.Parse("[[6]]") };
         var nodes = ReadPackets(input).Concat(dividers).Order().ToList();

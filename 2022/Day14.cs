@@ -4,9 +4,9 @@ using System.Collections;
 
 class Day14 : Solution
 {
-    private long FillCave(string input, Func<Point2D, long, bool> finished)
+    private static long FillCave(string input, Func<Point2D, long, bool> finished)
     {
-        const int caveWidth = 1000;
+        const int CaveWidth = 1000;
 
         var rocks = (
             from line in input.Lines()
@@ -17,16 +17,16 @@ class Day14 : Solution
         var abys = rocks.Max(p => p.Y);
         var floor = abys + 2;
 
-        var cave = new BitArray((int)((floor + 1) * caveWidth));
-        int Index(Point2D pt) => (int)((pt.Y * caveWidth) + pt.X);
+        var cave = new BitArray((int)((floor + 1) * CaveWidth));
+        static int Index(Point2D pt) => (int)((pt.Y * CaveWidth) + pt.X);
         rocks.Select(Index).ForEach(i => cave[i] = true);
-        Enumerable.Range(0, caveWidth).ForEach(x => cave[Index((x, floor))] = true);
+        Enumerable.Range(0, CaveWidth).ForEach(x => cave[Index((x, floor))] = true);
 
         int sand = 0;
         var directions = new Point2D[] { (0, 1), (-1, 1), (1, 1) };
         while (true)
         {
-            var next = new Point2D(caveWidth / 2, -1)
+            var next = new Point2D(CaveWidth / 2, -1)
                 .Unfold(p => directions.Select(d => d + p).FirstOrDefault(d => !cave[Index(d)]))
                 .TakeWhile(n => n != null)
                 .Last();
@@ -38,10 +38,9 @@ class Day14 : Solution
         }
     }
 
-
     protected override long? Part1()
     {
-        long Solve(string input)
+        static long Solve(string input)
             => FillCave(input, (pt, y) => pt.Y >= y) - 1;
 
         Assert(Solve(Sample()), 24);
@@ -50,7 +49,7 @@ class Day14 : Solution
 
     protected override long? Part2()
     {
-        long Solve(string input)
+        static long Solve(string input)
             => FillCave(input, (pt, _) => pt.Y == 0);
 
         Assert(Solve(Sample()), 93);

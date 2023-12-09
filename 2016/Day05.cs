@@ -7,7 +7,6 @@ class Day05 : Solution<string>
     static bool IsValidHash(ReadOnlySpan<byte> hash)
         => hash[0] == 0 && hash[1] == 0 && (hash[2] & 0xF0) == 0;
 
-
     private static IEnumerable<byte[]> GenerateValidHashes(string doorId)
     {
         var md = MD5.Create();

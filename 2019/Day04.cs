@@ -2,7 +2,7 @@
 
 class Day04 : Solution
 {
-    private IEnumerable<IEnumerable<int>> GenDigits(int startingDigit, int count)
+    private static IEnumerable<IEnumerable<int>> GenDigits(int startingDigit, int count)
     {
         for (int i = startingDigit; i <= 9; i++)
         {
@@ -33,7 +33,7 @@ class Day04 : Solution
         yield return count;
     }
 
-    private IEnumerable<int> GenPasswordCandidates(Func<int, bool> groupRule)
+    private static IEnumerable<int> GenPasswordCandidates(Func<int, bool> groupRule)
         => GenDigits(0, 6).Where(num => DigitGroupSizes(num).Any(groupRule))
             .Select(num => num.Aggregate(0, (sum, d) => (sum * 10) + d));
 

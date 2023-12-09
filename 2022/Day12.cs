@@ -2,7 +2,7 @@
 
 class Day12 : Solution
 {
-    private int ShortestPath(string input, params char[] startPoints)
+    private static int ShortestPath(string input, params char[] startPoints)
     {
         var map = input.Cells();
         var starts = map.Where(kvp => startPoints.Contains(kvp.Value)).Select(p=> p.Key);
@@ -19,7 +19,7 @@ class Day12 : Solution
             open.Enqueue((sp, 1, 0));
 
         while(open.TryDequeue(out var cur))
-        {;
+        {
             foreach(var n in cur.Pos.Neighbours())
             {
                 if (heights.TryGetValue(n, out var nh) && (nh-cur.Height) <= 1)
@@ -36,14 +36,14 @@ class Day12 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) => ShortestPath(input, 'S');
+        static long Solve(string input) => ShortestPath(input, 'S');
         Assert(Solve(Sample()), 31);
         return Solve(Input);
     }
 
     protected override long? Part2()
     {
-        long Solve(string input) => ShortestPath(input, 'S', 'a');
+        static long Solve(string input) => ShortestPath(input, 'S', 'a');
         Assert(Solve(Sample()), 29);
         return Solve(Input);
     }

@@ -23,7 +23,7 @@ class Day25 : Solution
             var ops = stateDescrpt.Lines().Skip(1).Chunk(4).Select(grp => string.Join("\n", grp)).Select(ParseOperation);
             states.Add(new State(name, ops.ToArray()));
         }
-        return new StateMachine(initialState, rounds, states.ToArray());
+        return new StateMachine(initialState, rounds, [.. states]);
     }
 
     private static long RunTuring(string machineDescript)

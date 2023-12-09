@@ -15,7 +15,7 @@ static class Parser
     public static Parser<string> Word { get; } = Expect(char.IsAsciiLetter).Many1().Text();
 
     static Parser<char> Expect(Func<char, bool> predicate)
-        => new Parser<char>((input) =>
+        => new((input) =>
         {
             if (input.EOF)
                 return "EOF not expected";
@@ -39,7 +39,7 @@ static class Parser
     }
 
     private static Parser<TValue[]> Sequence<TValue>(Parser<TValue>[] parsers)
-        => new Parser<TValue[]>((input) =>
+        => new((input) =>
         {
             var values = new TValue[parsers.Length];
             for (int i = 0; i < parsers.Length; i++)
@@ -53,9 +53,8 @@ static class Parser
             return new Result<TValue[]>(values, input);
         });
 
-
     public static Parser<string> Str(string s)
-        => new Parser<string>(input =>
+        => new(input =>
         {
             foreach(var c in s)
             {
@@ -65,6 +64,9 @@ static class Parser
             }
             return new Result<string>(s, input);
         });
+
+    public static Parser<T> Str<T>(string s, T value)
+        => Str(s).Select(_ => value);
 
     public static Parser<string> Text(this Parser<char[]> parser)
         => parser.Select(chars => new string(chars));
@@ -91,9 +93,7 @@ static class Parser
     public static Parser<T> Regex<T>([StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         var regex = new Regex("^" + pattern, RegexOptions.Compiled);
-        var factory = regex.CreateMatchFactory<T>();
-        if (factory == null)
-            throw new InvalidOperationException();
+        var factory = regex.CreateMatchFactory<T>() ?? throw new InvalidOperationException(); 
         return new Parser<T>((input) =>
         {
             var match = regex.Match(input.Remaining);

@@ -32,33 +32,33 @@ class Day21 : Solution
         public override string ToString() => Name;
     }
 
-    private readonly Item[] Weapons = new Item[]
-    {
-            new ("Dagger"    ,  8, 4, 0),
-            new ("Shortsword", 10, 5, 0),
-            new ("Warhammer" , 25, 6, 0),
-            new ("Longsword" , 40, 7, 0),
-            new ("Greataxe"  , 74, 8, 0),
-        };
+    private readonly Item[] Weapons =
+    [
+        new ("Dagger"    ,  8, 4, 0),
+        new ("Shortsword", 10, 5, 0),
+        new ("Warhammer" , 25, 6, 0),
+        new ("Longsword" , 40, 7, 0),
+        new ("Greataxe"  , 74, 8, 0),
+    ];
 
-    private readonly Item[] Armors = new[]
-    {
-            new Item("Leather"   ,  13, 0, 1),
-            new Item("Chainmail" ,  31, 0, 2),
-            new Item("Splintmail",  53, 0, 3),
-            new Item("Bandedmail",  75, 0, 4),
-            new Item("Platemail" , 102, 0, 5),
-        };
+    private readonly Item[] Armors =
+    [
+        new ("Leather"   ,  13, 0, 1),
+        new ("Chainmail" ,  31, 0, 2),
+        new ("Splintmail",  53, 0, 3),
+        new ("Bandedmail",  75, 0, 4),
+        new ("Platemail" , 102, 0, 5),
+    ];
 
-    private readonly Item[] Rings = new[]
-    {
-            new Item("Damage +1",  25, 1, 0),
-            new Item("Damage +2",  50, 2, 0),
-            new Item("Damage +3", 100, 3, 0),
-            new Item("Defense +1", 20, 0, 1),
-            new Item("Defense +2", 54, 0, 2),
-            new Item("Defense +3", 80, 0, 3),
-        };
+    private readonly Item[] Rings = 
+    [
+        new ("Damage +1",  25, 1, 0),
+        new ("Damage +2",  50, 2, 0),
+        new ("Damage +3", 100, 3, 0),
+        new ("Defense +1", 20, 0, 1),
+        new ("Defense +2", 54, 0, 2),
+        new ("Defense +3", 80, 0, 3),
+    ];
 
     private IEnumerable<IEnumerable<Item>> SelectItems()
     {
@@ -76,11 +76,11 @@ class Day21 : Solution
         }
     }
 
-    private List<Item[]> Take(Span<Item> p, int count)
+    private static List<Item[]> Take(Span<Item> p, int count)
     {
         var result = new List<Item[]>();
         if (count == 0)
-            result.Add(Array.Empty<Item>());
+            result.Add([]);
         else
         {
             for (int i = 0; i <= (p.Length - count); i++)
@@ -99,7 +99,7 @@ class Day21 : Solution
         return result;
     }
 
-    private IEnumerable<Item[]> Take(Item[] pool, int min, int max)
+    private static IEnumerable<Item[]> Take(Item[] pool, int min, int max)
         => Enumerable.Range(min, max - min + 1).SelectMany(c => Take(pool.AsSpan(), c));
 
     private bool WouldWin(IEnumerable<Item> equip)

@@ -27,7 +27,7 @@ class Day14 : Solution
         var missing = new Queue<MatAmount>();
         missing.Enqueue(new MatAmount(fuelAmount, "FUEL"));
 
-        while (missing.Any())
+        while (missing.Count > 0)
         {
             var (requiredAmount, mat) = missing.Dequeue();
             if (mat == "ORE")

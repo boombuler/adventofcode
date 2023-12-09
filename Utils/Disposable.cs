@@ -1,19 +1,14 @@
 ﻿namespace AdventOfCode.Utils;
 
-class Disposable : IDisposable
+class Disposable(Action onDispose) : IDisposable
 {
-    private readonly Action fOnDispose;    
     private bool fDisposed;
-    public Disposable(Action onDispose)
-    {
-        fOnDispose = onDispose;
-    }
     public void Dispose()
     {
         if (!fDisposed)
         {
             fDisposed= true;
-            fOnDispose?.Invoke();
+            onDispose?.Invoke();
         }
     }
 }

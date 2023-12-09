@@ -104,16 +104,19 @@ public static class EnumerableHelper
     /// <summary>
     /// Like <see cref="Combinations{T}(IEnumerable{T}, int)"/> but only for two items.
     /// </summary>
-    /// <param name="items"></param>
-    /// <returns></returns>
     public static IEnumerable<(T A, T B)> Pairs<T>(this IEnumerable<T> items)
     {
-        if (items is not IList<T> lst)
-            lst = items.ToList();
-        for (int i = 0; i < lst.Count; i++)
-            for (int j = i + 1; j < lst.Count; j++)
-                yield return (lst[i], lst[j]);
+        var seenItems = new List<T>();
+        foreach(var i in items)
+        {
+            foreach (var o in seenItems)
+                yield return (o, i);
+            seenItems.Add(i);
+        }
     }
+
+    public static IEnumerable<TVal> Pairs<T, TVal>(this IEnumerable<T> items, Func<T, T, TVal> selector)
+        => Pairs(items).Select(n => selector(n.A, n.B));
 
     /// <summary>
     /// returns a sliding window with <paramref name="windowSize"/> items from the <paramref name="items"/>
@@ -149,6 +152,16 @@ public static class EnumerableHelper
     {
         foreach (var itm in items)
             action?.Invoke(itm);
+    }
+
+    public static IEnumerable<TVal> Scan<T, TVal>(this IEnumerable<T> items, TVal seed, Func<TVal, T, TVal> selector)
+    {
+        yield return seed;
+        foreach(var itm in items)
+        {
+            seed = selector(seed, itm);
+            yield return seed;
+        }
     }
 
     public static IEnumerable<T> TakeUntil<T>(this IEnumerable<T> items, Func<T, bool> predicate)

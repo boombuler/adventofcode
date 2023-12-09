@@ -21,17 +21,17 @@ class AssembunnyVM
     private static Action<AssembunnyVM> CompileToggledOp(object[] args)
         => args switch
         {
-            ["inc", var x] => CompileOp(new[] { "dec", x }),
-            [_, var x] => CompileOp(new[] { "inc", x }),
-            ["jnz", var x, var y] => CompileOp(new[] { "cpy", x, y }),
-            [_, var x, var y] => CompileOp(new[] { "jnz", x, y }),
+            ["inc", var x] => CompileOp(["dec", x]),
+            [_, var x] => CompileOp(["inc", x]),
+            ["jnz", var x, var y] => CompileOp(["cpy", x, y]),
+            [_, var x, var y] => CompileOp(["jnz", x, y]),
             ["nop"] => CompileOp(args),
             ["mul"] => CompileOp(args),
             _ => throw new InvalidOperationException()
         };
 
     private readonly Channel<long> fOutput = Channel.CreateUnbounded<long>();
-    private readonly HashSet<int> fToggled = new HashSet<int>();
+    private readonly HashSet<int> fToggled = [];
     private readonly Action<AssembunnyVM>[] fNormalOperations;
     private readonly Action<AssembunnyVM>[] fToggledOperations;
     protected readonly long[] Registers = new long[4];

@@ -2,26 +2,18 @@
 
 class Day15 : Solution
 {
-    class PathFinder : AStar<Point2D>
+    class PathFinder(Dictionary<Point2D, long> riskMap) : AStar<Point2D>(Point2D.Origin)
     {
-        private readonly Dictionary<Point2D, long> fRiskMap;
-
-        public PathFinder(Dictionary<Point2D, long> riskMap)
-            : base(Point2D.Origin)
-        {
-            fRiskMap = riskMap;
-        }
-
         protected override long Distance(Point2D one, Point2D another)
         {
             var distance = one.ManhattanDistance(another);
             if (distance == 1)
-                return fRiskMap[another];
+                return riskMap[another];
             return distance;
         }
 
         protected override IEnumerable<Point2D> NeighboursOf(Point2D node)
-            => node.Neighbours().Where(fRiskMap.ContainsKey);
+            => node.Neighbours().Where(riskMap.ContainsKey);
     }
 
     private static long? FindPath(string input, int expandMap = 1)

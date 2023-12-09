@@ -81,7 +81,7 @@ partial class Day21 : Solution
         }
     }
 
-    private Dictionary<string, IMonkey> GetMonkeys(string input)
+    private static Dictionary<string, IMonkey> GetMonkeys(string input)
     {
         var result = new Dictionary<string, IMonkey>();
         
@@ -102,14 +102,14 @@ partial class Day21 : Solution
 
     protected override long? Part1()
     {
-        long GetRootValue(string input) => GetMonkeys(input)[ROOT].CalcValue();
+        static long GetRootValue(string input) => GetMonkeys(input)[ROOT].CalcValue();
         Assert(GetRootValue(Sample()), 152);
         return GetRootValue(Input);
     }
 
     protected override long? Part2()
     {
-        long GetHumanValue(string input) => GetMonkeys(input)[ROOT].SolveForHuman(0);
+        static long GetHumanValue(string input) => GetMonkeys(input)[ROOT].SolveForHuman(0);
         Assert(GetHumanValue(Sample()), 301);
         return GetHumanValue(Input);
     }

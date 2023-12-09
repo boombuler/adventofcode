@@ -34,7 +34,6 @@ class Day07 : Solution
         return Solve(Input);
     }
 
-
     protected override long? Part2()
     {
         static long Solve(string input) => RateHands(input, "J23456789TQKA", true);

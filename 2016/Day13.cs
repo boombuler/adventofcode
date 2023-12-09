@@ -28,17 +28,11 @@ class Day13 : Solution
         }.Where(isValid);
     }
 
-    class WallAStar : AStar<Point2D>
+    class WallAStar(Point2D src, int wallPattern) : AStar<Point2D>(src)
     {
-        private readonly int fWallPattern;
-        public WallAStar(Point2D src, int wallPattern)
-            : base(src)
-        {
-            fWallPattern = wallPattern;
-        }
         protected override long Distance(Point2D one, Point2D another) => one.ManhattanDistance(another);
 
-        protected override IEnumerable<Point2D> NeighboursOf(Point2D node) => Neighbours(node, fWallPattern);
+        protected override IEnumerable<Point2D> NeighboursOf(Point2D node) => Neighbours(node, wallPattern);
     }
 
     private static long ShortestPath(Point2D src, Point2D dest, int wallPattern)

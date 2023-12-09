@@ -2,7 +2,7 @@
 
 class Day07 : Solution
 {
-    private IEnumerable<long> GetDirSizes(string input)
+    private static IEnumerable<long> GetDirSizes(string input)
     {
         var curPath = ImmutableStack<string>.Empty;
         var sizes = new Dictionary<ImmutableStack<string>, long>();
@@ -25,10 +25,10 @@ class Day07 : Solution
         return sizes.Values;
     }
     
-    private long GetSumOfSmallDirs(string input) 
+    private static long GetSumOfSmallDirs(string input) 
         => GetDirSizes(input).Where(d => d < 100000).Sum();
 
-    private long SizeOfDirToDelete(string input)
+    private static long SizeOfDirToDelete(string input)
     {
         var sizes = GetDirSizes(input);
         var requiredSize = sizes.Max() - 40000000;

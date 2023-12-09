@@ -4,8 +4,8 @@ ref struct AsciiCounter
 {
     private readonly Span<byte> fBuffer;
     private int fLength;
-    public int Length => fLength;
-    public long Value => long.Parse(Encoding.ASCII.GetString(fBuffer[..Length]));
+    public readonly int Length => fLength;
+    public readonly long Value => long.Parse(Encoding.ASCII.GetString(fBuffer[..Length]));
     public AsciiCounter(Span<byte> buffer, long initialValue = 0)
     {
         fBuffer = buffer;

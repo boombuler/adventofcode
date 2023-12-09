@@ -2,22 +2,15 @@
 
 class Day20 : Solution
 {
-    private class Particle
+    private class Particle(int id, string line)
     {
-        public int ID { get; }
-        public Point3D Position { get; private set; }
-        public Point3D Velocity { get; private set; }
-        public Point3D Acceleration { get; private set; }
+        public int ID { get; } = id;
+        public Point3D Position { get; private set; } = ParsePosition(line);
+        public Point3D Velocity { get; private set; } = ParseVelocity(line);
+        public Point3D Acceleration { get; } = ParseAcceleration(line);
         private static readonly Func<string, Point3D> ParsePosition = new Regex(@"p=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
         private static readonly Func<string, Point3D> ParseVelocity = new Regex(@"v=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
         private static readonly Func<string, Point3D> ParseAcceleration = new Regex(@"a=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
-        public Particle(int id, string line)
-        {
-            ID = id;
-            Position = ParsePosition(line);
-            Velocity = ParseVelocity(line);
-            Acceleration = ParseAcceleration(line);
-        }
 
         public void Tick()
         {

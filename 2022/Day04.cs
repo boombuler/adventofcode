@@ -12,7 +12,7 @@ class Day04 : Solution
         public static bool Overlaps(Range a, Range b) => a.Contains(b.Min) || a.Contains(b.Max);
     }
 
-    private int CountRanges(string input, Func<Range, Range,bool> compare)
+    private static int CountRanges(string input, Func<Range, Range,bool> compare)
         => input.Lines()
             .Select(l => l.Split(',').Select(Range.Factory).MinMaxBy(n => n.Min))
             .Count(n => compare(n.min,n.max));

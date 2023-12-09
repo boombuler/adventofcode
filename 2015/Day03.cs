@@ -2,22 +2,8 @@
 
 class Day03 : Solution
 {
-    public static IEnumerable<(int x, int y)> Walk(IEnumerable<char> directions)
-    {
-        var current = (x: 0, y: 0);
-        yield return current;
-        foreach (var d in directions)
-        {
-            switch (d)
-            {
-                case '^': current = (current.x, current.y - 1); break;
-                case 'v': current = (current.x, current.y + 1); break;
-                case '<': current = (current.x - 1, current.y); break;
-                case '>': current = (current.x + 1, current.y); break;
-            }
-            yield return current;
-        }
-    }
+    public static IEnumerable<Point2D> Walk(IEnumerable<char> directions)
+        => directions.Select(Point2D.DirectionFromArrow).Scan(Point2D.Origin, (loc, dir) => loc + dir);
 
     public static int CountUniquePlaces(string directions, int workers = 1)
         => Enumerable.Range(0, workers)

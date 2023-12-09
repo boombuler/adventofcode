@@ -21,7 +21,7 @@ class Day05 : Solution
         Assert(!IsNice("jchzalrnumimnmhp"));
         Assert(!IsNice("haegwjzuvuyypxyu"));
         Assert(!IsNice("dvszwmarrgswjxmb"));
-        return Input.Lines().Where(IsNice).Count();
+        return Input.Lines().Count(IsNice);
     }
     protected override long? Part2()
     {
@@ -31,6 +31,6 @@ class Day05 : Solution
         Assert(IsNice2("xxyxx"));
         Assert(!IsNice2("uurcxstgmygtbstg"));
         Assert(!IsNice2("ieodomkazucvgmuy"));
-        return Input.Lines().Where(IsNice2).Count();
+        return Input.Lines().Count(IsNice2);
     }
 }

@@ -20,7 +20,7 @@ class Day22 : Solution
             }
 
             int rounds = 0;
-            while (p1.Any() && p2.Any())
+            while (p1.Count > 0 && p2.Count > 0)
             {
                 rounds++;
                 if (recursive && CheckEndlessLoop())

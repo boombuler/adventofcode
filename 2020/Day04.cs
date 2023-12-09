@@ -65,7 +65,7 @@ class Day04 : Solution
                 if (result.Count > 0)
                 {
                     yield return result;
-                    result = new Dictionary<string, string>();
+                    result = [];
                 }
 
                 continue;

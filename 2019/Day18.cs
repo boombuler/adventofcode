@@ -10,7 +10,7 @@ class Day18 : Solution
     {
         private readonly Dictionary<Point2D, char> fWalkableTiles;
         private readonly Dictionary<char, Point2D> fPOI;
-        private readonly Dictionary<(char, char), (long, string)?> fPaths = new();
+        private readonly Dictionary<(char, char), (long, string)?> fPaths = [];
         public IEnumerable<char> Keys => fPOI.Keys.Where(char.IsLower);
 
         public Map(string map, Point2D door = null)
@@ -122,7 +122,7 @@ class Day18 : Solution
 
     private static long ShortestPath(string map, bool splitMap)
     {
-        var maps = splitMap ? Map.Split(map) : new[] { new Map(map) };
+        var maps = splitMap ? Map.Split(map) : [new Map(map)];
 
         var dependencies = maps.SelectMany(map => map.Keys.Select(k => (Key: k, Required: map.GetPath(DOOR, k).RequiredKeys))).ToDictionary(k => k.Key, k => k.Required);
         var mapsByKey = maps.SelectMany((map, i) => map.Keys.Select(k => (k, i))).ToDictionary(x => x.k, x => x.i);

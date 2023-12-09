@@ -5,18 +5,11 @@ class Day24 : Solution
     record State(int Time, Point2D Position);
     record Blizzard(Point2D Position, Point2D Direction);
 
-    private (Point2D Start, Point2D End, Func<Point2D, Point2D, int, int> PathFinder) GetPathFinder(string input)
+    private static (Point2D Start, Point2D End, Func<Point2D, Point2D, int, int> PathFinder) GetPathFinder(string input)
     {
         var map = input.Cells();
         var (startPos, endPos) = map.Where(m => m.Value == '.').Select(m => m.Key).MinMaxBy(m => m.Y);
-        var blizzards = map.Select(c => new Blizzard(c.Key-(1,1), c.Value switch
-        {
-            '>' => (1, 0),
-            '<' => (-1, 0),
-            '^' => (0, -1),
-            'v' => (0, 1),
-            _ => Point2D.Origin
-        })).Where(b=> b.Direction != Point2D.Origin).ToList();
+        var blizzards = map.Select(c => new Blizzard(c.Key-(1,1), Point2D.DirectionFromArrow(c.Value))).Where(b=> b.Direction != Point2D.Origin).ToList();
         var (_, max) = Rect2D.AABB(map.Keys);
 
         var blizLoop = (int)MathExt.LCM(max.X - 1, max.Y - 1);
@@ -63,7 +56,7 @@ class Day24 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input)
+        static long Solve(string input)
         {
             var (start, end, findPath) = GetPathFinder(input);
             return findPath(start, end, 0);
@@ -74,7 +67,7 @@ class Day24 : Solution
 
     protected override long? Part2()
     {
-        long Solve(string input)
+        static long Solve(string input)
         {
             var (start, end, findPath) = GetPathFinder(input);
             return findPath(start, end, findPath(end, start, findPath(start, end, 0)));

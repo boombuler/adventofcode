@@ -19,10 +19,14 @@ public record Rect2D(Point2D TopLeft, Point2D BottomRight)
         long maxY = long.MinValue;
         foreach(var p in points)
         {
-            if (p.X < minX) minX = p.X;
-            if (p.X > maxX) maxX = p.X;
-            if (p.Y < minY) minY = p.Y;
-            if (p.Y > maxY) maxY = p.Y;
+            if (p.X < minX) 
+                minX = p.X;
+            if (p.X > maxX) 
+                maxX = p.X;
+            if (p.Y < minY) 
+                minY = p.Y;
+            if (p.Y > maxY) 
+                maxY = p.Y;
         }
         return new Rect2D((minX, minY), (maxX, maxY));
     }

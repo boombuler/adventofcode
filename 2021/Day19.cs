@@ -2,14 +2,10 @@
 
 class Day19 : Solution
 {
-    class Cluster
+    class Cluster(IEnumerable<Point3D> beacons)
     {
-        public ImmutableArray<ImmutableArray<Point3D>> Orientations { get; }
-
-        public Cluster(IEnumerable<Point3D> beacons)
-        {
-            Orientations = GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray).ToImmutableArray();
-        }
+        public ImmutableArray<ImmutableArray<Point3D>> Orientations { get; } 
+            = GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray).ToImmutableArray();
 
         private static IEnumerable<Func<Point3D, Point3D>> GetOrientations()
         {
@@ -34,7 +30,7 @@ class Day19 : Solution
         {
             if (parsePt.TryMatch<Point3D>(line, out var pt))
                 curList.Add(pt);
-            else if (curList.Any())
+            else if (curList.Count > 0)
             {
                 result.Add(new Cluster(curList));
                 curList.Clear();

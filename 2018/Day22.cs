@@ -17,23 +17,17 @@ class Day22 : Solution
         None = 4
     }
 
-    private static readonly Tools[] ValidTools = new[]
-    {
+    private static readonly Tools[] ValidTools =
+    [
         Tools.Torch | Tools.Climbing, // Rocky
         Tools.None | Tools.Climbing, // Wet
         Tools.None | Tools.Torch, // Narrow
-    };
+    ];
 
-    class CaveRouting : AStar<(Point2D Pt, Tools Tool)>
+    class CaveRouting(Cave cave, Point2D src, Tools startingEquip) : AStar<(Point2D Pt, Tools Tool)>((src, startingEquip))
     {
         private const long TOOL_CHANGE_COST = 7;
-        private readonly Cave fCave;
-
-        public CaveRouting(Cave cave, Point2D src, Tools startingEquip)
-            : base((src, startingEquip))
-        {
-            fCave = cave;
-        }
+        private readonly Cave fCave = cave;
 
         protected override long Distance((Point2D Pt, Tools Tool) one, (Point2D Pt, Tools Tool) another)
             => one.Pt.ManhattanDistance(another.Pt) + (one.Tool == another.Tool ? 0 : TOOL_CHANGE_COST);
@@ -55,18 +49,12 @@ class Day22 : Solution
         }
     }
 
-    class Cave
+    class Cave(long Depth, long X, long Y)
     {
-        private readonly long fDepth;
-        private readonly Point2D fTarget;
-        private readonly Dictionary<Point2D, int> fErosionLevels = new();
+        private readonly long fDepth = Depth;
+        private readonly Point2D fTarget = (X, Y);
+        private readonly Dictionary<Point2D, int> fErosionLevels = [];
         public static readonly Func<string, Cave> Parse = new Regex(@"depth: (?<Depth>\d+)\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
-
-        public Cave(long Depth, long X, long Y)
-        {
-            fDepth = Depth;
-            fTarget = (X, Y);
-        }
 
         private long GetGeologicIndex(Point2D pt)
         {

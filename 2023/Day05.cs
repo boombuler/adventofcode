@@ -6,7 +6,7 @@ class Day05 : Solution
 {
     record struct Range(long Start, long Size)
     {
-        public long End => Start + Size;
+        public readonly long End => Start + Size;
 
         public Range? Intersect(Range other, out IEnumerable<Range> unintersected)
         {
@@ -43,7 +43,7 @@ class Day05 : Solution
                 }
                 ranges = open;
             }
-            return mapped.Concat(ranges).ToArray();
+            return [.. mapped, .. ranges];
         }
     }
 

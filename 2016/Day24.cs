@@ -2,26 +2,15 @@
 
 class Day24 : Solution
 {
-    class Node
+    class Node(char c, Point2D l)
     {
-        public int? Number { get; }
-        public Point2D Location { get; }
-        public List<Node> Neigbours { get; } = new List<Node>();
-
-        public Node(char c, Point2D l)
-        {
-            Location = l;
-            Number = c is not '.' and not '#' ? c - '0' : null;
-        }
+        public int? Number { get; } = c is not '.' and not '#' ? c - '0' : null;
+        public Point2D Location { get; } = l;
+        public List<Node> Neigbours { get; } = [];
     }
 
-    class NodeAStar : AStar<Node>
+    class NodeAStar(Node src) : AStar<Node>(src)
     {
-        public NodeAStar(Node src)
-            : base(src)
-        {
-        }
-
         protected override long Distance(Node one, Node another) => one.Location.ManhattanDistance(another.Location);
 
         protected override IEnumerable<Node> NeighboursOf(Node node) => node.Neigbours;

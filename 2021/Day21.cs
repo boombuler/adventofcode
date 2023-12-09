@@ -62,7 +62,7 @@ class Day21 : Solution
                        from newGame in game.Key.StepQuantumGames(activePlayer)
                        group game.Value * newGame.Count by newGame.State into games
                        select new { Game = games.Key, Count = games.Sum() };
-            openGames = new Dictionary<GameState, long>();
+            openGames = [];
             foreach (var g in next)
             {
                 if (g.Game.PlayerWon(activePlayer, 21))

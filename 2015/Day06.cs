@@ -1,11 +1,18 @@
 ﻿namespace AdventOfCode._2015;
 
+using static Parser;
+
 class Day06 : Solution
 {
     abstract class GridBase<T>
     {
-        record Command(string Action, int XMin, int XMax, int YMin, int YMax);
-        private static readonly Func<string, Command> ParseCommand = new Regex(@"(?<Action>turn on|turn off|toggle) (?<XMin>\d+),(?<YMin>\d+) through (?<XMax>\d+),(?<YMax>\d+)", RegexOptions.Compiled).ToFactory<Command>();
+        private static readonly Func<string, (bool? Action, Point2D Min, Point2D Max)> ParseCommand =
+            from cmd in Str("turn on", (bool?)true) | Str("turn off", (bool?)false) | Str("toggle", (bool?)null)
+            from xMin in Int.Token() + ","
+            from yMin in Int.Token() + "through"
+            from xMax in Int.Token() + ","
+            from yMax in Int.Token()
+            select (cmd, new Point2D(xMin, yMin), new Point2D(xMax, yMax));
             
         protected abstract void Apply(ref T value, bool? command);
         protected abstract int ValueOf(T val);
@@ -16,22 +23,10 @@ class Day06 : Solution
             const int SIZE = 1000;
             var lights = new T[SIZE * SIZE];
 
-            foreach (var c in commands)
+            foreach (var (act, min, max) in commands)
             {
-                bool? action = c.Action switch
-                {
-                    "turn on" => (bool?)true,
-                    "turn off" => (bool?)false,
-                    _ => (bool?)null
-                };
-
-                for (int y = c.YMin; y <= c.YMax; y++)
-                {
-                    for (int x = c.XMin; x <= c.XMax; x++)
-                    {
-                        Apply(ref lights[y*SIZE+x], action);
-                    }
-                }
+                foreach (var p in Point2D.Range(min, max))
+                    Apply(ref lights[p.Y * SIZE + p.X], act);
             }
             return lights.Sum(ValueOf);
         }

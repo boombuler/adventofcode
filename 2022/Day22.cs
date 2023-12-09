@@ -2,19 +2,15 @@
 
 class Day22 : Solution
 {
-    private static readonly Point2D[] Directions = new Point2D[] { (1, 0), (0, 1), (-1, 0), (0, -1) };
+    private static readonly Point2D[] Directions = [Point2D.Right, Point2D.Down, Point2D.Left, Point2D.Up];
     delegate (int Direction, Point2D Position) GetPositionDelegate(int direction, Point2D Pt);
-    class CubeFace
+    class CubeFace(Point2D mapIndex)
     {
         public (CubeFace Face, int Direction)[] Sides { get; } = new (CubeFace Face, int Rotate)[Directions.Length];
-        public Point2D MapIndex { get; }
-        public CubeFace(Point2D mapIndex)
-        {
-            MapIndex = mapIndex;
-        }
+        public Point2D MapIndex { get; } = mapIndex;
     }
 
-    private long GetFinalPositionOnMap(string input)
+    private static long GetFinalPositionOnMap(string input)
         => GetFinalPosition(input, map =>
         {
             var columns = map.GroupBy(p => p.X).ToDictionary(g => g.Key, g => g.MinMax(p => p.Y));
@@ -29,9 +25,9 @@ class Day22 : Solution
             return (dir, pos) => (dir, coerceBounds[dir](pos + Directions[dir]));
         });
 
-    private Point2D GetFaceIndex(Point2D pt, int cubeSize) => pt / cubeSize;
+    private static Point2D GetFaceIndex(Point2D pt, int cubeSize) => pt / cubeSize;
 
-    private Dictionary<Point2D, CubeFace> FoldCube(IEnumerable<Point2D> points, int cubeSize)
+    private static Dictionary<Point2D, CubeFace> FoldCube(IEnumerable<Point2D> points, int cubeSize)
     {
         var faces = points.Select(p => GetFaceIndex(p, cubeSize)).Distinct().ToDictionary(f => f, f => new CubeFace(f));
         foreach (var (s, face) in faces)
@@ -68,7 +64,7 @@ class Day22 : Solution
         return faces;
     }
 
-    private long GetFinalPositionOnCube(string input, int cubeSize)
+    private static long GetFinalPositionOnCube(string input, int cubeSize)
         => GetFinalPosition(input, map =>
         {
             var validPoints = map.ToHashSet();
@@ -101,7 +97,7 @@ class Day22 : Solution
             };
         });
 
-    private long GetFinalPosition(string input, Func<IEnumerable<Point2D>, GetPositionDelegate> buildGetPosFunc)
+    private static long GetFinalPosition(string input, Func<IEnumerable<Point2D>, GetPositionDelegate> buildGetPosFunc)
     {
         var (mapInput, (directionInput, _)) = input.Split("\n\n");
         var map = mapInput.Cells(c => c == '#', c => c != ' ');

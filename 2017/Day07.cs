@@ -1,26 +1,23 @@
 ﻿namespace AdventOfCode._2017;
 
-using System.Diagnostics.CodeAnalysis;
-
 class Day07 : Solution<string, int>
 {
     class Node
     {
         public static readonly Func<string, Node> Parse = new Regex(@"(?<Name>\w+) \((?<Weight>\d+)\)(\s*->\s*((?<ChildNames>\w+)(,?\s*))+)?", RegexOptions.Compiled).ToFactory<Node>();
 
-        private readonly List<Node> fChildren = new();
+        private readonly List<Node> fChildren = [];
 
         public string Name { get; }
         public int Weight { get; }
         public ImmutableArray<string> ChildNames { get; }
         public Node Parent { get; private set; }
 
-        [SuppressMessage("CodeQuality", "IDE0051", Justification = "Used by factory (reflection)")]
         private Node(string name, int weight, string[] childNames)
         {
             Name = name;
             Weight = weight;
-            ChildNames = childNames != null ? childNames.ToImmutableArray() : ImmutableArray<string>.Empty;
+            ChildNames = childNames != null ? [.. childNames] : [];
         }
 
         public void AddChild(Node child)

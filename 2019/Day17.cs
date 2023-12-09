@@ -2,8 +2,8 @@
 
 class Day17 : Solution
 {
-    private static readonly char[] DirectionImages = new char[] { '^', '<', 'v', '>' };
-    private static readonly Point2D[] Directions = new Point2D[] { (0, -1), (-1, 0), (0, 1), (1, 0) };
+    private static readonly char[] DirectionImages = ['^', '<', 'v', '>'];
+    private static readonly Point2D[] Directions = [Point2D.Up, Point2D.Left, Point2D.Down, Point2D.Right];
 
     private Dictionary<Point2D, char> GetScaffoldMap()
     {
@@ -76,7 +76,7 @@ class Day17 : Solution
 
     private (ImmutableList<string> Main, ImmutableList<IEnumerable<string>> Functions)? ExctractFunctions(ImmutableList<string> path, int fnIdx = 0)
     {
-        string[] functions = new[] { "A", "B", "C" };
+        string[] functions = ["A", "B", "C"];
 
         int nextFn = fnIdx + 1;
         int idx = path.Select((f, i) => (Value: f, Index: i)).First(i => !functions.Contains(i.Value)).Index;

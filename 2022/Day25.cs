@@ -3,17 +3,17 @@
 class Day25 : Solution<string>
 {
     private const string RUNES = "=-012";
-    private long UnSNAFU(string number)
+    private static long UnSNAFU(string number)
         => number.Reverse().Select((d, i) => (RUNES.IndexOf(d) - 2) * (long)Math.Pow(5, i)).Sum();
 
-    private string SNAFU(long number)
-        => new string(number.Unfold(n =>
+    private static string SNAFU(long number)
+        => new(number.Unfold(n =>
         {
             var (d, r) = Math.DivRem(n + 2, 5);
             return (RUNES[(int)r], d);
         }, n => n != 0).Reverse().ToArray());
 
-    private string SumValues(string input)
+    private static string SumValues(string input)
         => SNAFU(input.Lines().Select(UnSNAFU).Sum());
 
     protected override string Part1()

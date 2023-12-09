@@ -2,7 +2,7 @@
 
 class Day09 : Solution
 {
-    private IEnumerable<Point2D> ParseMoves(string input)
+    private static IEnumerable<Point2D> ParseMoves(string input)
         => from line in input.Lines()
            let parts = line.Split(' ')
            from m in Enumerable.Repeat(parts[0] switch
@@ -14,7 +14,7 @@ class Day09 : Solution
            }, int.Parse(parts[1]))
            select m;
 
-    private int CountUniqueLocations(string input, int knotCount)
+    private static int CountUniqueLocations(string input, int knotCount)
     {
         var visited = new HashSet<Point2D>();
         var knots = Enumerable.Repeat(Point2D.Origin, knotCount).ToArray();
@@ -37,16 +37,16 @@ class Day09 : Solution
 
     protected override long? Part1()
     {
-        const int knotCount = 2;
-        Assert(CountUniqueLocations(Sample("1"), knotCount), 13);
-        return CountUniqueLocations(Input, knotCount);
+        const int KnotCount = 2;
+        Assert(CountUniqueLocations(Sample("1"), KnotCount), 13);
+        return CountUniqueLocations(Input, KnotCount);
     }
 
     protected override long? Part2()
     {
-        const int knotCount = 10;
-        Assert(CountUniqueLocations(Sample("1"), knotCount), 1);
-        Assert(CountUniqueLocations(Sample("2"), knotCount), 36);
-        return CountUniqueLocations(Input, knotCount);
+        const int KnotCount = 10;
+        Assert(CountUniqueLocations(Sample("1"), KnotCount), 1);
+        Assert(CountUniqueLocations(Sample("2"), KnotCount), 36);
+        return CountUniqueLocations(Input, KnotCount);
     }
 }

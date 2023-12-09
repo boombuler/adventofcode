@@ -2,7 +2,7 @@
 
 class Day08 : Solution
 {
-    private IEnumerable<(int Height, IEnumerable<IEnumerable<int>> Views)> IterateViews(string input)
+    private static IEnumerable<(int Height, IEnumerable<IEnumerable<int>> Views)> IterateViews(string input)
     {
         var trees = input.Cells(c => c - '0');
         var directions = new Point2D[] { (-1, 0), (0, -1), (1, 0), (0, 1) };
@@ -10,11 +10,11 @@ class Day08 : Solution
             (tree.Value, directions.Select(d => tree.Key.Unfold(p => p + d).TakeWhile(trees.ContainsKey).Select(p => trees[p]))));
     }
 
-    private long CountVisibleTrees(string input)
+    private static long CountVisibleTrees(string input)
         => IterateViews(input)
             .Count(tree => tree.Views.Any(v => v.All(t => t < tree.Height)));
 
-    private long GetMaxScenicScore(string input)
+    private static long GetMaxScenicScore(string input)
         => IterateViews(input)
             .Max(t => t.Views.Select(v => v.TakeUntil(h => h >= t.Height).Count()).Aggregate((a, b) => a * b));
     

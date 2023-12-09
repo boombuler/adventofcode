@@ -68,7 +68,7 @@ class Day25 : Solution
                 }
                 else
                 {
-                    if (next.StartsWith("="))
+                    if (next.StartsWith('='))
                     {
                         buffer = next;
                         break;
@@ -132,7 +132,7 @@ class Day25 : Solution
                 itemInstructions = itemInstructions.Add(src.ToString().ToLowerInvariant());
             return (itemInstructions, wpInstructions);
         }
-        var (gather, checkpt) = Explore(0, ImmutableList<string>.Empty, ImmutableList<string>.Empty);
+        var (gather, checkpt) = Explore(0, [], []);
         var savePt = vm.RunASCIICommands(gather.Concat(checkpt.Take(checkpt.Count - 1))).Select(n => n.State).Last();
 
         var testCommand = checkpt.Last();

@@ -6,7 +6,7 @@ class Day10 : Solution
 {
     private class ChainCache
     {
-        private readonly Dictionary<string, long> fData = new();
+        private readonly Dictionary<string, long> fData = [];
         private static string Key(ReadOnlySpan<long> span)
         {
             var sb = new StringBuilder(span.Length * 4);
@@ -39,13 +39,13 @@ class Day10 : Solution
         return result;
     }
 
-    private long CoundValidAdapterChains(string inputs)
+    private static long CoundValidAdapterChains(string inputs)
     {
         var adapterChain = inputs.Lines().Select(long.Parse).Order().ToArray();
         return CoundValidAdapterChains(adapterChain, 0, adapterChain.Length, new ChainCache());
     }
 
-    private long CoundValidAdapterChains(long[] chain, int idx, int len, ChainCache cache)
+    private static long CoundValidAdapterChains(long[] chain, int idx, int len, ChainCache cache)
     {
         long Value(int idx) => idx < 0 ? 0 : chain[idx];
 

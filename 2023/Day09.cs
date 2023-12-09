@@ -7,7 +7,7 @@ class Day09 : Solution
             .Select(data => data.Unfold(d => d.SlidingWindow(2).Select(n => n[1] - n[0]).ToArray())
                 .Prepend(data)
                 .TakeWhile(d => d.Any(x => x != 0))
-                .Aggregate((f: 0, l: 0, s: 1), (a, d) => (a.f + (a.s * d[0]), a.l + d[d.Length - 1], -a.s)))
+                .Aggregate((f: 0, l: 0, s: 1), (a, d) => (a.f + (a.s * d[0]), a.l + d[^1], -a.s)))
             .Aggregate((First: 0, Last: 0), (a, d) => (a.First + d.f, a.Last + d.l));
 
     protected override long? Part1()

@@ -10,10 +10,10 @@ class Day22 : Solution
         public static readonly Spell Poison = new(3, Cost: 173, Damage: 3, Duration: 6);
         public static readonly Spell Recharge = new(4, Cost: 229, Mana: 101, Duration: 5);
 
-        public static Spell[] AllSpells { get; } = new[]
-        {
-                MagicMissile, Drain, Shield, Poison, Recharge
-            };
+        public static Spell[] AllSpells { get; } =
+        [
+            MagicMissile, Drain, Shield, Poison, Recharge
+        ];
     }
 
     record GameState(int Mana, int PlayerHP, int BossHP)

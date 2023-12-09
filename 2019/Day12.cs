@@ -54,8 +54,6 @@ class Day12 : Solution
         return moons.Sum(m => m.TotalEnergy);
     }
 
-
-
     private static long GetLoopCount(string input)
     {
         var moons = input.Lines().Select(Moon.Parse).ToList();

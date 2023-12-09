@@ -3,6 +3,10 @@
 public record Point2D(long X, long Y) : IComparable<Point2D>
 {
     public static readonly Point2D Origin = (0, 0);
+    public static readonly Point2D Up = (0, -1);
+    public static readonly Point2D Down = (0, 1);
+    public static readonly Point2D Left = (-1, 0);
+    public static readonly Point2D Right = (1, 0);
 
     public override string ToString() => $"{X},{Y}";
 
@@ -67,4 +71,19 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
         var parts = s.Split(',');
         return new Point2D(long.Parse(parts[0]), long.Parse(parts[1]));
     }
+
+    /// <summary>
+    /// Maps '<', '>', '^' and 'v' into directions. Any other char returns (0,0)
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public static Point2D DirectionFromArrow(char c)
+        => c switch
+        {
+            '^' => Up,
+            'v' => Down,
+            '<' => Left,
+            '>' => Right,
+            _ => (0, 0)
+        };
 }

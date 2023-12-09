@@ -3,7 +3,7 @@
 class Day05 : Solution
 {
     private static long RunCode(string code, long input)
-        => new IntCodeVM(code).Run(new[] { input }).Last();
+        => new IntCodeVM(code).Run([input]).Last();
 
     protected override long? Part1() => RunCode(Input, 1);
 

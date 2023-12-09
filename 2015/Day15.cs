@@ -2,29 +2,14 @@
 
 class Day15 : Solution
 {
-    readonly struct Score
+    record struct Score(int Capacity, int Durability, int Flavor, int Texture, int Calories)
     {
-        public int Capacity { get; }
-        public int Durability { get; }
-        public int Flavor { get; }
-        public int Texture { get; }
-        public int Calories { get; }
-
-        public Score(int capacity, int durability, int flavor, int texture, int calories)
-        {
-            Capacity = capacity;
-            Durability = durability;
-            Flavor = flavor;
-            Texture = texture;
-            Calories = calories;
-        }
-
-        public Score Add(Score other)
+        public readonly Score Add(Score other)
             => new(Capacity + other.Capacity, Durability + other.Durability, Flavor + other.Flavor, Texture + other.Texture, Calories + other.Calories);
-        public Score Mult(int factor)
+        public readonly Score Mult(int factor)
             => new(Capacity * factor, Durability * factor, Flavor * factor, Texture * factor, Calories * factor);
 
-        public int GetWeightedPoints() => Math.Max(Capacity, 0) * Math.Max(Durability, 0) * Math.Max(Flavor, 0) * Math.Max(Texture, 0);
+        public readonly int GetWeightedPoints() => Math.Max(Capacity, 0) * Math.Max(Durability, 0) * Math.Max(Flavor, 0) * Math.Max(Texture, 0);
     }
 
     private static readonly Regex Parse = new (@"\w+: capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)");
@@ -42,7 +27,7 @@ class Day15 : Solution
         return GetBestScore(new Score(), allIngr, 100, validate ?? (s => true));
     }
 
-    private long GetBestScore(Score baseScore, IEnumerable<Score> ingredients, int remainingSpoons, Func<Score, bool> validate)
+    private static long GetBestScore(Score baseScore, IEnumerable<Score> ingredients, int remainingSpoons, Func<Score, bool> validate)
     {
         if (!ingredients.Any())
             return 0;

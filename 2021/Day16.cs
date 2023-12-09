@@ -55,7 +55,7 @@ class Day16 : Solution
                     tmp = Read(5);
                     value = (value << 4) | (tmp & 0x0F);
                 } while ((tmp & 0b10000) != 0);
-                return new Packet(version, type, value, ImmutableList<Packet>.Empty);
+                return new Packet(version, type, value, []);
             }
 
             if (Read(1) == 0)

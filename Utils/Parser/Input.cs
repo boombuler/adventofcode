@@ -1,27 +1,22 @@
 ﻿namespace AdventOfCode.Utils.Parser;
 
-ref struct Input
+readonly ref struct Input(ReadOnlySpan<char> input)
 {
-    private readonly ReadOnlySpan<char> fSource;
-    
-    public Input(ReadOnlySpan<char> input)
-    {
-        fSource = input;
-    }
+    private readonly ReadOnlySpan<char> fSource = input;
 
-    public Input Next()
+    public readonly Input Next()
     {
         if (!EOF) 
-            return new Input(fSource.Slice(1));
+            return new Input(fSource[1..]);
         throw new InvalidOperationException("No more Data");
     }
 
-    public Input Seek(int offset)
-        => new Input(fSource.Slice(offset));
+    public readonly Input Seek(int offset)
+        => new(fSource[offset..]);
 
-    public char Current => fSource[0];
+    public readonly char Current => fSource[0];
 
-    public bool EOF => fSource.Length == 0;
+    public readonly bool EOF => fSource.Length == 0;
 
-    public string Remaining => new string(fSource);
+    public readonly string Remaining => new(fSource);
 }

@@ -4,7 +4,7 @@ class Day15 : Solution
 {
     enum SensorInput { Wall = 0, Moved = 1, OxygenSystem = 2 };
     enum Movement { North = 1, South = 2, West = 3, East = 4 };
-    private static readonly Point2D[] MoveDirections = new Point2D[] { (0, 0), (0, -1), (0, 1), (-1, 0), (1, 0) };
+    private static readonly Point2D[] MoveDirections = [Point2D.Origin, Point2D.Up, Point2D.Down, Point2D.Left, Point2D.Right];
     private static (IntCodeVM, SensorInput) StepVM(IntCodeVM vm, Movement move)
     {
         while (true)
@@ -50,7 +50,7 @@ class Day15 : Solution
     }
 
     private ImmutableList<Movement> GetCommandsForOxygenTank()
-        => GetWalkableTiles(ImmutableList<Movement>.Empty).First(n => n.Type == SensorInput.OxygenSystem).Inputs;
+        => GetWalkableTiles([]).First(n => n.Type == SensorInput.OxygenSystem).Inputs;
 
     protected override long? Part1()
         => GetCommandsForOxygenTank().Count;

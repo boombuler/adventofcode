@@ -8,7 +8,6 @@ ref struct Result<TResult>
 
     public Input Input { get; private set; }
 
-
     private Result(string error)
     {
         fResult = default;
@@ -24,22 +23,22 @@ ref struct Result<TResult>
         Input = input;
     }
 
-    public Result<TValue> Map<TValue>(Func<TResult, TValue> map)
+    public readonly Result<TValue> Map<TValue>(Func<TResult, TValue> map)
     {
         if (fSuccess)
             return new Result<TValue>(map(fResult), Input);
         return Result<TValue>.Failed(fError);
     }
 
-    public bool HasValue => fSuccess;
+    public readonly bool HasValue => fSuccess;
 
-    public TResult Value => fSuccess ? fResult : throw new InvalidOperationException(fError);
+    public readonly TResult Value => fSuccess ? fResult : throw new InvalidOperationException(fError);
 
-    public string Error => !fSuccess ? fError : throw new InvalidOperationException();
+    public readonly string Error => !fSuccess ? fError : throw new InvalidOperationException();
 
     public static implicit operator Result<TResult>(string error)
         => Failed(error);
 
     public static Result<TResult> Failed(string error)
-        => new Result<TResult>(error);
+        => new(error);
 }

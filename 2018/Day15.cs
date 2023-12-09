@@ -2,13 +2,13 @@
 
 class Day15 : Solution
 {
-    static readonly Point2D[] ReadingOrder = new Point2D[] { (0, -1), (-1, 0), (1, 0), (0, 1) };
+    static readonly Point2D[] ReadingOrder = [ Point2D.Up, Point2D.Left, Point2D.Right, Point2D.Down];
     private const int DEFAULT_ATTACK = 3;
 
     class Map
     {
-        private readonly Dictionary<Entity, Point2D> fByEntity = new();
-        private readonly Dictionary<Point2D, Entity> fByPosition = new();
+        private readonly Dictionary<Entity, Point2D> fByEntity = [];
+        private readonly Dictionary<Point2D, Entity> fByPosition = [];
 
         public Map(string input, int ElfAttack)
         {
@@ -59,16 +59,11 @@ class Day15 : Solution
     abstract class Entity { }
     sealed class Wall : Entity { }
 
-    class Creature : Entity
+    class Creature(char c, int atk) : Entity
     {
-        public int DPH { get; }
-        public Team Team { get; private set; }
+        public int DPH { get; } = atk;
+        public Team Team { get; } = c == 'E' ? Team.Elves : Team.Goblins;
         public int HealthPoints { get; private set; } = 200;
-        public Creature(char c, int atk)
-        {
-            Team = c == 'E' ? Team.Elves : Team.Goblins;
-            DPH = atk;
-        }
 
         public Point2D MoveToTarget(Map map, HashSet<Point2D> targetPositions)
         {

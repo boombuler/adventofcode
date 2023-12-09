@@ -3,15 +3,15 @@
 class Day23 : Solution
 {
     record Move(Point2D MoveDirection, params Point2D[] CheckDirections);
-    private static readonly Move[] Moves = new[]
-    {
-        new Move((0,-1), (-1, -1), (0, -1), (1,-1)),
-        new Move((0, 1), (-1, 1), (0, 1), (1, 1)),
-        new Move((-1, 0), (-1, -1), (-1, 0), (-1, 1)),
-        new Move((1, 0), (1, -1), (1, 0), (1, 1)),
-    };
+    private static readonly Move[] Moves = 
+    [
+        new ((0,-1), (-1, -1), (0, -1), (1,-1)),
+        new ((0, 1), (-1, 1), (0, 1), (1, 1)),
+        new ((-1, 0), (-1, -1), (-1, 0), (-1, 1)),
+        new ((1, 0), (1, -1), (1, 0), (1, 1)),
+    ];
 
-    private (long TotalRounds, long FreeSpace) MoveElves(string input, int maxRounds)
+    private static (long TotalRounds, long FreeSpace) MoveElves(string input, int maxRounds)
     {
         var elves = input.Cells().Where(c => c.Value == '#').Select(c => c.Key).ToHashSet();
 
@@ -46,7 +46,7 @@ class Day23 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) => MoveElves(input, 10).FreeSpace;
+        static long Solve(string input) => MoveElves(input, 10).FreeSpace;
         Assert(Solve(Sample("Small")), 25);
         Assert(Solve(Sample("Large")), 110);
         return Solve(Input);
@@ -54,7 +54,7 @@ class Day23 : Solution
 
     protected override long? Part2()
     {
-        long Solve(string input) => MoveElves(input, int.MaxValue).TotalRounds;
+        static long Solve(string input) => MoveElves(input, int.MaxValue).TotalRounds;
         Assert(Solve(Sample("Small")), 4);
         Assert(Solve(Sample("Large")), 20);
         return Solve(Input);

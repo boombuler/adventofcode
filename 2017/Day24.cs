@@ -10,7 +10,7 @@ class Day24 : Solution
     record Bridge
     {
         public int Tip { get; private init; }
-        public ImmutableList<Connector> Connections { get; private init; } = ImmutableList<Connector>.Empty;
+        public ImmutableList<Connector> Connections { get; private init; } = [];
 
         public int Strength { get; private init; }
         public int Length => Connections.Count;

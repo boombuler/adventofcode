@@ -8,20 +8,15 @@ class Day11 : Solution<long, string>
         Right = 1
     }
 
-    class Robot
+    class Robot(string program)
     {
-        private static readonly Point2D[] MoveDirections = { (0, -1), (1, 0), (0, 1), (-1, 0) };
-        private readonly IntCodeVM fVM;
+        private static readonly Point2D[] MoveDirections = [Point2D.Up, Point2D.Right, Point2D.Down, Point2D.Left];
+        private readonly IntCodeVM fVM = new(program);
         private Point2D fPosition;
         private int fDirection = 0;
 
-        private readonly HashSet<Point2D> fWhiteTiles = new();
-        private readonly HashSet<Point2D> fPaintedTiles = new();
-
-        public Robot(string program)
-        {
-            fVM = new IntCodeVM(program);
-        }
+        private readonly HashSet<Point2D> fWhiteTiles = [];
+        private readonly HashSet<Point2D> fPaintedTiles = [];
 
         public long Run(bool startOnWhiteTile)
         {

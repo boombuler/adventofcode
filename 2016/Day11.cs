@@ -8,8 +8,8 @@ class Day11 : Solution
     {
         public static readonly Items Empty = new(0, 0);
 
-        public int Count => NumberOfSetBits(Chips) + NumberOfSetBits(Generators);
-        public int GetElements(Items[] buffer)
+        public readonly int Count => NumberOfSetBits(Chips) + NumberOfSetBits(Generators);
+        public readonly int GetElements(Items[] buffer)
         {
             int r = 0;
             var c = Chips;
@@ -28,7 +28,7 @@ class Day11 : Solution
             return r;
         }
 
-        public bool IsValidFloor
+        public readonly bool IsValidFloor
         {
             get
             {

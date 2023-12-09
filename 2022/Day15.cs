@@ -15,7 +15,7 @@ class Day15 : Solution
         }
     }
 
-    private IEnumerable<Sensor> Sensors(string input)
+    private static IEnumerable<Sensor> Sensors(string input)
         => from line in input.Lines()
            let parts = line.Split('=', ',', ':')
            select new Sensor(
@@ -23,16 +23,16 @@ class Day15 : Solution
                new Point2D(long.Parse(parts[5]), long.Parse(parts[7]))
            );
 
-    private IEnumerable<Range> Ranges(IEnumerable<Sensor> Sensors, int y)
+    private static IEnumerable<Range> Ranges(IEnumerable<Sensor> Sensors, int y)
         => Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min)
             .Aggregate(ImmutableStack<Range>.Empty,
                 (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) : 
                     s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))));
     
-    private long CountScannedPoints(string input, int y) 
+    private static long CountScannedPoints(string input, int y) 
         => Ranges(Sensors(input), y).Sum(r => r.Max-r.Min);
 
-    private long? FindFreq(string input, int max)
+    private static long? FindFreq(string input, int max)
     {
         var sens = Sensors(input).ToList();
 

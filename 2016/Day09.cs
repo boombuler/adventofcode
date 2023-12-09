@@ -5,9 +5,9 @@ using System.IO;
 class Day09 : Solution
 {
 
-    private long DecompressV1(string input) => Decompress(input, false);
-    private long DecompressV2(string input) => Decompress(input, true);
-    private long Decompress(string input, bool recursive)
+    private static long DecompressV1(string input) => Decompress(input, false);
+    private static long DecompressV2(string input) => Decompress(input, true);
+    private static long Decompress(string input, bool recursive)
     {
         long result = 0;
 

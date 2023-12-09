@@ -4,10 +4,10 @@ class Day03 : Solution
 {
     public static readonly Point2D DefaultSlope = new(3, 1);
 
-    public static readonly Point2D[] AllSlopes = new Point2D[]
-    {
-            new (1,1), new (3, 1), new (5, 1), new (7, 1), new (1, 2)
-    };
+    public static readonly Point2D[] AllSlopes =
+    [
+        (1,1), (3, 1), (5, 1), (7, 1), (1, 2)
+    ];
 
     public static long Navigate(bool[][] map, Point2D slope)
     {

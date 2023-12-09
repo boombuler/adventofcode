@@ -2,7 +2,7 @@
 
 class Day12 : Solution
 {
-    private long Run(string code, long cInit = 0)
+    private static long Run(string code, long cInit = 0)
         => new AssembunnyVM(code).Run(c: cInit);
 
     protected override long? Part1()

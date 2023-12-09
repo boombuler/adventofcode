@@ -45,7 +45,7 @@ class Day20 : Solution
         public IEnumerable<Tile> GetRotations() => fRotations;
         private void BuildRotations()
         {
-            fRotations = new List<Tile> { this };
+            fRotations = [this];
             Rotate().Rotate().Rotate().VFlip().Rotate().Rotate().Rotate();
         }
 

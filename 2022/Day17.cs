@@ -15,26 +15,21 @@ class Day17 : Solution
             Height = (int)((ymax - ymin) + 1);
         }
     }
-    private readonly Shape[] Shapes = new Shape[]
-    {
-        new Shape((0,0), (1, 0), (2,0), (3, 0)), // -
-        new Shape((1,0), (0, 1), (1, 1), (2, 1), (1, 2)), // +
-        new Shape((2, 2), (2, 1), (0, 0), (1, 0), (2, 0)), // J
-        new Shape((0,0), (0, 1), (0,2), (0,3)), // |
-        new Shape((0,0), (0, 1), (1, 0), (1,1)), // box
-    };
+    private readonly Shape[] Shapes =
+    [
+        new ((0,0), (1, 0), (2,0), (3, 0)), // -
+        new ((1,0), (0, 1), (1, 1), (2, 1), (1, 2)), // +
+        new ((2, 2), (2, 1), (0, 0), (1, 0), (2, 0)), // J
+        new ((0,0), (0, 1), (0,2), (0,3)), // |
+        new ((0,0), (0, 1), (1, 0), (1,1)), // box
+    ];
 
-    class CacheKey
+    class CacheKey(int shapeIndex, int jetIndex, ImmutableHashSet<Point2D> points)
     {
-        private readonly int fShapeIndex;
-        private readonly int fJetIndex;
-        private readonly ImmutableHashSet<Point2D> fPoints;
-        public CacheKey(int ShapeIndex, int JetIndex, ImmutableHashSet<Point2D> Points)
-        {
-            fShapeIndex = ShapeIndex;
-            fJetIndex = JetIndex;
-            fPoints = Points;
-        }
+        private readonly int fShapeIndex = shapeIndex;
+        private readonly int fJetIndex = jetIndex;
+        private readonly ImmutableHashSet<Point2D> fPoints = points;
+
         public override bool Equals(object obj)
             => obj is CacheKey ck && 
                 fShapeIndex == ck.fShapeIndex && 

@@ -4,7 +4,7 @@ class Day23 : Solution
 {
     record VM(long A, long B, int PC)
     {
-        public static readonly VM Empty = new VM(0, 0, 0);
+        public static readonly VM Empty = new (0, 0, 0);
 
         public VM Run(string input)
         {

@@ -2,13 +2,13 @@
 
 class Day19 : Solution<string, long?>
 {
-    private static readonly Point2D[] Offsets = new Point2D[]
-    {
-        (0, 1),     // Down
-        (-1, 0),    // Left
-        (0, -1),    // Up
-        (1, 0)      // Right
-    };
+    private static readonly Point2D[] Offsets =
+    [
+        Point2D.Down,
+        Point2D.Left,
+        Point2D.Up,
+        Point2D.Right,
+    ];
 
     private static IEnumerable<char> WalkPath(string data)
     {

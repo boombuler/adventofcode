@@ -9,7 +9,7 @@ class Day14 : Solution
         static readonly string[] fHexLookup;
         static readonly byte[] fHexCharLookup;
 
-        private readonly Dictionary<int, string> fHashes = new();
+        private readonly Dictionary<int, string> fHashes = [];
         private readonly string fSalt;
         private readonly int fRounds;
 
@@ -25,12 +25,10 @@ class Day14 : Solution
         }
 
         private static string DoHash(string value, int rounds)
-        {
-            var md = MD5.Create();
-
+        {   
             Span<byte> inBuf = stackalloc byte[32];
             Span<byte> hashBuf = stackalloc byte[16];
-            md.TryComputeHash(Encoding.ASCII.GetBytes(value), hashBuf, out _);
+            MD5.HashData(Encoding.ASCII.GetBytes(value), hashBuf);
 
             for (int r = 1; r < rounds; r++)
             {
@@ -39,7 +37,7 @@ class Day14 : Solution
                     inBuf[i * 2 + 0] = fHexCharLookup[hashBuf[i] >> 4];
                     inBuf[i * 2 + 1] = fHexCharLookup[hashBuf[i] & 0xF];
                 }
-                md.TryComputeHash(inBuf, hashBuf, out _);
+                MD5.HashData(inBuf, hashBuf);
             }
             var sb = new StringBuilder(32);
             for (int i = 0; i < hashBuf.Length; i++)

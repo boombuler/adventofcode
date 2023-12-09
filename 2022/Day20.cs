@@ -2,16 +2,12 @@
 
 class Day20 : Solution
 {
-    class Number
+    class Number(string n, long decryptionKey)
     {
-        public long Value { get; }
-        public Number(string n, long decryptionKey)
-        {
-            Value = long.Parse(n) * decryptionKey;
-        }
+        public long Value { get; } = long.Parse(n) * decryptionKey;
     }
-    
-    private long DecryptFile(string input, long decryptionKey, int rounds)
+
+    private static long DecryptFile(string input, long decryptionKey, int rounds)
     {
         var numbers = input.Lines().Select(s => new Number(s, decryptionKey)).ToArray();
         var steps = numbers.ToArray();
@@ -38,14 +34,14 @@ class Day20 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) => DecryptFile(input, 1, 1);
+        static long Solve(string input) => DecryptFile(input, 1, 1);
         Assert(Solve(Sample()), 3);
         return Solve(Input);
     }
 
     protected override long? Part2()
     {
-        long Solve(string input) => DecryptFile(input, 811589153, 10);
+        static long Solve(string input) => DecryptFile(input, 811589153, 10);
         Assert(Solve(Sample()), 1623178306);
         return Solve(Input);
     }

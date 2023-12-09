@@ -8,7 +8,7 @@ class Day09 : Solution
     private static long GetWinningScore(string args, long factor = 1)
     {
         var a = ParseArgs(args);
-        var circle = new LinkedList<long>(new[] { 0L });
+        var circle = new LinkedList<long>([0]);
         var current = circle.First;
         long[] scores = new long[a.PlayerCount];
         long max = a.MaxMarble * factor;

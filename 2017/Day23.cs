@@ -10,13 +10,8 @@ class Day23 : Solution
         jnz, // X Y jumps with an offset of the value of Y, but only if the value of X is not zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
     }
 
-    class VM : AsmVM<OpCode>
+    class VM(string code) : AsmVM<OpCode>(code)
     {
-        public VM(string code)
-            : base(code)
-        {
-        }
-
         public long CountMul()
         {
             long result = 0;

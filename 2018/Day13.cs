@@ -3,10 +3,10 @@
 class Day13 : Solution<Point2D>
 {
     enum Direction { Up = 0, Right = 1, Down = 2, Left = 3, MASK = Left, Invalid = -1 }
-    private static readonly Point2D[] DirectionOffsets = new Point2D[]
-    {
-        (0, -1), (1, 0), (0, 1), (-1, 0)
-    };
+    private static readonly Point2D[] DirectionOffsets =
+    [
+        Point2D.Up, Point2D.Right, Point2D.Down, Point2D.Left
+    ];
     enum TurnDirection { Left = -1, Straight = 0, Right = 1 }
 
     record Cart(Point2D Position, Direction Direction, TurnDirection NextTurnDirection);
@@ -39,7 +39,7 @@ class Day13 : Solution<Point2D>
         while (carts.Count > 1)
         {
             var toMove = new Queue<Cart>(carts.OrderBy(c => c.Position.Y).ThenBy(c => c.Position.X));
-            carts = ImmutableList<Cart>.Empty;
+            carts = [];
             var crashes = ImmutableList<Point2D>.Empty;
             while (toMove.TryDequeue(out var cart))
             {

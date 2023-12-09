@@ -2,9 +2,9 @@
 
 class Day10 : Solution
 {
-    private readonly char[] Open = new char[] { '(', '[', '{', '<' };
-    private readonly char[] Close = new char[] { ')', ']', '}', '>' };
-    private readonly int[] Score = new int[] { 3, 57, 1197, 25137 };
+    private readonly char[] Open = ['(', '[', '{', '<'];
+    private readonly char[] Close = [')', ']', '}', '>'];
+    private readonly int[] Score = [3, 57, 1197, 25137];
 
     (long? Corruption, long? AutoComplete) CheckLine(string line)
     {
