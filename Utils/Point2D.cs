@@ -13,6 +13,8 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
     public static implicit operator (long, long)(Point2D pt) => (pt.X, pt.Y);
     public static implicit operator Point2D((long, long) t) => new(t.Item1, t.Item2);
 
+    public static Point2D operator -(Point2D a)
+        => new(-a.X, -a.Y);
     public static Point2D operator -(Point2D a, Point2D b)
         => new(a.X - b.X, a.Y - b.Y);
     public static Point2D operator +(Point2D a, Point2D b)
