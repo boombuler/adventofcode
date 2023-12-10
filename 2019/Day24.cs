@@ -9,7 +9,7 @@ class Day24 : Solution
 
     protected override long? Part1()
     {
-        var state = Input.Cells().Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+        var state = Input.Cells(filter: v => v == '#').Keys.ToHashSet();
 
         static bool ValidCell(Point2D p) => p.X >= 0 && p.Y >= 0 && p.X < SIZE && p.Y < SIZE;
 
@@ -56,7 +56,7 @@ class Day24 : Solution
 
     protected override long? Part2()
     {
-        var state = Input.Cells().Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key.WithZ(0)).ToHashSet();
+        var state = Input.Cells(filter: v => v == '#').Select(kvp => kvp.Key.WithZ(0)).ToHashSet();
 
         return GameOfLife.Emulate(state, 200, GetRecursiveNeighbours, IsBugAlive);
     }

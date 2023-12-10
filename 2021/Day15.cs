@@ -18,13 +18,13 @@ class Day15 : Solution
 
     private static long? FindPath(string input, int expandMap = 1)
     {
-        var baseMap = input.Cells(c => c - '0');
-        var size = baseMap.Keys.Max() + (1, 1);
+        var baseMap = input.AsMap(c => c - '0');
+        var (width, height) = (baseMap.Width, baseMap.Height);
         var riskMap = new Dictionary<Point2D, long>();
 
         foreach (var of in Point2D.Range(Point2D.Origin, (expandMap - 1, expandMap - 1)))
         {
-            var offset = new Point2D(of.X * size.X, of.Y * size.Y);
+            var offset = new Point2D(of.X * width, of.Y * height);
             foreach (var (k, v) in baseMap)
                 riskMap[k + offset] = (of.X + of.Y + v - 1) % 9 + 1;
         }

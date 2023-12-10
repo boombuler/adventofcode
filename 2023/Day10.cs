@@ -20,10 +20,10 @@ class Day10 : Solution
         [('F', Up)] = Right,
     }.ToFrozenDictionary();
     
-    private static (HashSet<Point2D> Loop, Dictionary<Point2D, char> Map) ParseMap(string input)
+    private static (HashSet<Point2D> Loop, StringMap<char> Map) ParseMap(string input)
     {
-        var map = input.Cells();
-        var pos = map.Where(kvp => kvp.Value == 'S').First().Key;
+        var map = input.AsMap();
+        var pos = map.Where(kvp => kvp.Value == 'S').First().Index;
         var possibleStartDirections = (
             from d in new Point2D[] { Up, Down, Left, Right }
             let n = map.GetValueOrDefault(pos + d, '.')
@@ -46,19 +46,17 @@ class Day10 : Solution
     private static long CountEnclosedTiles(string input)
     {
         var (loop, map) = ParseMap(input);
-        foreach (var k in map.Keys.Where(p => !loop.Contains(p)).ToArray())
-            map[k] = '.'; // remove scrap tiles
-
-        var (min, max) = Rect2D.AABB(loop);
+        foreach (var idx in map.Select(m => m.Index).Where(m => !loop.Contains(m)))
+            map[idx] = '.'; // remove scrap tiles
 
         long sum = 0;
-        for (long y = min.Y; y <= max.Y; y++)
+        foreach(var row in map.Rows())
         {
             var edgeStart = ' ';
             var inside = false;
-            for (long x = min.X; x <= max.X; x++)
+            foreach (var cell in row)
             {
-                switch (map[(x,y)])
+                switch (cell)
                 {
                     case '.' when inside: 
                         sum++; 

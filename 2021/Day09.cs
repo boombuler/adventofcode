@@ -4,20 +4,20 @@ class Day09 : Solution
 {
     protected override long? Part1()
     {
-        var map = Input.Cells(c => c - '0');
+        var map = Input.AsMap(c => c - '0');
         long result = 0;
-        foreach (var pt in Point2D.Range(Point2D.Origin, map.Keys.Max()))
+        foreach (var (pt, val) in map)
         {
-            var n = pt.Neighbours().Where(map.ContainsKey).Select(k => map[k]);
-            if (n.All(v => v > map[pt]))
-                result += map[pt] + 1;
+            var n = pt.Neighbours().Where(map.Contains).Select(k => map[k]);
+            if (n.All(v => v > val))
+                result += val + 1;
         }
         return result;
     }
 
     protected override long? Part2()
     {
-        var map = Input.Cells().Where(kvp => kvp.Value != '9').Select(kvp => kvp.Key).ToHashSet();
+        var map = Input.Cells(filter: v => v != '9').Keys.ToHashSet();
         var open = new Stack<Point2D>();
         var basins = new PriorityQueue<long, long>();
         basins.EnqueueRange([(0, -1), (0, -1), (0, -1)]);

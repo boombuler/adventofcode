@@ -13,7 +13,7 @@ class Day23 : Solution
 
     private static (long TotalRounds, long FreeSpace) MoveElves(string input, int maxRounds)
     {
-        var elves = input.Cells().Where(c => c.Value == '#').Select(c => c.Key).ToHashSet();
+        var elves = input.Cells(filter: c => c == '#').Keys.ToHashSet();
 
         int r;
         for (r = 0; r < maxRounds; r++)

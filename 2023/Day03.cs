@@ -5,7 +5,7 @@ class Day03 : Solution
     private static readonly Point2D Right = (1, 0);
     private static IEnumerable<IGrouping<Point2D, long>> NumbersNearParts(string drawing, Predicate<char> partFilter)
     {
-        var map = drawing.Cells().ToFrozenDictionary();
+        var map = drawing.AsMap();
 
         bool IsDigit(Point2D pt)
             => map.TryGetValue(pt, out var digit) && char.IsAsciiDigit(digit);
@@ -21,9 +21,9 @@ class Day03 : Solution
         return (
             from kvp in map
             where partFilter(kvp.Value)
-            from n in kvp.Key.Neighbours(withDiagonal: true)
+            from n in kvp.Index.Neighbours(withDiagonal: true)
             where IsDigit(n)
-            select (Gear: kvp.Key, Number: ReadNumber(n))
+            select (Gear: kvp.Index, Number: ReadNumber(n))
         ).Distinct().GroupBy(n => n.Gear, n => n.Number);
     }
 
