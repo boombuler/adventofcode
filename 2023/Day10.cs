@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode._2023;
 
+using System.Buffers;
 using static Point2D;
 
 class Day10 : Solution
@@ -50,26 +51,16 @@ class Day10 : Solution
             map[idx] = '.'; // remove scrap tiles
 
         long sum = 0;
+        var vertical = SearchValues.Create(['|', 'L', 'J']);
         foreach(var row in map.Rows())
         {
-            var edgeStart = ' ';
             var inside = false;
             foreach (var cell in row)
             {
-                switch (cell)
-                {
-                    case '.' when inside: 
-                        sum++; 
-                        break;
-                    case char c when c is 'F' or 'L':
-                        edgeStart = c; 
-                        break;
-                    case '|':
-                    case '7' when edgeStart is 'L':
-                    case 'J' when edgeStart is 'F':
-                        inside = !inside;
-                        break;
-                }
+                if (vertical.Contains(cell))
+                    inside = !inside;
+                else if (inside && cell == '.')
+                    sum++;
             }
         }
         return sum;
