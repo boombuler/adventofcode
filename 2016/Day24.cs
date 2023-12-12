@@ -2,10 +2,10 @@
 
 class Day24 : Solution
 {
-    class Node(char c, Point2D l)
+    class Node(char c, Point2D<int> l)
     {
-        public int? Number { get; } = c is not '.' and not '#' ? c - '0' : null;
-        public Point2D Location { get; } = l;
+        public int? Number { get; } = c is not '.' ? c - '0' : null;
+        public Point2D<int> Location { get; } = l;
         public List<Node> Neigbours { get; } = [];
     }
 
@@ -18,10 +18,7 @@ class Day24 : Solution
 
     private static Dictionary<int, Node> ReadGrid(string map)
     {
-        var cells = map.Lines()
-            .SelectMany((line, y) => line.Select((c, x) => c == '#' ? null : new Node(c, (x, y))))
-            .Where(c => c != null)
-            .ToDictionary(c => c.Location);
+        var cells = map.Cells(filter: v => v != '#').ToDictionary(kvp => kvp.Key, kvp => new Node(kvp.Value, kvp.Key));
         var result = new Dictionary<int, Node>();
         foreach (var kvp in cells)
         {

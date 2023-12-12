@@ -23,7 +23,7 @@ static class Parser
                 return new Result<char>(input.Current, input.Next());
             return "Unexpected character";
         });
-    
+
     public static Parser<char> Char(char input)
         => Expect(c => c == input);
     public static Parser<T> Char<T>(char input, T value)
@@ -45,7 +45,7 @@ static class Parser
             for (int i = 0; i < parsers.Length; i++)
             {
                 var res = parsers[i].Parse(input);
-                if (!res.HasValue) 
+                if (!res.HasValue)
                     return res.Error;
                 values[i] = res.Value;
                 input = res.Input;
@@ -56,7 +56,7 @@ static class Parser
     public static Parser<string> Str(string s)
         => new(input =>
         {
-            foreach(var c in s)
+            foreach (var c in s)
             {
                 if (input.EOF)
                     return "Unexpected end of input";
@@ -78,9 +78,17 @@ static class Parser
 
     public static Parser<string> Digits => Digit.Many1().Text();
 
-    public static Parser<long> Int
+    public static Parser<long> Long
         => (Char('-').Return(-1).Opt(1))
             .Then(Digits, (sign, digits) => sign * long.Parse(digits));
+    public static Parser<Point2D<long>> LongPoint2D
+        => (Long + ",").Then(Long, (a, b) => new Point2D<long>(a, b));
+
+    public static Parser<int> Int
+        => (Char('-').Return(-1).Opt(1))
+            .Then(Digits, (sign, digits) => sign * int.Parse(digits));
+    public static Parser<Point2D<int>> IntPoint2D
+        => (Int.Token() + ",").Then(Int.Token(), (a, b) => new Point2D<int>(a, b));
 
     public static Parser<BigInteger> BigInt
         => from sign in (Char('-').Return(-1).Opt(1))
@@ -88,14 +96,14 @@ static class Parser
            select sign * digits;
 
     public static Parser<T> Enum<T>() where T : struct, Enum
-        => System.Enum.GetValues<T>()
+        => System.Enum.GetValues<T>().OrderByDescending(v => v.ToString().Length)
             .Select(e => Str(e.ToString()).Return(e))
             .Aggregate((a, b) => a.Or(b));
 
     public static Parser<T> Regex<T>([StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         var regex = new Regex("^" + pattern, RegexOptions.Compiled);
-        var factory = regex.CreateMatchFactory<T>() ?? throw new InvalidOperationException(); 
+        var factory = regex.CreateMatchFactory<T>() ?? throw new InvalidOperationException();
         return new Parser<T>((input) =>
         {
             var match = regex.Match(input.Remaining);

@@ -1,22 +1,24 @@
 ﻿namespace AdventOfCode._2021;
 
+using Point = Point2D<int>;
+
 class Day17 : Solution
 {
     private static (long MaxY, int Count) ValidVelocities(string descrp)
     {
-        var coords = descrp.Split("x=")[1].Split(", y=").SelectMany(n => n.Split("..").Select(long.Parse)).ToArray();
-        var tMin = new Point2D(coords[0], coords[2]);
-        var tMax = new Point2D(coords[1], coords[3]);
-        var aabb = Rect2D.AABB(tMin, tMax);
+        var coords = descrp.Split("x=")[1].Split(", y=").SelectMany(n => n.Split("..").Select(int.Parse)).ToArray();
+        var tMin = new Point(coords[0], coords[2]);
+        var tMax = new Point(coords[1], coords[3]);
+        var aabb = Rect2D<int>.AABB(tMin, tMax);
 
         var peek = 0L;
         var count = 0;
 
         var minX = Enumerable.Range(1, (int)tMax.X).FirstOrDefault(x => (x * (x + 1)) / 2 >= tMin.X);
-        foreach (var velocity in Point2D.Range((minX, tMin.Y), (tMax.X, -tMin.Y)))
+        foreach (var velocity in Point.Range((minX, tMin.Y), (tMax.X, -tMin.Y)))
         {
             var v = velocity;
-            var pt = Point2D.Origin;
+            var pt = Point.Origin;
 
             var max = 0L;
             while (pt.Y >= tMin.Y && pt.X <= tMax.X)

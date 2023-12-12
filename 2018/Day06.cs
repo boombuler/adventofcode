@@ -1,17 +1,16 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point2D<int>;
 class Day06 : Solution
 {
-    private static readonly Func<string, Point2D> ParsePt = new Regex(@"(?<X>\d+), (?<Y>\d+)", RegexOptions.Compiled).ToFactory<Point2D>();
-
     private static int FindLargestArea(string input)
     {
-        var points = input.Lines().Select(ParsePt).ToList();
+        var points = input.Lines().Select(Parser.IntPoint2D.MustParse).ToList();
         var (maxX, maxY) = (points.Max(p => p.X), points.Max(p => p.Y));
 
         var itemCounts = new int[points.Count];
         var unlimited = new HashSet<int>();
-        foreach (var loc in Point2D.Range(Point2D.Origin, (maxX, maxY)))
+        foreach (var loc in Point.Range(Point.Origin, (maxX, maxY)))
         {
             var near = points
                 .Select((p, i) => new { Distance = p.ManhattanDistance(loc), Index = i })
@@ -36,9 +35,9 @@ class Day06 : Solution
 
     protected override long? Part2()
     {
-        var points = Input.Lines().Select(ParsePt).ToList();
+        var points = Input.Lines().Select(Parser.IntPoint2D.MustParse).ToList();
         var result = 0;
-        foreach (var loc in Point2D.Range(Point2D.Origin, (points.Max(p => p.X), points.Max(p => p.Y))))
+        foreach (var loc in Point.Range(Point.Origin, (points.Max(p => p.X), points.Max(p => p.Y))))
         {
             if (points.Select(p => p.ManhattanDistance(loc)).Sum() < 10000)
                 result++;

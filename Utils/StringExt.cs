@@ -17,13 +17,13 @@ static class StringExt
         }
     }
 
-    public static Dictionary<Point2D, char> Cells(this string str, Func<char, bool> filter = null) => str.Cells(c => c, filter);
+    public static Dictionary<Point2D<int>, char> Cells(this string str, Func<char, bool> filter = null) => str.Cells(c => c, filter);
 
-    public static Dictionary<Point2D, T> Cells<T>(this string str, Func<char, T> selector, Func<char, bool> filter = null)
+    public static Dictionary<Point2D<int>, T> Cells<T>(this string str, Func<char, T> selector, Func<char, bool> filter = null)
         => str.Lines()
             .SelectMany((l, y) => l.Select((c, x) => (x, y, c)))
             .Where(n => filter?.Invoke(n.c) ?? true)
-            .ToDictionary(n => new Point2D(n.x, n.y), n => selector(n.c));
+            .ToDictionary(n => new Point2D<int>(n.x, n.y), n => selector(n.c));
 
     public static StringMap<T> AsMap<T>(this string str, Func<char, T> selector)
         => new StringMap<T>(str, selector);

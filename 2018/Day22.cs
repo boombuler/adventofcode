@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point2D<int>;
+
 class Day22 : Solution
 {
     enum RegionType
@@ -24,15 +26,15 @@ class Day22 : Solution
         Tools.None | Tools.Torch, // Narrow
     ];
 
-    class CaveRouting(Cave cave, Point2D src, Tools startingEquip) : AStar<(Point2D Pt, Tools Tool)>((src, startingEquip))
+    class CaveRouting(Cave cave, Point src, Tools startingEquip) : AStar<(Point Pt, Tools Tool)>((src, startingEquip))
     {
         private const long TOOL_CHANGE_COST = 7;
         private readonly Cave fCave = cave;
 
-        protected override long Distance((Point2D Pt, Tools Tool) one, (Point2D Pt, Tools Tool) another)
+        protected override long Distance((Point Pt, Tools Tool) one, (Point Pt, Tools Tool) another)
             => one.Pt.ManhattanDistance(another.Pt) + (one.Tool == another.Tool ? 0 : TOOL_CHANGE_COST);
 
-        protected override IEnumerable<(Point2D Pt, Tools Tool)> NeighboursOf((Point2D Pt, Tools Tool) node)
+        protected override IEnumerable<(Point Pt, Tools Tool)> NeighboursOf((Point Pt, Tools Tool) node)
         {
             var fromType = fCave.GetRegionType(node.Pt);
 
@@ -49,16 +51,16 @@ class Day22 : Solution
         }
     }
 
-    class Cave(long Depth, long X, long Y)
+    class Cave(long Depth, int X, int Y)
     {
         private readonly long fDepth = Depth;
-        private readonly Point2D fTarget = (X, Y);
-        private readonly Dictionary<Point2D, int> fErosionLevels = [];
+        private readonly Point fTarget = (X, Y);
+        private readonly Dictionary<Point, int> fErosionLevels = [];
         public static readonly Func<string, Cave> Parse = new Regex(@"depth: (?<Depth>\d+)\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
 
-        private long GetGeologicIndex(Point2D pt)
+        private long GetGeologicIndex(Point pt)
         {
-            if (pt == Point2D.Origin || pt == fTarget)
+            if (pt == Point.Origin || pt == fTarget)
                 return 0;
             if (pt.Y == 0)
                 return pt.X * 16807;
@@ -67,21 +69,21 @@ class Day22 : Solution
             return GetErosionLevel(pt - (0, 1)) * GetErosionLevel(pt - (1, 0));
         }
 
-        private int GetErosionLevel(Point2D pt)
+        private int GetErosionLevel(Point pt)
         {
             if (!fErosionLevels.TryGetValue(pt, out var result))
                 fErosionLevels[pt] = result = (int)((GetGeologicIndex(pt) + fDepth) % 20183);
             return result;
         }
 
-        public RegionType GetRegionType(Point2D pt)
+        public RegionType GetRegionType(Point pt)
             => (RegionType)(GetErosionLevel(pt) % 3);
 
         public long GetRiskLevel()
-            => Point2D.Range(Point2D.Origin, fTarget).Select(GetRegionType).Cast<int>().Sum();
+            => Point.Range(Point.Origin, fTarget).Select(GetRegionType).Cast<int>().Sum();
 
         public long GetRescueTime()
-            => new CaveRouting(this, Point2D.Origin, Tools.Torch).ShortestPath((fTarget, Tools.Torch)).Cost;
+            => new CaveRouting(this, Point.Origin, Tools.Torch).ShortestPath((fTarget, Tools.Torch)).Cost;
     }
 
     protected override long? Part1()

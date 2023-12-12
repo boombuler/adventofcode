@@ -1,14 +1,15 @@
 ﻿namespace AdventOfCode._2022;
 
+
 class Day23 : Solution
 {
-    record Move(Point2D MoveDirection, params Point2D[] CheckDirections);
-    private static readonly Move[] Moves = 
+    record Move(Point2D<int> MoveDirection, params Point2D<int>[] CheckDirections);
+    private static readonly Move[] Moves =
     [
-        new ((0,-1), (-1, -1), (0, -1), (1,-1)),
-        new ((0, 1), (-1, 1), (0, 1), (1, 1)),
-        new ((-1, 0), (-1, -1), (-1, 0), (-1, 1)),
-        new ((1, 0), (1, -1), (1, 0), (1, 1)),
+        new((0, -1), (-1, -1), (0, -1), (1, -1)),
+        new((0, 1), (-1, 1), (0, 1), (1, 1)),
+        new((-1, 0), (-1, -1), (-1, 0), (-1, 1)),
+        new((1, 0), (1, -1), (1, 0), (1, 1)),
     ];
 
     private static (long TotalRounds, long FreeSpace) MoveElves(string input, int maxRounds)
@@ -31,7 +32,7 @@ class Day23 : Solution
                 where targetPositions.Count() == 1
                 select targetPositions.First();
             bool moved = false;
-            foreach(var (oldPos, newPos) in moves)
+            foreach (var (oldPos, newPos) in moves)
             {
                 elves.Remove(oldPos);
                 elves.Add(newPos);
@@ -40,8 +41,8 @@ class Day23 : Solution
             if (!moved)
                 break;
         }
-        var b = Rect2D.AABB(elves);
-        return (r+1, (b.Width * b.Height) - elves.Count);
+        var b = Rect2D<int>.AABB(elves);
+        return (r + 1, (b.Width * b.Height) - elves.Count);
     }
 
     protected override long? Part1()

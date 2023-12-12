@@ -1,12 +1,13 @@
 ﻿namespace AdventOfCode._2021;
 
+using Point = Point2D<int>;
 class Day25 : Solution
 {
-    record Map(long Width, long Height)
+    record Map(int Width, int Height)
     {
-        public (Dictionary<Point2D, char> NewState, int Moved) Move(Dictionary<Point2D, char> state, char c, Point2D direction)
+        public (Dictionary<Point, char> NewState, int Moved) Move(Dictionary<Point, char> state, char c, Point direction)
         {
-            var result = new Dictionary<Point2D, char>(state);
+            var result = new Dictionary<Point, char>(state);
             var moved = 0;
             foreach (var (k, v) in state)
             {
@@ -35,8 +36,8 @@ class Day25 : Solution
         while (true)
         {
             turn++;
-            var (state1, movedEast) = map.Move(cucumbers, '>', (1, 0));
-            var (state2, movedSouth) = map.Move(state1, 'v', (0, 1));
+            var (state1, movedEast) = map.Move(cucumbers, '>', Point.Right);
+            var (state2, movedSouth) = map.Move(state1, 'v', Point.Down);
             if (movedEast + movedSouth == 0)
                 break;
             cucumbers = state2;

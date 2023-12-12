@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day11 : Solution<long, string>
 {
     enum TurnDirection
@@ -10,17 +12,17 @@ class Day11 : Solution<long, string>
 
     class Robot(string program)
     {
-        private static readonly Point2D[] MoveDirections = [Point2D.Up, Point2D.Right, Point2D.Down, Point2D.Left];
+        private static readonly Point[] MoveDirections = [Point.Up, Point.Right, Point.Down, Point.Left];
         private readonly IntCodeVM fVM = new(program);
-        private Point2D fPosition;
+        private Point fPosition;
         private int fDirection = 0;
 
-        private readonly HashSet<Point2D> fWhiteTiles = [];
-        private readonly HashSet<Point2D> fPaintedTiles = [];
+        private readonly HashSet<Point> fWhiteTiles = [];
+        private readonly HashSet<Point> fPaintedTiles = [];
 
         public long Run(bool startOnWhiteTile)
         {
-            fPosition = Point2D.Origin;
+            fPosition = Point.Origin;
             if (startOnWhiteTile)
                 fWhiteTiles.Add(fPosition);
 
@@ -42,7 +44,7 @@ class Day11 : Solution<long, string>
                 fWhiteTiles.Remove(fPosition);
         }
 
-        public bool IsPainted(Point2D p) => fWhiteTiles.Contains(p);
+        public bool IsPainted(Point p) => fWhiteTiles.Contains(p);
 
         private void Turn(long turnDirection)
         {

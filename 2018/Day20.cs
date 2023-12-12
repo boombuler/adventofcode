@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point2D<int>;
 class Day20 : Solution
 {
     enum Direction
@@ -10,10 +11,10 @@ class Day20 : Solution
         East = 0b11,
     }
 
-    private static IEnumerable<(Point2D From, Point2D To)> Edges(string regex)
+    private static IEnumerable<(Point From, Point To)> Edges(string regex)
     {
-        var p = Point2D.Origin;
-        var groups = new Stack<Point2D>();
+        var p = Point.Origin;
+        var groups = new Stack<Point>();
 
         foreach (var c in regex)
         {
@@ -37,16 +38,16 @@ class Day20 : Solution
     private static IEnumerable<int> Distances(string regex)
     {
         var edges = Edges(regex).ToLookup(p => p.From, p => p.To);
-        var open = new Queue<Point2D>();
-        var distances = new Dictionary<Point2D, int>();
+        var open = new Queue<Point>();
+        var distances = new Dictionary<Point, int>();
 
-        void Visit(Point2D room, int dist)
+        void Visit(Point room, int dist)
         {
             if (distances.TryAdd(room, dist))
                 open.Enqueue(room);
         }
 
-        Visit(Point2D.Origin, 0);
+        Visit(Point.Origin, 0);
         while (open.TryDequeue(out var p))
         {
             var d = distances[p] + 1;

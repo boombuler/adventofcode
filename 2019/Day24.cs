@@ -1,5 +1,8 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point2D = Point2D<int>;
+using Point3D = Point3D<int>;
+
 class Day24 : Solution
 {
     private const int SIZE = 5;

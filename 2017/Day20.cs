@@ -1,16 +1,17 @@
 ﻿namespace AdventOfCode._2017;
 
+using Point = Point3D<int>;
 class Day20 : Solution
 {
     private class Particle(int id, string line)
     {
         public int ID { get; } = id;
-        public Point3D Position { get; private set; } = ParsePosition(line);
-        public Point3D Velocity { get; private set; } = ParseVelocity(line);
-        public Point3D Acceleration { get; } = ParseAcceleration(line);
-        private static readonly Func<string, Point3D> ParsePosition = new Regex(@"p=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
-        private static readonly Func<string, Point3D> ParseVelocity = new Regex(@"v=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
-        private static readonly Func<string, Point3D> ParseAcceleration = new Regex(@"a=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point3D>();
+        public Point Position { get; private set; } = ParsePosition(line);
+        public Point Velocity { get; private set; } = ParseVelocity(line);
+        public Point Acceleration { get; } = ParseAcceleration(line);
+        private static readonly Func<string, Point> ParsePosition = new Regex(@"p=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
+        private static readonly Func<string, Point> ParseVelocity = new Regex(@"v=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
+        private static readonly Func<string, Point> ParseAcceleration = new Regex(@"a=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
 
         public void Tick()
         {
@@ -23,7 +24,7 @@ class Day20 : Solution
 
     protected override long? Part1()
     {
-        var origin = new Point3D(0, 0, 0);
+        var origin = new Point(0, 0, 0);
         return GetParticles()
             .OrderBy(p => p.Acceleration.ManhattanDistance(origin))
             .ThenBy(p => p.Velocity.ManhattanDistance(origin))

@@ -1,14 +1,14 @@
 ﻿namespace AdventOfCode._2022;
 
-using System.Diagnostics;
+using Point = Point2D<long>;
 
 class Day17 : Solution
 {
     record Shape
     {
-        public Point2D[] Points { get; init; }
+        public Point[] Points { get; init; }
         public int Height { get; }
-        public Shape(params Point2D[] points)
+        public Shape(params Point[] points)
         {
             Points = points;
             var (ymin, ymax) = points.MinMax(p => p.Y);
@@ -17,22 +17,22 @@ class Day17 : Solution
     }
     private readonly Shape[] Shapes =
     [
-        new ((0,0), (1, 0), (2,0), (3, 0)), // -
-        new ((1,0), (0, 1), (1, 1), (2, 1), (1, 2)), // +
-        new ((2, 2), (2, 1), (0, 0), (1, 0), (2, 0)), // J
-        new ((0,0), (0, 1), (0,2), (0,3)), // |
-        new ((0,0), (0, 1), (1, 0), (1,1)), // box
+        new((0, 0), (1, 0), (2, 0), (3, 0)), // -
+        new((1, 0), (0, 1), (1, 1), (2, 1), (1, 2)), // +
+        new((2, 2), (2, 1), (0, 0), (1, 0), (2, 0)), // J
+        new((0, 0), (0, 1), (0, 2), (0, 3)), // |
+        new((0, 0), (0, 1), (1, 0), (1, 1)), // box
     ];
 
-    class CacheKey(int shapeIndex, int jetIndex, ImmutableHashSet<Point2D> points)
+    class CacheKey(int shapeIndex, int jetIndex, ImmutableHashSet<Point> points)
     {
         private readonly int fShapeIndex = shapeIndex;
         private readonly int fJetIndex = jetIndex;
-        private readonly ImmutableHashSet<Point2D> fPoints = points;
+        private readonly ImmutableHashSet<Point> fPoints = points;
 
         public override bool Equals(object obj)
-            => obj is CacheKey ck && 
-                fShapeIndex == ck.fShapeIndex && 
+            => obj is CacheKey ck &&
+                fShapeIndex == ck.fShapeIndex &&
                 fJetIndex == ck.fJetIndex &&
                 fPoints.SetEquals(ck.fPoints);
 
@@ -42,18 +42,18 @@ class Day17 : Solution
 
     private long Simulate(string input, long rockCount)
     {
-        var jetstreams = input.Select(c => c == '>' ? new Point2D(1, 0) : (-1, 0)).ToArray();
+        var jetstreams = input.Select(c => c == '>' ? new Point(1, 0) : (-1, 0)).ToArray();
         long height = 0;
-        var blocked = Enumerable.Range(0, 7).Select(x => new Point2D(x, 0)).ToImmutableHashSet();
-        Point2D blockedOffset = Point2D.Origin;
-        
-        bool CanMoveTo(Shape s, Point2D pos)
+        var blocked = Enumerable.Range(0, 7).Select(x => new Point(x, 0)).ToImmutableHashSet();
+        Point blockedOffset = Point.Origin;
+
+        bool CanMoveTo(Shape s, Point pos)
             => !s.Points.Select(p => p + pos - blockedOffset)
                 .Any(p => p.X < 0 || p.X > 6 || blocked.Contains(p));
 
-        Point2D CalcFinalPosition(Shape s, ref int jetIndex)
+        Point CalcFinalPosition(Shape s, ref int jetIndex)
         {
-            var pos = new Point2D(2, height + 4);
+            var pos = new Point(2, height + 4);
             while (true)
             {
                 // Gas:
@@ -88,7 +88,7 @@ class Day17 : Solution
             var max = blocked.Max(b => b.Y);
             if (max > PatternLines)
             {
-                var delta = new Point2D(0, max - PatternLines);
+                var delta = new Point(0, max - PatternLines);
                 blockedOffset += delta;
                 blocked = blocked.Select(b => b - delta).Where(p => p.Y >= 0).ToImmutableHashSet();
             }

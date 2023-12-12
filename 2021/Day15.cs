@@ -1,10 +1,12 @@
 ﻿namespace AdventOfCode._2021;
 
+using Point = Point2D<int>;
+
 class Day15 : Solution
 {
-    class PathFinder(Dictionary<Point2D, long> riskMap) : AStar<Point2D>(Point2D.Origin)
+    class PathFinder(Dictionary<Point, long> riskMap) : AStar<Point>(Point.Origin)
     {
-        protected override long Distance(Point2D one, Point2D another)
+        protected override long Distance(Point one, Point another)
         {
             var distance = one.ManhattanDistance(another);
             if (distance == 1)
@@ -12,7 +14,7 @@ class Day15 : Solution
             return distance;
         }
 
-        protected override IEnumerable<Point2D> NeighboursOf(Point2D node)
+        protected override IEnumerable<Point> NeighboursOf(Point node)
             => node.Neighbours().Where(riskMap.ContainsKey);
     }
 
@@ -20,11 +22,11 @@ class Day15 : Solution
     {
         var baseMap = input.AsMap(c => c - '0');
         var (width, height) = (baseMap.Width, baseMap.Height);
-        var riskMap = new Dictionary<Point2D, long>();
+        var riskMap = new Dictionary<Point, long>();
 
-        foreach (var of in Point2D.Range(Point2D.Origin, (expandMap - 1, expandMap - 1)))
+        foreach (var of in Point.Range(Point.Origin, (expandMap - 1, expandMap - 1)))
         {
-            var offset = new Point2D(of.X * width, of.Y * height);
+            var offset = new Point(of.X * width, of.Y * height);
             foreach (var (k, v) in baseMap)
                 riskMap[k + offset] = (of.X + of.Y + v - 1) % 9 + 1;
         }

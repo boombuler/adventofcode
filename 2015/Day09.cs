@@ -4,7 +4,7 @@ using static Parser;
 
 class Day09 : Solution
 {
-    record Instruction(string From, string To, long Dist);
+    record Instruction(string From, string To, int Dist);
     private static readonly Func<string, Instruction> ParseInstruction =
         from f in Word.Token() + "to"
         from t in Word.Token() + "="

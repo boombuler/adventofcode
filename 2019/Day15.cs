@@ -1,10 +1,12 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day15 : Solution
 {
     enum SensorInput { Wall = 0, Moved = 1, OxygenSystem = 2 };
     enum Movement { North = 1, South = 2, West = 3, East = 4 };
-    private static readonly Point2D[] MoveDirections = [Point2D.Origin, Point2D.Up, Point2D.Down, Point2D.Left, Point2D.Right];
+    private static readonly Point[] MoveDirections = [Point.Origin, Point.Up, Point.Down, Point.Left, Point.Right];
     private static (IntCodeVM, SensorInput) StepVM(IntCodeVM vm, Movement move)
     {
         while (true)
@@ -18,8 +20,8 @@ class Day15 : Solution
 
     private IEnumerable<(SensorInput Type, ImmutableList<Movement> Inputs)> GetWalkableTiles(ImmutableList<Movement> initialMovements)
     {
-        var visited = new HashSet<Point2D>();
-        var queue = new Queue<(Point2D Location, ImmutableList<Movement> Inputs, IntCodeVM VM)>();
+        var visited = new HashSet<Point>();
+        var queue = new Queue<(Point Location, ImmutableList<Movement> Inputs, IntCodeVM VM)>();
 
         var initialVM = initialMovements.Aggregate(new IntCodeVM(Input), (vm, m) =>
         {
@@ -27,8 +29,8 @@ class Day15 : Solution
             return vm;
         });
 
-        queue.Enqueue((Point2D.Origin, ImmutableList<Movement>.Empty, initialVM));
-        visited.Add(Point2D.Origin);
+        queue.Enqueue((Point.Origin, ImmutableList<Movement>.Empty, initialVM));
+        visited.Add(Point.Origin);
 
         while (queue.TryDequeue(out var state))
         {

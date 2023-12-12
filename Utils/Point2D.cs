@@ -1,77 +1,81 @@
 ﻿namespace AdventOfCode.Utils;
 
-public record Point2D(long X, long Y) : IComparable<Point2D>
+using System.Globalization;
+using System.Numerics;
+
+public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T>, INumberBase<T>
 {
-    public static readonly Point2D Origin = (0, 0);
-    public static readonly Point2D Up = (0, -1);
-    public static readonly Point2D Down = (0, 1);
-    public static readonly Point2D Left = (-1, 0);
-    public static readonly Point2D Right = (1, 0);
+    private static readonly T TwoT = T.One + T.One;
+    public static readonly Point2D<T> Origin = (T.Zero, T.Zero);
+    public static readonly Point2D<T> Up = (T.Zero, -T.One);
+    public static readonly Point2D<T> Down = (T.Zero, T.One);
+    public static readonly Point2D<T> Left = (-T.One, T.Zero);
+    public static readonly Point2D<T> Right = (T.One, T.Zero);
 
     public override string ToString() => $"{X},{Y}";
 
-    public static implicit operator (long, long)(Point2D pt) => (pt.X, pt.Y);
-    public static implicit operator Point2D((long, long) t) => new(t.Item1, t.Item2);
+    public static implicit operator (T, T)(Point2D<T> pt) => (pt.X, pt.Y);
+    public static implicit operator Point2D<T>((T, T) t) => new(t.Item1, t.Item2);
 
-    public static Point2D operator -(Point2D a)
+    public static Point2D<T> operator -(Point2D<T> a)
         => new(-a.X, -a.Y);
-    public static Point2D operator -(Point2D a, Point2D b)
+    public static Point2D<T> operator -(Point2D<T> a, Point2D<T> b)
         => new(a.X - b.X, a.Y - b.Y);
-    public static Point2D operator +(Point2D a, Point2D b)
+    public static Point2D<T> operator +(Point2D<T> a, Point2D<T> b)
         => new(a.X + b.X, a.Y + b.Y);
-    public static Point2D operator *(Point2D a, long b)
+    public static Point2D<T> operator *(Point2D<T> a, T b)
         => new(a.X * b, a.Y * b);
-    public static Point2D operator *(long a, Point2D b)
+    public static Point2D<T> operator *(T a, Point2D<T> b)
         => b * a;
-    public static Point2D operator /(Point2D a, long b)
-        => new(a.X/b, a.Y / b);
-    public static Point2D operator %(Point2D a, long b)
+    public static Point2D<T> operator /(Point2D<T> a, T b)
+        => new(a.X / b, a.Y / b);
+    public static Point2D<T> operator %(Point2D<T> a, T b)
         => new(a.X % b, a.Y % b);
-    public static Point2D operator %(Point2D a, Point2D b)
+    public static Point2D<T> operator %(Point2D<T> a, Point2D<T> b)
         => new(a.X % b.X, a.Y % b.Y);
 
-    public IEnumerable<Point2D> Neighbours(bool withDiagonal = false)
+    public IEnumerable<Point2D<T>> Neighbours(bool withDiagonal = false)
     {
-        yield return this + (1, 0);
-        yield return this + (0, 1);
-        yield return this - (1, 0);
-        yield return this - (0, 1);
+        yield return this + Right;
+        yield return this + Down;
+        yield return this + Up;
+        yield return this + Left;
         if (withDiagonal)
         {
-            yield return this + (+1, +1);
-            yield return this + (-1, +1);
-            yield return this + (+1, -1);
-            yield return this + (-1, -1);
+            yield return this + Up + Left;
+            yield return this + Up + Right;
+            yield return this + Down + Left;
+            yield return this + Down + Right;
         }
     }
 
-    public long ManhattanDistance(Point2D other)
-        => Math.Abs(other.X - X) + Math.Abs(other.Y - Y);
-    public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
+    public T ManhattanDistance(Point2D<T> other)
+        => T.Abs(other.X - X) + T.Abs(other.Y - Y);
 
-    public static IEnumerable<Point2D> Range(Point2D min, Point2D max)
+    public static IEnumerable<Point2D<T>> Range(Point2D<T> min, Point2D<T> max)
     {
         (var minX, var maxX) = min.X < max.X ? (min.X, max.X) : (max.X, min.X);
         (var minY, var maxY) = min.Y < max.Y ? (min.Y, max.Y) : (max.Y, min.Y);
-        for (long x = minX; x <= maxX; x++)
-            for (long y = minY; y <= maxY; y++)
-                yield return new Point2D(x, y);
+        for (T x = minX; x <= maxX; x++)
+            for (T y = minY; y <= maxY; y++)
+                yield return new(x, y);
     }
 
-    public int CompareTo(Point2D other)
+    public int CompareTo(Point2D<T> other)
     {
         var dy = Y - other.Y;
-        if (dy == 0)
-            return Math.Sign(X - other.X);
-        return Math.Sign(dy);
+        if (dy == T.Zero)
+            return T.Sign(X - other.X);
+        return T.Sign(dy);
     }
 
-    public Point3D WithZ(long z) => new(X, Y, z);
+    public Point3D<T> WithZ(T z) => new(X, Y, z);
 
-    public static Point2D Parse(string s)
+    public static Point2D<T> Parse(string s)
     {
         var parts = s.Split(',');
-        return new Point2D(long.Parse(parts[0]), long.Parse(parts[1]));
+        var fp = CultureInfo.InvariantCulture;
+        return new Point2D<T>(T.Parse(parts[0], fp), T.Parse(parts[1], fp));
     }
 
     /// <summary>
@@ -79,13 +83,13 @@ public record Point2D(long X, long Y) : IComparable<Point2D>
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public static Point2D DirectionFromArrow(char c)
+    public static Point2D<T> DirectionFromArrow(char c)
         => c switch
         {
             '^' => Up,
             'v' => Down,
             '<' => Left,
             '>' => Right,
-            _ => (0, 0)
+            _ => Origin
         };
 }

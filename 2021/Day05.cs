@@ -1,21 +1,18 @@
 ﻿namespace AdventOfCode._2021;
 
-using System.Diagnostics.CodeAnalysis;
+using Point = Point2D<int>;
 
 class Day05 : Solution
 {
-    class Line
+    class Line(int X1, int Y1, int X2, int Y2)
     {
-        public Point2D P1 { get; }
-        public Point2D P2 { get; }
-
-        [SuppressMessage("CodeQuality", "IDE0051", Justification = "Used by factory (reflection)")]
-        private Line(long X1, long Y1, long X2, long Y2) => (P1, P2) = ((X1, Y1), (X2, Y2));
+        public Point P1 { get; } = (X1, Y1);
+        public Point P2 { get; } = (X2, Y2);
 
         public static readonly Func<string, Line> Parse = new Regex(@"(?<X1>\-?\d+),(?<Y1>\-?\d+) -> (?<X2>\-?\d+),(?<Y2>\-?\d+)").ToFactory<Line>();
-        public IEnumerable<Point2D> Range()
+        public IEnumerable<Point> Range()
         {
-            var off = new Point2D(Math.Sign(P2.X - P1.X), Math.Sign(P2.Y - P1.Y));
+            var off = new Point(Math.Sign(P2.X - P1.X), Math.Sign(P2.Y - P1.Y));
             for (var p = P1; p != P2; p += off)
                 yield return p;
             yield return P2;

@@ -18,7 +18,7 @@ class Day09 : Solution
     protected override long? Part2()
     {
         var map = Input.Cells(filter: v => v != '9').Keys.ToHashSet();
-        var open = new Stack<Point2D>();
+        var open = new Stack<Point2D<int>>();
         var basins = new PriorityQueue<long, long>();
         basins.EnqueueRange([(0, -1), (0, -1), (0, -1)]);
 

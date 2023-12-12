@@ -1,16 +1,18 @@
 ﻿namespace AdventOfCode._2021;
 
+using Point = Point2D<int>;
+
 class Day11 : Solution<int>
 {
-    private static (Dictionary<Point2D, int> NextState, int Flashes) StepRound(Dictionary<Point2D, int> cells)
+    private static (Dictionary<Point, int> NextState, int Flashes) StepRound(Dictionary<Point, int> cells)
     {
         cells = cells.ToDictionary(kvp => kvp.Key, kvp => kvp.Value + 1);
 
-        var flashed = new HashSet<Point2D>();
-        IEnumerable<Point2D> Flashing(Dictionary<Point2D, int> cells)
+        var flashed = new HashSet<Point>();
+        IEnumerable<Point> Flashing(Dictionary<Point, int> cells)
             => cells.Where(kvp => kvp.Value > 9 && !flashed.Contains(kvp.Key)).Select(kvp => kvp.Key);
 
-        var bounds = new Rect2D((0, 0), (9, 9));
+        var bounds = new Rect2D<int>((0, 0), (9, 9));
         while (Flashing(cells).Any())
         {
             foreach (var pt in Flashing(cells))

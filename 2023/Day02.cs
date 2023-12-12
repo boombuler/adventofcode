@@ -13,9 +13,9 @@ class Day02 : Solution
     record Game(long Id, Move[] Moves);
 
     private static readonly Func<string, Game> ParseGame = (
-        from id in "Game " + Int + ":"
+        from id in "Game " + Long + ":"
         from moves in (
-            from amount in Int 
+            from amount in Long 
             from color in " " + Enum<Color>()
             select new Move(amount, color)
         ).Token().List(',', ';')

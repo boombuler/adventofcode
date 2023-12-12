@@ -1,20 +1,21 @@
 ﻿namespace AdventOfCode._2023;
+
+using Point = Point2D<int>;
+
 class Day03 : Solution
 {
-    private static readonly Point2D Left = (-1, 0);
-    private static readonly Point2D Right = (1, 0);
-    private static IEnumerable<IGrouping<Point2D, long>> NumbersNearParts(string drawing, Predicate<char> partFilter)
+    private static IEnumerable<IGrouping<Point, long>> NumbersNearParts(string drawing, Predicate<char> partFilter)
     {
         var map = drawing.AsMap();
 
-        bool IsDigit(Point2D pt)
+        bool IsDigit(Point pt)
             => map.TryGetValue(pt, out var digit) && char.IsAsciiDigit(digit);
 
-        IEnumerable<Point2D> WalkDigits(Point2D pt, Point2D direction)
+        IEnumerable<Point> WalkDigits(Point pt, Point direction)
             => pt.Unfold(x => x + direction).Prepend(pt).TakeWhile(IsDigit);
 
-        long ReadNumber(Point2D pt)
-            => WalkDigits(WalkDigits(pt, Left).Last(), Right)
+        long ReadNumber(Point pt)
+            => WalkDigits(WalkDigits(pt, Point.Left).Last(), Point.Right)
                 .Select(map.GetValueOrDefault)
                 .Aggregate(0L, MathExt.AppendDigit);
 

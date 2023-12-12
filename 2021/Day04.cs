@@ -1,18 +1,20 @@
 ﻿namespace AdventOfCode._2021;
 
+using Point = Point2D<int>;
+
 class Day04 : Solution
 {
     const int BOARD_SIZE = 5;
     class BingoBoard
     {
-        private readonly Dictionary<long, Point2D> fCells;
-        private readonly HashSet<Point2D> fMarked = [];
+        private readonly Dictionary<long, Point> fCells;
+        private readonly HashSet<Point> fMarked = [];
 
         public BingoBoard(IEnumerable<string> rows)
         {
             fCells = rows.SelectMany((l, y) =>
                 l.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                 .Select((n, x) => new { Pt = new Point2D(x, y), N = long.Parse(n) })
+                 .Select((n, x) => new { Pt = new Point(x, y), N = long.Parse(n) })
             ).ToDictionary(x => x.N, x => x.Pt);
         }
 
@@ -21,7 +23,7 @@ class Day04 : Solution
             if (!fCells.TryGetValue(n, out var p) || !fMarked.Add(p))
                 return null;
 
-            if (Point2D.Range((0, p.Y), (BOARD_SIZE - 1, p.Y)).All(fMarked.Contains) || Point2D.Range((p.X, 0), (p.X, BOARD_SIZE - 1)).All(fMarked.Contains))
+            if (Point.Range((0, p.Y), (BOARD_SIZE - 1, p.Y)).All(fMarked.Contains) || Point.Range((p.X, 0), (p.X, BOARD_SIZE - 1)).All(fMarked.Contains))
                 return n * fCells.Where(kvp => !fMarked.Contains(kvp.Value)).Sum(kvp => kvp.Key);
 
             return null;

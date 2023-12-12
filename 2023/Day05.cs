@@ -52,9 +52,9 @@ class Day05 : Solution
             from maps in (
                 from _ in Any.Until(NL)
                 from range in (
-                    from d in Int.Token()
-                    from s in Int.Token()
-                    from l in Int.Token()
+                    from d in Long.Token()
+                    from s in Long.Token()
+                    from l in Long.Token()
                     select (new Range(s, l), d - s)
                 ).List('\n')
                 select new Map(range)
@@ -65,7 +65,7 @@ class Day05 : Solution
     protected override long? Part1()
     {
         static long Solve(string input)
-            => FindLowestLocationNumber(input, Int.Token().Select(n => new Range(n, 1)).Many());
+            => FindLowestLocationNumber(input, Long.Token().Select(n => new Range(n, 1)).Many());
 
         Assert(Solve(Sample()), 35);
         return Solve(Input);
@@ -76,8 +76,8 @@ class Day05 : Solution
         static long Solve(string input)
             => FindLowestLocationNumber(input, 
                  (
-                    from s in Int + " "
-                    from l in Int
+                    from s in Long + " "
+                    from l in Long
                     select new Range(s, l)
                 ).Token().Many()
             );

@@ -9,13 +9,15 @@
     sw +--+ se
       / s  \
 */
+using Point = Point2D<int>;
+
 class Day11 : Solution
 {
     enum Direction
     {
         n, nw, ne, sw, se, s,
     }
-    private static readonly Dictionary<Direction, Point2D> Offsets = new()
+    private static readonly Dictionary<Direction, Point> Offsets = new()
     {
         {Direction.n, (0, -2) },
         {Direction.nw, (-1, -1) },
@@ -27,9 +29,8 @@ class Day11 : Solution
 
     private static (long FinalDistance, long MaxDistance) GetDistance(string moves)
     {
-        var src = new Point2D(0, 0);
-        var dest = moves.Split(',')
-            .Select(Enum.Parse<Direction>)
+        var src = new Point(0, 0);
+        var dest = Parser.Enum<Direction>().List(',').MustParse(moves)
             .Select(d => Offsets[d])
             .Aggregate(
                 new { Point = src, Dist = 0L },

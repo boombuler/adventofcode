@@ -5,7 +5,7 @@ class Day12 : Solution
     private static int ShortestPath(string input, params char[] startPoints)
     {
         var map = input.Cells();
-        var starts = map.Where(kvp => startPoints.Contains(kvp.Value)).Select(p=> p.Key);
+        var starts = map.Where(kvp => startPoints.Contains(kvp.Value)).Select(p => p.Key);
         var end = map.Where(k => k.Value == 'E').Single().Key;
         var heights = map.ToDictionary(kvp => kvp.Key, kvp => kvp.Value switch
         {
@@ -14,15 +14,15 @@ class Day12 : Solution
             var c => c
         } - 'a');
 
-        var open = new Queue<(Point2D Pos, int Steps, int Height)>();
-        foreach(var sp in starts)
+        var open = new Queue<(Point2D<int> Pos, int Steps, int Height)>();
+        foreach (var sp in starts)
             open.Enqueue((sp, 1, 0));
 
-        while(open.TryDequeue(out var cur))
+        while (open.TryDequeue(out var cur))
         {
-            foreach(var n in cur.Pos.Neighbours())
+            foreach (var n in cur.Pos.Neighbours())
             {
-                if (heights.TryGetValue(n, out var nh) && (nh-cur.Height) <= 1)
+                if (heights.TryGetValue(n, out var nh) && (nh - cur.Height) <= 1)
                 {
                     if (n == end)
                         return cur.Steps;

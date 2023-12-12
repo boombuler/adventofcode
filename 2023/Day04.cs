@@ -1,24 +1,20 @@
 ﻿namespace AdventOfCode._2023;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using static Parser;
 
 class Day04 : Solution
 {
     private static readonly Func<string, int> CardParser =
         from _ in Any.Until(":")
-        from winning in Int.Token().Until("|")
-        from own in Int.Token().Many()
+        from winning in Long.Token().Until("|")
+        from own in Long.Token().Many()
         select winning.Intersect(own).Count();
 
     private static IEnumerable<int> WinningNumberCount(string input)
         => input.Lines().Select(CardParser);
 
     protected override long? Part1()
-    { 
+    {
         static long Solve(string input)
             => WinningNumberCount(input).Where(n => n > 0).Sum(n => 1 << (n - 1));
 

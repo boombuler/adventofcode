@@ -1,5 +1,8 @@
 ﻿namespace AdventOfCode._2022;
 
+using Point2D = Point2D<int>;
+using Point3D = Point3D<int>;
+
 class Day16 : Solution
 {
     record Valve(string Name, int FlowRate, string[] Tunnels)
@@ -16,7 +19,7 @@ class Day16 : Solution
             distances[p.X, p.Y] = (p.X == p.Y) ? 0 :
                 (valves[(int)p.X].Tunnels.Contains(valves[(int)p.Y].Name) ? 1 : int.MaxValue);
 
-        foreach(var (k, i, j) in Point3D.Range((0, 0, 0), (valves.Count - 1, valves.Count - 1, valves.Count - 1)))
+        foreach (var (k, i, j) in Point3D.Range((0, 0, 0), (valves.Count - 1, valves.Count - 1, valves.Count - 1)))
         {
             if (k == i || k == j || distances[k, j] == int.MaxValue || distances[i, k] == int.MaxValue)
                 continue;
@@ -34,11 +37,11 @@ class Day16 : Solution
         var valves = input.Lines().Select(Valve.Factory).ToList();
         var targetValves = valves.Select((v, i) => (v.FlowRate, i)).Where(v => v.FlowRate > 0).Select(v => new { Index = v.i, Mask = 1L << v.i }).ToArray();
         var dists = Distances(valves);
-        var startPt = valves.FindIndex(v => v.Name == "AA");        
-        
-        (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location ) ? (a, b) : (b, a);
+        var startPt = valves.FindIndex(v => v.Name == "AA");
+
+        (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location) ? (a, b) : (b, a);
         var cache = new Dictionary<(State, State, long), long>();
-        Func<State, State, long, long> getFlowAmount = null; 
+        Func<State, State, long, long> getFlowAmount = null;
         long CalcFlowAmount(State a, State b, long openValves)
             => (
                 from target in targetValves
@@ -55,7 +58,7 @@ class Day16 : Solution
             return res;
         };
 
-        return CalcFlowAmount(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt) , 0);
+        return CalcFlowAmount(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt), 0);
     }
 
     protected override long? Part1()
@@ -65,7 +68,7 @@ class Day16 : Solution
         return Solve(Input);
     }
 
-  
+
     protected override long? Part2()
     {
         long Solve(string s) => GetTotalFlowAmount(s, 26, true);

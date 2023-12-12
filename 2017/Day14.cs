@@ -57,9 +57,9 @@ class Day14 : Solution
     {
         var grid = BuildGrid(prefix);
 
-        void ClearRegion(Point2D pt)
+        void ClearRegion(Point2D<int> pt)
         {
-            var open = new Queue<Point2D>();
+            var open = new Queue<Point2D<int>>();
             open.Enqueue(pt);
             while (open.TryDequeue(out var p))
             {
@@ -77,7 +77,7 @@ class Day14 : Solution
 
         long result = 0;
 
-        foreach (var pt in Point2D.Range((0, 0), (127, 127)))
+        foreach (var pt in Point2D<int>.Range((0, 0), (127, 127)))
         {
             if (grid[pt.Y][pt.X])
             {

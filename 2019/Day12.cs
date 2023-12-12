@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode._2019;
 
 using System.Diagnostics.CodeAnalysis;
+using Point3D = Point3D<int>;
 
 class Day12 : Solution
 {
@@ -14,7 +15,7 @@ class Day12 : Solution
         public long TotalEnergy => PotentialEnergy * KineticEnergy;
 
         [SuppressMessage("CodeQuality", "IDE0051", Justification = "Used by factory (reflection)")]
-        private Moon(long x, long y, long z)
+        private Moon(int x, int y, int z)
         {
             Velocity = Point3D.Origin;
             Position = (x, y, z);

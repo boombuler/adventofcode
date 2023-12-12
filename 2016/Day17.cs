@@ -1,15 +1,15 @@
 ﻿namespace AdventOfCode._2016;
 
 using System.Security.Cryptography;
-
+using Point = Point2D<int>;
 class Day17 : Solution<string, long?>
 {
-    private static readonly Point2D Target = new(3, 3);
-    private static readonly Point2D Start = new (0, 0);
+    private static readonly Point Target = new(3, 3);
+    private static readonly Point Start = new(0, 0);
 
     class State
     {
-        private readonly Point2D fPosition;
+        private readonly Point fPosition;
         private readonly string fSeed;
         public string Directions { get; }
         public bool Won => fPosition.Equals(Target);
@@ -19,7 +19,7 @@ class Day17 : Solution<string, long?>
         {
         }
 
-        private State(string seed, Point2D pos, string dir)
+        private State(string seed, Point pos, string dir)
         {
             fSeed = seed;
             fPosition = pos;
@@ -28,26 +28,25 @@ class Day17 : Solution<string, long?>
 
         public IEnumerable<State> ValidMoves()
         {
-            var md = MD5.Create();
-            Span<byte> hash = stackalloc byte[md.HashSize / 8];
-            md.TryComputeHash(Encoding.ASCII.GetBytes(fSeed + Directions), hash, out _);
+            Span<byte> hash = stackalloc byte[MD5.HashSizeInBytes];
+            MD5.HashData(Encoding.ASCII.GetBytes(fSeed + Directions), hash);
             // up, down, left, and right
             var doorStates = new[]
             {
-                    (hash[0] >> 4) > 0x0A,
-                    (hash[0] & 0x0F) > 0x0A,
-                    (hash[1] >> 4) > 0x0A,
-                    (hash[1] & 0x0F) > 0x0A,
-                };
+                (hash[0] >> 4) > 0x0A,
+                (hash[0] & 0x0F) > 0x0A,
+                (hash[1] >> 4) > 0x0A,
+                (hash[1] & 0x0F) > 0x0A,
+            };
 
             if (fPosition.Y > 0 && doorStates[0]) // Up
-                yield return new State(fSeed, fPosition - (0, 1), Directions + "U");
+                yield return new State(fSeed, fPosition + Point.Up, Directions + "U");
             if (fPosition.Y < 3 && doorStates[1]) // Down
-                yield return new State(fSeed, fPosition + (0, 1), Directions + "D");
+                yield return new State(fSeed, fPosition + Point.Down, Directions + "D");
             if (fPosition.X > 0 && doorStates[2]) // Left
-                yield return new State(fSeed, fPosition - (1, 0), Directions + "L");
+                yield return new State(fSeed, fPosition + Point.Left, Directions + "L");
             if (fPosition.X < 3 && doorStates[3]) // Right
-                yield return new State(fSeed, fPosition + (1, 0), Directions + "R");
+                yield return new State(fSeed, fPosition + Point.Right, Directions + "R");
         }
     }
 

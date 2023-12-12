@@ -2,7 +2,7 @@
 
 internal class Day22 : Solution
 {
-    record Region(Point3D Min, Point3D Max)
+    record Region(Point3D<long> Min, Point3D<long> Max)
     {
         public long Size => (Max.X - Min.X + 1) * (Max.Y - Min.Y + 1) * (Max.Z - Min.Z + 1);
 

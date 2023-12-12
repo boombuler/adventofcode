@@ -1,10 +1,12 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day03 : Solution
 {
-    private IEnumerable<Point2D> TracePath(string path)
+    private IEnumerable<Point> TracePath(string path)
     {
-        var cur = Point2D.Origin;
+        var cur = Point.Origin;
         (char direction, int amount) = ('\0', 0);
 
         using var sr = new StringReader(path + ",");
@@ -31,7 +33,7 @@ class Day03 : Solution
     }
 
     private long ClosestIntersection(params string[] paths)
-        => paths.Select(TracePath).Aggregate(Enumerable.Intersect).Min(Point2D.Origin.ManhattanDistance);
+        => paths.Select(TracePath).Aggregate(Enumerable.Intersect).Min(Point.Origin.ManhattanDistance);
 
     protected override long? Part1()
     {
@@ -45,7 +47,7 @@ class Day03 : Solution
     private long FirstIntersection(params string[] paths)
     {
         var lists = paths.Select(TracePath).Select(Enumerable.ToList).ToList();
-        return lists.Aggregate<IEnumerable<Point2D>>(Enumerable.Intersect).Select(pt => lists.Count + lists.Sum(l => l.IndexOf(pt))).Min();
+        return lists.Aggregate<IEnumerable<Point>>(Enumerable.Intersect).Select(pt => lists.Count + lists.Sum(l => l.IndexOf(pt))).Min();
     }
 
     protected override long? Part2()

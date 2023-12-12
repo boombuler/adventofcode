@@ -1,12 +1,13 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point2D<int>;
 class Day10 : Solution<string, int>
 {
     record Star
     {
-        public Point2D Position { get; init; }
-        private Point2D Velocity { get; }
-        public Star(long PosX, long PosY, long VelX, long VelY)
+        public Point Position { get; init; }
+        private Point Velocity { get; }
+        public Star(int PosX, int PosY, int VelX, int VelY)
             => (Position, Velocity) = ((PosX, PosY), (VelX, VelY));
         public Star Move() => this with { Position = Position + Velocity };
     }

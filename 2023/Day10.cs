@@ -1,11 +1,12 @@
 ﻿namespace AdventOfCode._2023;
 
 using System.Buffers;
-using static Point2D;
+
+using static Point2D<int>;
 
 class Day10 : Solution
 {
-    private static readonly FrozenDictionary<(char Char, Point2D Dir), Point2D> Connections = new Dictionary<(char, Point2D), Point2D>()
+    private static readonly FrozenDictionary<(char Char, Point2D<int> Dir), Point2D<int>> Connections = new Dictionary<(char, Point2D<int>), Point2D<int>>()
     {
         [('|', Up)] = Up,
         [('|', Down)] = Down,
@@ -20,13 +21,13 @@ class Day10 : Solution
         [('F', Left)] = Down,
         [('F', Up)] = Right,
     }.ToFrozenDictionary();
-    
-    private static (HashSet<Point2D> Loop, StringMap<char> Map) ParseMap(string input)
+
+    private static (HashSet<Point2D<int>> Loop, StringMap<char> Map) ParseMap(string input)
     {
         var map = input.AsMap();
         var pos = map.Where(kvp => kvp.Value == 'S').First().Index;
         var possibleStartDirections = (
-            from d in new Point2D[] { Up, Down, Left, Right }
+            from d in new Point2D<int>[] { Up, Down, Left, Right }
             let n = map.GetValueOrDefault(pos + d, '.')
             where Connections.ContainsKey((n, d))
             select d
@@ -35,7 +36,7 @@ class Day10 : Solution
             .Single(c => possibleStartDirections.All(d => Connections.ContainsKey((c, -d))));
 
         var dir = possibleStartDirections.First();
-        var loop = new HashSet<Point2D>();
+        var loop = new HashSet<Point2D<int>>();
         while (loop.Add(pos))
         {
             pos += dir;
@@ -52,7 +53,7 @@ class Day10 : Solution
 
         long sum = 0;
         var vertical = SearchValues.Create(['|', 'L', 'J']);
-        foreach(var row in map.Rows())
+        foreach (var row in map.Rows())
         {
             var inside = false;
             foreach (var cell in row)
@@ -68,7 +69,7 @@ class Day10 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) 
+        long Solve(string input)
             => ParseMap(input).Loop.Count / 2;
 
         Assert(Solve(Sample("1")), 8);

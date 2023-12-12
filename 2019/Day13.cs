@@ -14,7 +14,7 @@ class Day13 : Solution
     protected override long? Part1()
     {
         var vm = new IntCodeVM(Input);
-        var screen = new Dictionary<Point2D, Tile>();
+        var screen = new Dictionary<Point2D<long>, Tile>();
 
         foreach (var (x, (y, (tile, _))) in vm.Run().Chunk(3))
             screen[(x, y)] = (Tile)tile;
@@ -34,7 +34,7 @@ class Day13 : Solution
         {
             if (x == -1 && y == 0)
                 score = tile;
-            else 
+            else
                 switch ((Tile)tile)
                 {
                     case Tile.Ball: ballPos = x; break;

@@ -1,18 +1,20 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point2D<int>;
+
 class Day15 : Solution
 {
-    static readonly Point2D[] ReadingOrder = [ Point2D.Up, Point2D.Left, Point2D.Right, Point2D.Down];
+    static readonly Point[] ReadingOrder = [Point.Up, Point.Left, Point.Right, Point.Down];
     private const int DEFAULT_ATTACK = 3;
 
     class Map
     {
-        private readonly Dictionary<Entity, Point2D> fByEntity = [];
-        private readonly Dictionary<Point2D, Entity> fByPosition = [];
+        private readonly Dictionary<Entity, Point> fByEntity = [];
+        private readonly Dictionary<Point, Entity> fByPosition = [];
 
         public Map(string input, int ElfAttack)
         {
-            var ents = input.Lines().SelectMany((l, y) => l.Select((c, x) => (c, new Point2D(x, y))));
+            var ents = input.Lines().SelectMany((l, y) => l.Select((c, x) => (c, new Point(x, y))));
             foreach (var (c, pos) in ents)
             {
                 switch (c)
@@ -24,7 +26,7 @@ class Day15 : Solution
             }
         }
 
-        private void Add(Entity ent, Point2D pos)
+        private void Add(Entity ent, Point pos)
         {
             if (fByEntity.ContainsKey(ent) || fByPosition.ContainsKey(pos))
                 return;
@@ -32,7 +34,7 @@ class Day15 : Solution
             fByEntity[ent] = pos;
         }
 
-        public Point2D this[Entity ent]
+        public Point this[Entity ent]
         {
             get => fByEntity[ent];
             set
@@ -43,10 +45,10 @@ class Day15 : Solution
                 fByEntity[ent] = value;
             }
         }
-        public Entity this[Point2D pos] => fByPosition.TryGetValue(pos, out var res) ? res : null;
+        public Entity this[Point pos] => fByPosition.TryGetValue(pos, out var res) ? res : null;
         public IEnumerable<Entity> Entities => fByEntity.Keys;
-        public IEnumerable<Point2D> BlockedPositions => fByPosition.Keys;
-        public bool Occupied(Point2D pt) => fByPosition.ContainsKey(pt);
+        public IEnumerable<Point> BlockedPositions => fByPosition.Keys;
+        public bool Occupied(Point pt) => fByPosition.ContainsKey(pt);
         public void Remove(Entity ent)
         {
             var pos = fByEntity[ent];
@@ -65,15 +67,15 @@ class Day15 : Solution
         public Team Team { get; } = c == 'E' ? Team.Elves : Team.Goblins;
         public int HealthPoints { get; private set; } = 200;
 
-        public Point2D MoveToTarget(Map map, HashSet<Point2D> targetPositions)
+        public Point MoveToTarget(Map map, HashSet<Point> targetPositions)
         {
             var curPos = map[this];
 
-            int DistanceToFight(Point2D pt)
+            int DistanceToFight(Point pt)
             {
                 var visited = map.BlockedPositions.ToHashSet(); // Mark all entites as visited
-                var moves = new List<Point2D>() { pt };
-                var nextMoves = new List<Point2D>();
+                var moves = new List<Point>() { pt };
+                var nextMoves = new List<Point>();
                 int steps = 0;
                 while (moves.Count > 0)
                 {

@@ -1,55 +1,65 @@
 ﻿namespace AdventOfCode.Utils;
 
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
-class Mat4
+class Mat4<T> where T : INumber<T>
 {
-    private readonly long[] M;
+    private readonly T[] M;
 
-    public long this[int col, int row]
+    public T this[int col, int row]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => M[row * 4 + col];
     }
 
-    private Mat4(params long[] m) => M = m;
+    private Mat4(params T[] m) => M = m;
 
-    public static Mat4 Identity = new(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
+    public static Mat4<T> Identity = new(
+        T.One, T.Zero, T.Zero, T.Zero,
+        T.Zero, T.One, T.Zero, T.Zero,
+        T.Zero, T.Zero, T.One, T.Zero,
+        T.Zero, T.Zero, T.Zero, T.One
     );
 
-    public Mat4 Translate(Point3D offset)
-        => this * new Mat4(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            offset.X, offset.Y, offset.Z, 1
+    public Mat4<T> Translate(Point3D<T> offset)
+        => this * new Mat4<T>(
+            T.One, T.Zero, T.Zero, T.Zero,
+            T.Zero, T.One, T.Zero, T.Zero,
+            T.Zero, T.Zero, T.One, T.Zero,
+            offset.X, offset.Y, offset.Z, T.One
         );
 
-    public Mat4 Rotate90Degree(Point3D a)
+    public Mat4<T> Rotate90Degree(Point3D<T> a)
     {
-        var (x, y, z) = (Math.Sign(a.X), Math.Sign(a.Y), Math.Sign(a.Z));
-        return this * new Mat4(
-              x * x, y * x - z, z * x + y, 0,
-            x * y + z, y * y, z * y - x, 0,
-            z * x - y, z * y + x, z * z, 0,
-                0, 0, 0, 1
+        var (x, y, z) = (Sign(a.X), Sign(a.Y), Sign(a.Z));
+        return this * new Mat4<T>(
+            x * x, y * x - z, z * x + y, T.Zero,
+            x * y + z, y * y, z * y - x, T.Zero,
+            z * x - y, z * y + x, z * z, T.Zero,
+            T.Zero, T.Zero, T.Zero, T.One
         );
     }
 
-    public Point3D Apply(Point3D pt) => (
+    private static T Sign(T v)
+    {
+        if (v > T.Zero)
+            return T.One;
+        if (v < T.Zero)
+            return -T.One;
+        return T.Zero;
+    }
+
+    public Point3D<T> Apply(Point3D<T> pt) => (
         this[0, 0] * pt.X + this[0, 1] * pt.Y + this[0, 2] * pt.Z + this[0, 3],
         this[1, 0] * pt.X + this[1, 1] * pt.Y + this[1, 2] * pt.Z + this[1, 3],
         this[2, 0] * pt.X + this[2, 1] * pt.Y + this[2, 2] * pt.Z + this[2, 3]
     );
 
-    public Mat4 Combine(Mat4 other)
+    public Mat4<T> Combine(Mat4<T> other)
         => this * other;
 
-    public static Mat4 operator *(Mat4 m1, Mat4 m2) => new (
+    public static Mat4<T> operator *(Mat4<T> m1, Mat4<T> m2) => new(
         m1[0, 0] * m2[0, 0] + m1[0, 1] * m2[1, 0] + m1[0, 2] * m2[2, 0] + m1[0, 3] * m2[3, 0],
         m1[1, 0] * m2[0, 0] + m1[1, 1] * m2[1, 0] + m1[1, 2] * m2[2, 0] + m1[1, 3] * m2[3, 0],
         m1[2, 0] * m2[0, 0] + m1[2, 1] * m2[1, 0] + m1[2, 2] * m2[2, 0] + m1[2, 3] * m2[3, 0],
@@ -70,7 +80,7 @@ class Mat4
 
     public override bool Equals(object obj)
     {
-        if (obj is Mat4 other)
+        if (obj is Mat4<T> other)
             return other.M.SequenceEqual(M);
         return false;
     }

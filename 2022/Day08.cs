@@ -5,8 +5,8 @@ class Day08 : Solution
     private static IEnumerable<(int Height, IEnumerable<IEnumerable<int>> Views)> IterateViews(string input)
     {
         var trees = input.Cells(c => c - '0');
-        var directions = new Point2D[] { (-1, 0), (0, -1), (1, 0), (0, 1) };
-        return trees.Select(tree => 
+        var directions = new[] { Point2D<int>.Left, Point2D<int>.Up, Point2D<int>.Right, Point2D<int>.Down };
+        return trees.Select(tree =>
             (tree.Value, directions.Select(d => tree.Key.Unfold(p => p + d).TakeWhile(trees.ContainsKey).Select(p => trees[p]))));
     }
 
@@ -17,7 +17,7 @@ class Day08 : Solution
     private static long GetMaxScenicScore(string input)
         => IterateViews(input)
             .Max(t => t.Views.Select(v => v.TakeUntil(h => h >= t.Height).Count()).Aggregate((a, b) => a * b));
-    
+
     protected override long? Part1()
     {
         Assert(CountVisibleTrees(Sample()), 21);

@@ -2,8 +2,8 @@
 
 class Day03 : Solution
 {
-    public static IEnumerable<Point2D> Walk(IEnumerable<char> directions)
-        => directions.Select(Point2D.DirectionFromArrow).Scan(Point2D.Origin, (loc, dir) => loc + dir);
+    public static IEnumerable<Point2D<int>> Walk(IEnumerable<char> directions)
+        => directions.Select(Point2D<int>.DirectionFromArrow).Scan(Point2D<int>.Origin, (loc, dir) => loc + dir);
 
     public static int CountUniquePlaces(string directions, int workers = 1)
         => Enumerable.Range(0, workers)

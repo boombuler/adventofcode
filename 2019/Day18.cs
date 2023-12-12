@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day18 : Solution
 {
     const char DOOR = '@';
@@ -8,12 +10,12 @@ class Day18 : Solution
 
     class Map
     {
-        private readonly Dictionary<Point2D, char> fWalkableTiles;
-        private readonly Dictionary<char, Point2D> fPOI;
+        private readonly Dictionary<Point, char> fWalkableTiles;
+        private readonly Dictionary<char, Point> fPOI;
         private readonly Dictionary<(char, char), (long, string)?> fPaths = [];
         public IEnumerable<char> Keys => fPOI.Keys.Where(char.IsLower);
 
-        public Map(string map, Point2D door = null)
+        public Map(string map, Point door = null)
         {
             fWalkableTiles = ToTiles(map)
                 .Where(t => t.Char is not WALL and not DOOR)
@@ -25,10 +27,10 @@ class Day18 : Solution
                     fPOI.Remove(k);
         }
 
-        private static IEnumerable<(Point2D Position, char Char)> ToTiles(string map)
-            => map.Lines().SelectMany((line, y) => line.Select((c, x) => (new Point2D(x, y), c)));
+        private static IEnumerable<(Point Position, char Char)> ToTiles(string map)
+            => map.Lines().SelectMany((line, y) => line.Select((c, x) => (new Point(x, y), c)));
 
-        private static Point2D FindDoor(string map)
+        private static Point FindDoor(string map)
             => ToTiles(map).Where(x => x.Char == DOOR).Single().Position;
 
         public static Map[] Split(string map)
@@ -40,7 +42,7 @@ class Day18 : Solution
             lines[doorPos.Y + 1] = lines[doorPos.Y + 1].Remove((int)(doorPos.X - 1), 3).Insert((int)(doorPos.X - 1), "@#@");
             map = string.Join(Environment.NewLine, lines);
 
-            var offsets = new Point2D[] { (-1, -1), (-1, +1), (+1, -1), (+1, +1) };
+            var offsets = new Point[] { (-1, -1), (-1, +1), (+1, -1), (+1, +1) };
             var maps = offsets.Select(o => new Map(map, doorPos + o)).ToArray();
             return maps;
         }
@@ -63,8 +65,8 @@ class Day18 : Solution
 
         public (long Distance, string RequiredKeys)? CalcPath(char from, char to)
         {
-            var open = new Queue<(Point2D, long, string)>();
-            var visited = new HashSet<Point2D>();
+            var open = new Queue<(Point, long, string)>();
+            var visited = new HashSet<Point>();
 
             open.Enqueue((fPOI[from], 0, string.Empty));
 
@@ -129,7 +131,7 @@ class Day18 : Solution
 
         var visited = new HashSet<(string Locations, string Keys)>();
         var open = new PriorityQueue<(string Locations, string Keys), long>();
-            
+
         open.Enqueue((new string(DOOR, maps.Length), string.Empty), 0);
 
         while (open.TryDequeue(out var currentItem, out var distance))

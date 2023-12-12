@@ -1,15 +1,20 @@
 ﻿namespace AdventOfCode._2018;
 
-class Day13 : Solution<Point2D>
+using Point = Point2D<int>;
+
+class Day13 : Solution<Point>
 {
     enum Direction { Up = 0, Right = 1, Down = 2, Left = 3, MASK = Left, Invalid = -1 }
-    private static readonly Point2D[] DirectionOffsets =
+    private static readonly Point[] DirectionOffsets =
     [
-        Point2D.Up, Point2D.Right, Point2D.Down, Point2D.Left
+        Point.Up,
+        Point.Right,
+        Point.Down,
+        Point.Left
     ];
     enum TurnDirection { Left = -1, Straight = 0, Right = 1 }
 
-    record Cart(Point2D Position, Direction Direction, TurnDirection NextTurnDirection);
+    record Cart(Point Position, Direction Direction, TurnDirection NextTurnDirection);
 
     delegate Cart Rail(Cart cart);
 
@@ -32,7 +37,7 @@ class Day13 : Solution<Point2D>
             }
         });
 
-    private static IEnumerable<(IEnumerable<Cart> RemainingCarts, IEnumerable<Point2D> CrashLocations)> Simulate(string map)
+    private static IEnumerable<(IEnumerable<Cart> RemainingCarts, IEnumerable<Point> CrashLocations)> Simulate(string map)
     {
         var (rails, carts) = ReadMap(map);
 
@@ -40,7 +45,7 @@ class Day13 : Solution<Point2D>
         {
             var toMove = new Queue<Cart>(carts.OrderBy(c => c.Position.Y).ThenBy(c => c.Position.X));
             carts = [];
-            var crashes = ImmutableList<Point2D>.Empty;
+            var crashes = ImmutableList<Point>.Empty;
             while (toMove.TryDequeue(out var cart))
             {
                 var newCart = rails[cart.Position](cart);
@@ -58,10 +63,10 @@ class Day13 : Solution<Point2D>
         }
     }
 
-    private static (Dictionary<Point2D, Rail> Rails, ImmutableList<Cart> Carts) ReadMap(string map)
+    private static (Dictionary<Point, Rail> Rails, ImmutableList<Cart> Carts) ReadMap(string map)
     {
         var positions = map.Lines().SelectMany((l, y) => l
-            .Select((c, x) => new { Char = c, Position = new Point2D(x, y) })
+            .Select((c, x) => new { Char = c, Position = new Point(x, y) })
             .Where(c => !char.IsWhiteSpace(c.Char))
         );
         var cartDirections = new[] { '^', '>', 'v', '<' };
@@ -79,19 +84,19 @@ class Day13 : Solution<Point2D>
         );
     }
 
-    protected override Point2D Part1()
+    protected override Point Part1()
     {
-        static Point2D CrashLocation(string map) 
+        static Point CrashLocation(string map)
             => Simulate(map).SelectMany(s => s.CrashLocations).First();
-        Assert(CrashLocation(Sample(nameof(Part1))), new Point2D(7, 3));
+        Assert(CrashLocation(Sample(nameof(Part1))), new Point(7, 3));
         return CrashLocation(Input);
     }
 
-    protected override Point2D Part2()
+    protected override Point Part2()
     {
-        static Point2D LastCarLocation(string map) 
+        static Point LastCarLocation(string map)
             => Simulate(map).Last().RemainingCarts.Single().Position;
-        Assert(LastCarLocation(Sample(nameof(Part2))), new Point2D(6, 4));
+        Assert(LastCarLocation(Sample(nameof(Part2))), new Point(6, 4));
         return LastCarLocation(Input);
     }
 }

@@ -2,43 +2,35 @@
 
 class Day19 : Solution<string, long?>
 {
-    private static readonly Point2D[] Offsets =
+    private static readonly Point2D<int>[] Offsets =
     [
-        Point2D.Down,
-        Point2D.Left,
-        Point2D.Up,
-        Point2D.Right,
+        Point2D<int>.Down,
+        Point2D<int>.Left,
+        Point2D<int>.Up,
+        Point2D<int>.Right,
     ];
 
     private static IEnumerable<char> WalkPath(string data)
     {
-        var grid = data.Lines().Select(l => l.ToArray()).ToArray();
-        char get(Point2D pt)
-        {
-            if (pt.X < 0 || pt.Y < 0 || pt.Y >= grid.Length)
-                return ' ';
-            var row = grid[pt.Y];
-            return (pt.X >= row.Length) ? ' ' : row[pt.X];
-        }
+        var grid = data.AsMap();
 
-        var pos = new Point2D(grid[0].Select((c, i) => (c, i)).Where(i => i.c != ' ').Select(i => i.i).First(), 0);
-        yield return get(pos);
+        var pos = new Point2D<int>(grid.Rows().First().Select((c, i) => (c, i)).Where(i => i.c != ' ').Select(i => i.i).First(), 0);
+        yield return grid.GetValueOrDefault(pos, ' ');
 
         var direction = 0; // Down;
         while (true)
         {
             pos += Offsets[direction];
-            var chr = get(pos);
-            if (chr == ' ')
+            if (!grid.TryGetValue(pos, out var chr) || chr == ' ')
                 yield break;
 
             yield return chr;
 
             if (chr == '+')
             {
-                direction ^= 1; // turn 90°
-                if (get(pos + Offsets[direction]) == ' ')
-                    direction ^= 2; // turn 180° 
+                direction ^= 0b_01; // turn 90°
+                if (grid.GetValueOrDefault(pos + Offsets[direction], ' ') == ' ')
+                    direction ^= 0b_10; // turn 180° 
             }
         }
     }

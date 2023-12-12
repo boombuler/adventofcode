@@ -1,33 +1,36 @@
 ﻿namespace AdventOfCode._2022;
 
+using Point = Point2D<int>;
+
 class Day09 : Solution
 {
-    private static IEnumerable<Point2D> ParseMoves(string input)
+    private static IEnumerable<Point> ParseMoves(string input)
         => from line in input.Lines()
            let parts = line.Split(' ')
            from m in Enumerable.Repeat(parts[0] switch
            {
-               "U" => new Point2D(0, -1),
-               "D" => new Point2D(0, +1),
-               "L" => new Point2D(-1, 0),
-                 _ => new Point2D(+1, 0),
+               "U" => new Point(0, -1),
+               "D" => new Point(0, +1),
+               "L" => new Point(-1, 0),
+               _ => new Point(+1, 0),
            }, int.Parse(parts[1]))
            select m;
 
     private static int CountUniqueLocations(string input, int knotCount)
     {
-        var visited = new HashSet<Point2D>();
-        var knots = Enumerable.Repeat(Point2D.Origin, knotCount).ToArray();
+        var visited = new HashSet<Point>();
+        var knots = Enumerable.Repeat(Point.Origin, knotCount).ToArray();
+        double Length(Point p) => Math.Sqrt(p.X * p.X + p.Y * p.Y);
 
-        foreach(var mv in ParseMoves(input))
+        foreach (var mv in ParseMoves(input))
         {
             knots[0] += mv;
             for (int i = 1; i < knotCount; i++)
             {
-                var d = knots[i-1] - knots[i];
-                if (d.Length >= 2)
+                var d = knots[i - 1] - knots[i];
+                if (Length(d) >= 2)
                     knots[i] += (Math.Sign(d.X), Math.Sign(d.Y));
-                else 
+                else
                     break;
             }
             visited.Add(knots[knotCount - 1]);

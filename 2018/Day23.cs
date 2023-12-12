@@ -1,23 +1,25 @@
 ﻿namespace AdventOfCode._2018;
 
+using Point = Point3D<long>;
+
 class Day23 : Solution
 {
     class BoundingBox
     {
-        private readonly Point3D fSize;
-        public Point3D Min { get; }
-        public Point3D Max { get; }
+        private readonly Point fSize;
+        public Point Min { get; }
+        public Point Max { get; }
         public long DistanceToOrigin { get; }
         public bool IsPoint => fSize.X == 1 && fSize.Y == 1 && fSize.Z == 1;
 
-        public BoundingBox(Point3D min, Point3D size)
+        public BoundingBox(Point min, Point size)
         {
             Min = min;
             Max = min + size - (1, 1, 1);
             fSize = size;
             DistanceToOrigin = Math.Min(
-                Max.ManhattanDistance(Point3D.Origin),
-                Min.ManhattanDistance(Point3D.Origin)
+                Max.ManhattanDistance(Point.Origin),
+                Min.ManhattanDistance(Point.Origin)
             );
         }
 
@@ -37,12 +39,12 @@ class Day23 : Solution
     class NanoBot
     {
         public static readonly Func<string, NanoBot> Parse = new Regex(@"pos=\<(?<x>-?\d+),(?<y>-?\d+),(?<z>-?\d+)\>, r=(?<r>\d+)").ToFactory<NanoBot>();
-        public Point3D Location { get; }
+        public Point Location { get; }
         public long Radius { get; }
         public NanoBot(long x, long y, long z, long r)
             => (Location, Radius) = ((x, y, z), r);
 
-        public bool Reaches(Point3D pt) => Location.ManhattanDistance(pt) <= Radius;
+        public bool Reaches(Point pt) => Location.ManhattanDistance(pt) <= Radius;
         public bool Intersects(BoundingBox box)
         {
             var dx = Math.Max(0, Math.Max(box.Min.X - Location.X, Location.X - box.Max.X));
@@ -67,8 +69,8 @@ class Day23 : Solution
         var (minX, maxX) = bots.MinMax(b => b.Location.X);
         var (minY, maxY) = bots.MinMax(b => b.Location.Y);
         var (minZ, maxZ) = bots.MinMax(b => b.Location.Z);
-        var min = new Point3D(minX, minY, minZ);
-        var max = new Point3D(maxX, maxY, maxZ);
+        var min = new Point(minX, minY, minZ);
+        var max = new Point(maxX, maxY, maxZ);
 
         var q = new PriorityQueue<(BoundingBox BBox, NanoBot[] Bots), (int Count, long Distance)>(
             ComparerBuilder<(int Count, long Distance)>

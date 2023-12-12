@@ -20,8 +20,8 @@ class Day06 : Solution
 
     protected override long? Part1()
     {
-        Assert(Solve(Sample(), Int), 288);
-        return Solve(Input, Int);
+        Assert(Solve(Sample(), Long), 288);
+        return Solve(Input, Long);
     }
 
     protected override long? Part2()

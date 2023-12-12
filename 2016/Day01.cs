@@ -2,7 +2,7 @@
 
 class Day01 : Solution
 {
-    private static IEnumerable<Point2D> WalkDirections(string directions)
+    private static IEnumerable<Point2D<int>> WalkDirections(string directions)
     {
         int x = 0, y = 0;
         int direction = 0;
@@ -28,16 +28,16 @@ class Day01 : Solution
         }
     }
 
-    private static long GetFinalDistance(string directions) 
-        => WalkDirections(directions).Last().ManhattanDistance(Point2D.Origin);
+    private static long GetFinalDistance(string directions)
+        => WalkDirections(directions).Last().ManhattanDistance(Point2D<int>.Origin);
 
     private long GetDistanceToFirstPlaceVisitedTwice(string directions)
     {
-        var visited = new HashSet<Point2D>();
+        var visited = new HashSet<Point2D<int>>();
         foreach (var pt in WalkDirections(directions))
         {
             if (!visited.Add(pt))
-                return pt.ManhattanDistance(Point2D.Origin);
+                return pt.ManhattanDistance(Point2D<int>.Origin);
         }
         Error("No point visited twice");
         return 0;

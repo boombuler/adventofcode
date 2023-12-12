@@ -1,12 +1,12 @@
 ﻿namespace AdventOfCode._2022;
 
-using System;
+using Point = Point2D<int>;
 
 class Day15 : Solution
 {
     record Range(long Min, long Max);
 
-    record Sensor(Point2D Location, Point2D Beacon)
+    record Sensor(Point Location, Point Beacon)
     {
         public Range ScanOnLine(long y)
         {
@@ -19,18 +19,18 @@ class Day15 : Solution
         => from line in input.Lines()
            let parts = line.Split('=', ',', ':')
            select new Sensor(
-               new Point2D(long.Parse(parts[1]), long.Parse(parts[3])), 
-               new Point2D(long.Parse(parts[5]), long.Parse(parts[7]))
+               new Point(int.Parse(parts[1]), int.Parse(parts[3])),
+               new Point(int.Parse(parts[5]), int.Parse(parts[7]))
            );
 
     private static IEnumerable<Range> Ranges(IEnumerable<Sensor> Sensors, int y)
         => Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min)
             .Aggregate(ImmutableStack<Range>.Empty,
-                (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) : 
+                (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) :
                     s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))));
-    
-    private static long CountScannedPoints(string input, int y) 
-        => Ranges(Sensors(input), y).Sum(r => r.Max-r.Min);
+
+    private static long CountScannedPoints(string input, int y)
+        => Ranges(Sensors(input), y).Sum(r => r.Max - r.Min);
 
     private static long? FindFreq(string input, int max)
     {

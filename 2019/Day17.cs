@@ -1,15 +1,17 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day17 : Solution
 {
     private static readonly char[] DirectionImages = ['^', '<', 'v', '>'];
-    private static readonly Point2D[] Directions = [Point2D.Up, Point2D.Left, Point2D.Down, Point2D.Right];
+    private static readonly Point[] Directions = [Point.Up, Point.Left, Point.Down, Point.Right];
 
-    private Dictionary<Point2D, char> GetScaffoldMap()
+    private Dictionary<Point, char> GetScaffoldMap()
     {
         var vm = new IntCodeVM(Input);
         return vm.RunASCIICommands().Select(l => l.Result)
-            .SelectMany((line, y) => line.Select((c, x) => (new Point2D(x, y), c)))
+            .SelectMany((line, y) => line.Select((c, x) => (new Point(x, y), c)))
             .Where(t => t.c != '.')
             .ToDictionary(t => t.Item1, t => t.c);
     }

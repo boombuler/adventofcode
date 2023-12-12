@@ -39,7 +39,7 @@ class Day18 : Solution
         for (int i = 0; i < rounds; i++)
         {
             var sbMapStr = new StringBuilder();
-            foreach (var pt in Point2D.Range((0, 0), (size - 1, size - 1)))
+            foreach (var pt in Point2D<int>.Range((0, 0), (size - 1, size - 1)))
             {
                 var neigbours = pt.Neighbours(withDiagonal: true)
                     .Where(n => n.X >= 0 && n.Y >= 0 && n.Y < size && n.X < size)

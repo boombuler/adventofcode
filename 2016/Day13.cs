@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode._2016;
 
+using Point = Point2D<int>;
 class Day13 : Solution
 {
     private static int NumberOfSetBits(ulong i)
@@ -8,34 +9,24 @@ class Day13 : Solution
         i = (i & 0x3333333333333333UL) + ((i >> 2) & 0x3333333333333333UL);
         return (int)(unchecked(((i + (i >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
     }
-    private static bool IsWall(Point2D pt, int wallPattern)
+    private static bool IsWall(Point pt, int wallPattern)
     {
         long tileNo = (pt.X * pt.X) + (3 * pt.X) + (2 * pt.X * pt.Y) + pt.Y + (pt.Y * pt.Y);
         tileNo += wallPattern;
         return (NumberOfSetBits((ulong)tileNo) % 2) != 0;
     }
 
-    private static IEnumerable<Point2D> Neighbours(Point2D pt, int wallPattern)
-    {
-        bool isValid(Point2D p) => p.X >= 0 && p.Y >= 0 && !IsWall(p, wallPattern);
+    private static IEnumerable<Point> Neighbours(Point pt, int wallPattern)
+        => pt.Neighbours().Where(p => p.X >= 0 && p.Y >= 0 && !IsWall(p, wallPattern));
 
-        return new Point2D[]
-        {
-                pt - (0, 1),
-                pt + (0, 1),
-                pt - (1, 0),
-                pt + (1, 0),
-        }.Where(isValid);
+    class WallAStar(Point src, int wallPattern) : AStar<Point>(src)
+    {
+        protected override long Distance(Point one, Point another) => one.ManhattanDistance(another);
+
+        protected override IEnumerable<Point> NeighboursOf(Point node) => Neighbours(node, wallPattern);
     }
 
-    class WallAStar(Point2D src, int wallPattern) : AStar<Point2D>(src)
-    {
-        protected override long Distance(Point2D one, Point2D another) => one.ManhattanDistance(another);
-
-        protected override IEnumerable<Point2D> NeighboursOf(Point2D node) => Neighbours(node, wallPattern);
-    }
-
-    private static long ShortestPath(Point2D src, Point2D dest, int wallPattern)
+    private static long ShortestPath(Point src, Point dest, int wallPattern)
         => new WallAStar(src, wallPattern).ShortestPath(dest).Cost;
 
     protected override long? Part1()
@@ -44,10 +35,10 @@ class Day13 : Solution
         return ShortestPath((1, 1), (31, 39), int.Parse(Input));
     }
 
-    private static long CountReachableTiles(Point2D src, int wallPattern, int maxMoves)
+    private static long CountReachableTiles(Point src, int wallPattern, int maxMoves)
     {
-        var visited = new HashSet<Point2D> { src };
-        var open = new Queue<(Point2D pt, int moves)>();
+        var visited = new HashSet<Point> { src };
+        var open = new Queue<(Point pt, int moves)>();
         open.Enqueue((src, 0));
         while (open.TryDequeue(out var cur))
         {

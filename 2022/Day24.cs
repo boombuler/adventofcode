@@ -1,16 +1,18 @@
 ﻿namespace AdventOfCode._2022;
 
+using Point = Point2D<int>;
+
 class Day24 : Solution
 {
-    record State(int Time, Point2D Position);
-    record Blizzard(Point2D Position, Point2D Direction);
+    record State(int Time, Point Position);
+    record Blizzard(Point Position, Point Direction);
 
-    private static (Point2D Start, Point2D End, Func<Point2D, Point2D, int, int> PathFinder) GetPathFinder(string input)
+    private static (Point Start, Point End, Func<Point, Point, int, int> PathFinder) GetPathFinder(string input)
     {
         var map = input.Cells();
         var (startPos, endPos) = map.Where(m => m.Value == '.').Select(m => m.Key).MinMaxBy(m => m.Y);
-        var blizzards = map.Select(c => new Blizzard(c.Key-(1,1), Point2D.DirectionFromArrow(c.Value))).Where(b=> b.Direction != Point2D.Origin).ToList();
-        var (_, max) = Rect2D.AABB(map.Keys);
+        var blizzards = map.Select(c => new Blizzard(c.Key - (1, 1), Point.DirectionFromArrow(c.Value))).Where(b => b.Direction != Point.Origin).ToList();
+        var (_, max) = Rect2D<int>.AABB(map.Keys);
 
         var blizLoop = (int)MathExt.LCM(max.X - 1, max.Y - 1);
         var mapSize = max - (1, 1);
@@ -24,7 +26,7 @@ class Day24 : Solution
             var closed = new HashSet<State>();
             var open = new PriorityQueue<State, long>();
             open.Enqueue(initialState, 0);
-            
+
             while (open.TryDequeue(out var curState, out _))
             {
                 if (curState.Position == to)
@@ -51,7 +53,8 @@ class Day24 : Solution
                     .Where(p => !bliz.Contains(p))
                     .Select(p => new State(t, p));
             }
-        });
+        }
+        );
     }
 
     protected override long? Part1()

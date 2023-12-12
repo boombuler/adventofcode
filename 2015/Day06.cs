@@ -6,14 +6,12 @@ class Day06 : Solution
 {
     abstract class GridBase<T>
     {
-        private static readonly Func<string, (bool? Action, Point2D Min, Point2D Max)> ParseCommand =
+        private static readonly Func<string, (bool? Action, Point2D<int> Min, Point2D<int> Max)> ParseCommand =
             from cmd in Str("turn on", (bool?)true) | Str("turn off", (bool?)false) | Str("toggle", (bool?)null)
-            from xMin in Int.Token() + ","
-            from yMin in Int.Token() + "through"
-            from xMax in Int.Token() + ","
-            from yMax in Int.Token()
-            select (cmd, new Point2D(xMin, yMin), new Point2D(xMax, yMax));
-            
+            from min in IntPoint2D.Token() + "through"
+            from max in IntPoint2D.Token()
+            select (cmd, min, max);
+
         protected abstract void Apply(ref T value, bool? command);
         protected abstract int ValueOf(T val);
 
@@ -25,7 +23,7 @@ class Day06 : Solution
 
             foreach (var (act, min, max) in commands)
             {
-                foreach (var p in Point2D.Range(min, max))
+                foreach (var p in Point2D<int>.Range(min, max))
                     Apply(ref lights[p.Y * SIZE + p.X], act);
             }
             return lights.Sum(ValueOf);

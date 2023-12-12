@@ -7,7 +7,7 @@ class Day17 : Solution
     {
         public static readonly Func<string, ClayBlock> Parse = new Regex(@"\w=(?<Offset>\d+), (?<Orientation>\w)=(?<RangeFrom>\d+)\.\.(?<RangeTo>\d+)").ToFactory<ClayBlock>();
 
-        public IEnumerable<Point2D> GetPoints()
+        public IEnumerable<Point2D<int>> GetPoints()
         {
             for (int i = RangeFrom; i <= RangeTo; i++)
             {
@@ -25,13 +25,13 @@ class Day17 : Solution
     {
         var clay = input.Lines().Select(ClayBlock.Parse).SelectMany(c => c.GetPoints()).ToHashSet();
 
-        var flowStates = new Dictionary<Point2D, bool>();
+        var flowStates = new Dictionary<Point2D<int>, bool>();
         var (minY, maxY) = clay.MinMax(p => p.Y);
         var (minX, maxX) = clay.MinMax(p => p.X);
-        minX--; 
+        minX--;
         maxX++;
 
-        bool CheckFlowing(Point2D p)
+        bool CheckFlowing(Point2D<int> p)
         {
             if (clay.Contains(p))
                 return false;
@@ -42,7 +42,7 @@ class Day17 : Solution
 
             var flowing = CheckFlowing(p + (0, 1));
 
-            long merge(long dx, Func<long, bool> checkBounds)
+            int merge(int dx, Func<int, bool> checkBounds)
             {
                 var r = p.X;
                 while (checkBounds(r) && !clay.Contains((r + dx, p.Y)))
@@ -57,8 +57,8 @@ class Day17 : Solution
                 return r;
             }
 
-            long left = merge(-1, i => i >= minX);
-            long right = merge(+1, i => i <= maxX);
+            var left = merge(-1, i => i >= minX);
+            var right = merge(+1, i => i <= maxX);
 
             for (var x = left; x <= right; x++)
                 flowStates[(x, p.Y)] = flowing;

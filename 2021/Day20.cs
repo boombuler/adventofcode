@@ -16,11 +16,11 @@ class Day20 : Solution
             var nextSize = size + 2;
             var next = new BitArray((int)(nextSize * nextSize));
 
-            foreach (var px in Point2D.Range((-1, -1), (size, size)))
+            foreach (var px in Point2D<int>.Range((-1, -1), (size, size)))
             {
                 var window = from y in Enumerable.Range((int)px.Y - 1, 3)
                              from x in Enumerable.Range((int)px.X - 1, 3)
-                             select new Point2D(x, y);
+                             select new Point2D<int>(x, y);
 
                 var lookupIdx = window.Select((p, i) =>
                 {

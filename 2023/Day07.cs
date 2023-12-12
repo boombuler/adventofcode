@@ -17,7 +17,7 @@ class Day07 : Solution
     private static long RateHands(string input, string cardOrder, bool withJoker)
         => input.Lines().Select((
             from hand in AnyChar(cardOrder).Select(cardOrder.IndexOf).Take(HandSize)
-            from bid in Int.Token()
+            from bid in Long.Token()
             select new {
                 Bid = bid,
                 Ranking = Ranking(hand, withJoker),

@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode._2017;
-
+using Point = Point2D<int>;
 class Day22 : Solution
 {
     public enum State
@@ -13,26 +13,12 @@ class Day22 : Solution
 
     private static void HandleCarrier(string map, int burstCount, Func<State, (State, TurnDirection)> update)
     {
-        var mapGrid = map.Lines().ToList();
-        var yOffset = -(mapGrid.Count / 2);
-        var nodeStates = new Dictionary<Point2D, State>();
-        for (int y = 0; y < mapGrid.Count; y++)
-        {
-            var line = mapGrid[y];
-            var xOffSet = -(line.Length / 2);
-            foreach (var infection in line.Select((c, x) => (c, x)).Where(t => t.c == '#').Select(t => new Point2D(t.x + xOffSet, y + yOffset)))
-                nodeStates[infection] = State.Infected;
-        }
+        var offset = new Point(map.Lines().First().Length / 2, map.Lines().Count() / 2);
+        var nodeStates = map.Cells(filter: c => c == '#').ToDictionary(kvp => kvp.Key - offset, _ => State.Infected);
 
-        var pos = Point2D.Origin;
+        var pos = Point.Origin;
         int direction = 0;
-        var offsets = new Point2D[]
-        {
-                (0, -1), // Up
-                (1, 0), // Right
-                (0, 1), // Down
-                (-1, 0) // Left
-        };
+        var offsets = new Point[] { Point.Up, Point.Right, Point.Down, Point.Left };
 
         for (int i = 0; i < burstCount; i++)
         {

@@ -1,6 +1,8 @@
 ﻿namespace AdventOfCode._2019;
 
 using System.Collections.Frozen;
+using Point2D = Point2D<int>;
+using Point3D = Point3D<int>;
 
 class Day20 : Solution
 {

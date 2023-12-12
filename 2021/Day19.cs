@@ -1,34 +1,37 @@
 ﻿namespace AdventOfCode._2021;
 
+using Mat = Mat4<int>;
+using Point = Point3D<int>;
+
 class Day19 : Solution
 {
-    class Cluster(IEnumerable<Point3D> beacons)
+    class Cluster(IEnumerable<Point> beacons)
     {
-        public ImmutableArray<ImmutableArray<Point3D>> Orientations { get; } 
+        public ImmutableArray<ImmutableArray<Point>> Orientations { get; }
             = GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray).ToImmutableArray();
 
-        private static IEnumerable<Func<Point3D, Point3D>> GetOrientations()
+        private static IEnumerable<Func<Point, Point>> GetOrientations()
         {
-            IEnumerable<Mat4> Rotate(Point3D direction)
-                => Mat4.Identity.Unfold(m => m.Rotate90Degree(direction)).Take(4);
+            IEnumerable<Mat> Rotate(Point direction)
+                => Mat.Identity.Unfold(m => m.Rotate90Degree(direction)).Take(4);
 
             return Rotate((0, 1, 0)).Concat(Rotate((0, 0, 1)))
                 .SelectMany(r => Rotate((1, 0, 0)).Select(r.Combine))
                 .Distinct()
-                .Select(m => new Func<Point3D, Point3D>(m.Apply));
+                .Select(m => new Func<Point, Point>(m.Apply));
         }
     }
 
-    record Scanner(ImmutableArray<Point3D> Beacons, Point3D Offset);
+    record Scanner(ImmutableArray<Point> Beacons, Point Offset);
 
     private static List<Cluster> Parse(string input)
     {
         var result = new List<Cluster>();
-        var curList = new List<Point3D>();
+        var curList = new List<Point>();
         var parsePt = new Regex(@"(?<X>-?\d+),(?<Y>-?\d+),(?<Z>-?\d+)");
         foreach (var line in input.Lines())
         {
-            if (parsePt.TryMatch<Point3D>(line, out var pt))
+            if (parsePt.TryMatch<Point>(line, out var pt))
                 curList.Add(pt);
             else if (curList.Count > 0)
             {
@@ -59,7 +62,7 @@ class Day19 : Solution
     {
         var unmappedClusters = Parse(scanResult).ToHashSet();
         var originCluster = unmappedClusters.First();
-        var originScanner = new Scanner(originCluster.Orientations.First(), Point3D.Origin);
+        var originScanner = new Scanner(originCluster.Orientations.First(), Point.Origin);
         var scanners = new List<Scanner>() { originScanner };
         unmappedClusters.Remove(originCluster);
 

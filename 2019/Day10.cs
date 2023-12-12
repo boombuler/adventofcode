@@ -1,34 +1,36 @@
 ﻿namespace AdventOfCode._2019;
 
+using Point = Point2D<int>;
+
 class Day10 : Solution
 {
-    private static Point2D Normalize(Point2D center, Point2D pt)
+    private static Point Normalize(Point center, Point pt)
     {
         pt -= center;
-        var gcd = Math.Abs(MathExt.GCD(pt.X, pt.Y));
+        var gcd = (int)Math.Abs(MathExt.GCD(pt.X, pt.Y));
         return (pt.X / gcd, pt.Y / gcd);
     }
 
-    private static double Degrees(Point2D direction)
+    private static double Degrees(Point direction)
     {
         static double Mod(double a, double b) => a - Math.Floor(a / b) * b;
         var radian = Math.Atan2(direction.Y, direction.X);
         return Mod(radian * 180 / Math.PI + 90, 360);
     }
 
-    private static long GetVisibleAsteroids(Point2D src, IEnumerable<Point2D> other)
+    private static long GetVisibleAsteroids(Point src, IEnumerable<Point> other)
         => other.Where(o => o != src).Select(o => Normalize(src, o)).Distinct().Count();
 
     private static long MostVisibleAsteroids(string input)
     {
-        var asteroids = input.Lines().SelectMany((l, y) => l.Select((c, x) => c == '#' ? new Point2D(x, y) : null)).Where(a => a != null).ToList();
+        var asteroids = input.Cells(filter: c => c == '#').Keys;
 
         return asteroids.Select(a => GetVisibleAsteroids(a, asteroids)).Max();
     }
 
-    private static IEnumerable<Point2D> ShootingOrder(string input)
+    private static IEnumerable<Point> ShootingOrder(string input)
     {
-        var asteroids = input.Lines().SelectMany((l, y) => l.Select((c, x) => c == '#' ? new Point2D(x, y) : null)).Where(a => a != null).ToList();
+        var asteroids = input.Lines().SelectMany((l, y) => l.Select((c, x) => c == '#' ? new Point(x, y) : null)).Where(a => a != null).ToList();
         var (_, center) = asteroids.MinMaxBy(a => GetVisibleAsteroids(a, asteroids));
         var targets = asteroids
             .Where(a => a != center)
