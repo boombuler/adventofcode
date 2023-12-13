@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 class Mat4<T> where T : INumber<T>
 {
+    private static readonly T[] Signs = [-T.One, T.Zero, T.One];
     private readonly T[] M;
 
     public T this[int col, int row]
@@ -15,7 +16,7 @@ class Mat4<T> where T : INumber<T>
 
     private Mat4(params T[] m) => M = m;
 
-    public static Mat4<T> Identity = new(
+    public static readonly Mat4<T> Identity = new(
         T.One, T.Zero, T.Zero, T.Zero,
         T.Zero, T.One, T.Zero, T.Zero,
         T.Zero, T.Zero, T.One, T.Zero,
@@ -24,10 +25,10 @@ class Mat4<T> where T : INumber<T>
 
     public Mat4<T> Translate(Point3D<T> offset)
         => this * new Mat4<T>(
-            T.One, T.Zero, T.Zero, T.Zero,
-            T.Zero, T.One, T.Zero, T.Zero,
-            T.Zero, T.Zero, T.One, T.Zero,
-            offset.X, offset.Y, offset.Z, T.One
+            T.One, T.Zero, T.Zero, offset.X,
+            T.Zero, T.One, T.Zero, offset.Y,
+            T.Zero, T.Zero, T.One, offset.Z,
+            T.Zero, T.Zero, T.Zero, T.One
         );
 
     public Mat4<T> Rotate90Degree(Point3D<T> a)
@@ -41,19 +42,12 @@ class Mat4<T> where T : INumber<T>
         );
     }
 
-    private static T Sign(T v)
-    {
-        if (v > T.Zero)
-            return T.One;
-        if (v < T.Zero)
-            return -T.One;
-        return T.Zero;
-    }
+    private static T Sign(T v) => Signs[T.Sign(v) + 1];
 
     public Point3D<T> Apply(Point3D<T> pt) => (
-        this[0, 0] * pt.X + this[0, 1] * pt.Y + this[0, 2] * pt.Z + this[0, 3],
-        this[1, 0] * pt.X + this[1, 1] * pt.Y + this[1, 2] * pt.Z + this[1, 3],
-        this[2, 0] * pt.X + this[2, 1] * pt.Y + this[2, 2] * pt.Z + this[2, 3]
+        this[0, 0] * pt.X + this[1, 0] * pt.Y + this[2, 0] * pt.Z + this[3, 0],
+        this[0, 1] * pt.X + this[1, 1] * pt.Y + this[2, 1] * pt.Z + this[3, 1],
+        this[0, 2] * pt.X + this[1, 2] * pt.Y + this[2, 2] * pt.Z + this[3, 2]
     );
 
     public Mat4<T> Combine(Mat4<T> other)
@@ -68,10 +62,10 @@ class Mat4<T> where T : INumber<T>
         m1[1, 0] * m2[0, 1] + m1[1, 1] * m2[1, 1] + m1[1, 2] * m2[2, 1] + m1[1, 3] * m2[3, 1],
         m1[2, 0] * m2[0, 1] + m1[2, 1] * m2[1, 1] + m1[2, 2] * m2[2, 1] + m1[2, 3] * m2[3, 1],
         m1[3, 0] * m2[0, 1] + m1[3, 1] * m2[1, 1] + m1[3, 2] * m2[2, 1] + m1[3, 3] * m2[3, 1],
-        m1[0, 0] * m2[0, 2] + m1[0, 1] * m2[1, 2] + m1[0, 2] * m2[2, 2] + m1[0, 3] * m2[3, 1],
-        m1[1, 0] * m2[0, 2] + m1[1, 1] * m2[1, 2] + m1[1, 2] * m2[2, 2] + m1[1, 3] * m2[3, 1],
-        m1[2, 0] * m2[0, 2] + m1[2, 1] * m2[1, 2] + m1[2, 2] * m2[2, 2] + m1[2, 3] * m2[3, 1],
-        m1[3, 0] * m2[0, 2] + m1[3, 1] * m2[1, 2] + m1[3, 2] * m2[2, 2] + m1[3, 3] * m2[3, 1],
+        m1[0, 0] * m2[0, 2] + m1[0, 1] * m2[1, 2] + m1[0, 2] * m2[2, 2] + m1[0, 3] * m2[3, 2],
+        m1[1, 0] * m2[0, 2] + m1[1, 1] * m2[1, 2] + m1[1, 2] * m2[2, 2] + m1[1, 3] * m2[3, 2],
+        m1[2, 0] * m2[0, 2] + m1[2, 1] * m2[1, 2] + m1[2, 2] * m2[2, 2] + m1[2, 3] * m2[3, 2],
+        m1[3, 0] * m2[0, 2] + m1[3, 1] * m2[1, 2] + m1[3, 2] * m2[2, 2] + m1[3, 3] * m2[3, 2],
         m1[0, 0] * m2[0, 3] + m1[0, 1] * m2[1, 3] + m1[0, 2] * m2[2, 3] + m1[0, 3] * m2[3, 3],
         m1[1, 0] * m2[0, 3] + m1[1, 1] * m2[1, 3] + m1[1, 2] * m2[2, 3] + m1[1, 3] * m2[3, 3],
         m1[2, 0] * m2[0, 3] + m1[2, 1] * m2[1, 3] + m1[2, 2] * m2[2, 3] + m1[2, 3] * m2[3, 3],
