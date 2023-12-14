@@ -5,7 +5,6 @@ using System.Numerics;
 
 public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T>, INumberBase<T>
 {
-    private static readonly T TwoT = T.One + T.One;
     public static readonly Point2D<T> Origin = (T.Zero, T.Zero);
     public static readonly Point2D<T> Up = (T.Zero, -T.One);
     public static readonly Point2D<T> Down = (T.Zero, T.One);

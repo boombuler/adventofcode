@@ -96,7 +96,7 @@ public static class EnumerableHelper
                 foreach (var subCombination in Combinations(items.Skip(i + 1), remainingItems))
                     yield return subCombination.Prepend(itm);
             }
-            else 
+            else
                 yield return new[] { itm };
         }
     }
@@ -107,7 +107,7 @@ public static class EnumerableHelper
     public static IEnumerable<(T A, T B)> Pairs<T>(this IEnumerable<T> items)
     {
         var seenItems = new List<T>();
-        foreach(var i in items)
+        foreach (var i in items)
         {
             foreach (var o in seenItems)
                 yield return (o, i);
@@ -157,7 +157,7 @@ public static class EnumerableHelper
     public static IEnumerable<TVal> Scan<T, TVal>(this IEnumerable<T> items, TVal seed, Func<TVal, T, TVal> selector)
     {
         yield return seed;
-        foreach(var itm in items)
+        foreach (var itm in items)
         {
             seed = selector(seed, itm);
             yield return seed;
@@ -166,7 +166,7 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> TakeUntil<T>(this IEnumerable<T> items, Func<T, bool> predicate)
     {
-        foreach(var i in items)
+        foreach (var i in items)
         {
             yield return i;
             if (predicate(i))
@@ -236,5 +236,14 @@ public static class EnumerableHelper
         if (first)
             throw new InvalidOperationException();
         return (minItm, maxItm);
+    }
+
+    public static int GetCollectionHashCode<T>(this ICollection<T> items)
+    {
+        var hc = new HashCode();
+        hc.Add(items.Count);
+        foreach (var i in items)
+            hc.Add(i);
+        return hc.ToHashCode();
     }
 }

@@ -7,25 +7,22 @@ class Day14 : Solution
     {
         var map = input.AsMap();
         var rockPos = map.Where(n => n.Value == 'O').Select(n => n.Index).ToList();
-        var seenStates = new Dictionary<string, int>();
+        var seenStates = new Dictionary<int, int>();
         for (int i = 0; i < cycleCount; i++)
         {
             foreach (var direction in directions)
             {
                 var next = new List<Point>(rockPos.Count);
-                foreach (var pOld in rockPos.OrderBy(n => (n.X*-direction.X, n.Y*-direction.Y)))
+                foreach (var pOld in rockPos.OrderBy(n => (n.X * -direction.X, n.Y * -direction.Y)))
                 {
-                    var pNew = pOld;
-                    while (map.GetValueOrDefault(pNew + direction, '#') == '.')
-                        pNew += direction;
-                    map[pOld] = '.';
-                    map[pNew] = 'O';
+                    var pNew = pOld.Unfold(p => p + direction).TakeWhile(p => map.GetValueOrDefault(p, '#') == '.').LastOrDefault(pOld);
+                    (map[pOld], map[pNew]) = (map[pNew], map[pOld]);
                     next.Add(pNew);
                 }
                 rockPos = next;
             }
 
-            var h = string.Join("|", rockPos);
+            var h = rockPos.GetCollectionHashCode();
             if (seenStates.TryGetValue(h, out var lastTime))
             {
                 var cycle = (i - lastTime);
@@ -35,6 +32,7 @@ class Day14 : Solution
         }
         return rockPos.Sum(p => map.Height - p.Y);
     }
+
     protected override long? Part1()
     {
         static long Solve(string s)
@@ -46,7 +44,7 @@ class Day14 : Solution
 
     protected override long? Part2()
     {
-        static long Solve(string s) 
+        static long Solve(string s)
             => CalculateTotalLoad(s, 1_000_000_000, [Point.Up, Point.Left, Point.Down, Point.Right]);
 
         Assert(Solve(Sample()), 64);
