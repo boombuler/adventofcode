@@ -13,45 +13,35 @@ class Day12 : Solution
                 string.Join('?', Enumerable.Repeat(c, unfold)),
                 Enumerable.Repeat(n, unfold).SelectMany(n => n).ToArray()
             )
-        ).MustParse(inputStr); 
+        ).MustParse(inputStr);
 
-        var foundSolutions = new Dictionary<string, long>();
-        long SolveRec(int numberIdx, string pattern)
+        return Memoization.Recursive<int, string, long>((idx, pattern, solve) =>
         {
             if (pattern.Length == 0)
-                return numberIdx == numbers.Length ? 1 : 0;
-            var key = numberIdx + '|' + pattern;
-            if (foundSolutions.TryGetValue(key, out var res))
-                return res;
+                return idx == numbers.Length ? 1 : 0;
 
-            long CalcValue()
+            switch (pattern[0])
             {
-                switch (pattern[0])
-                {
-                    case '.':
-                        return SolveRec(numberIdx, pattern[1..]);
-                    case '?':
-                        return SolveRec(numberIdx, "#" + pattern[1..]) + SolveRec(numberIdx, "." + pattern[1..]);
-                    default: // #
-                        if (numberIdx == numbers.Length)
-                            return 0;
-                        var n = numbers[numberIdx];
-                        if (n > pattern.Length || pattern[0..n].Contains('.'))
-                            return 0;
+                case '.':
+                    return solve(idx, pattern[1..]);
+                case '?':
+                    return solve(idx, "#" + pattern[1..]) + solve(idx, "." + pattern[1..]);
+                default: // #
+                    if (idx == numbers.Length)
+                        return 0;
+                    var n = numbers[idx];
+                    if (n > pattern.Length || pattern[0..n].Contains('.'))
+                        return 0;
 
-                        var remaining = pattern[n..];
-                        if (remaining.Length == 0)
-                            return SolveRec(numberIdx + 1, string.Empty);
-                        if (remaining[0] == '#')
-                            return 0;
-                        return SolveRec(numberIdx+1, remaining[1..]);
-                        
-                }
+                    var remaining = pattern[n..];
+                    if (remaining.Length == 0)
+                        return solve(idx + 1, string.Empty);
+                    if (remaining[0] == '#')
+                        return 0;
+                    return solve(idx + 1, remaining[1..]);
+
             }
-            return foundSolutions[key] = CalcValue();
-        }
-       
-        return SolveRec(0, pattern);
+        })(0, pattern);
     }
 
     private static long CountPossibleSolutions(string input, int unfold = 1)

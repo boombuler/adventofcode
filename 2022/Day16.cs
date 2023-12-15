@@ -40,25 +40,17 @@ class Day16 : Solution
         var startPt = valves.FindIndex(v => v.Name == "AA");
 
         (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location) ? (a, b) : (b, a);
-        var cache = new Dictionary<(State, State, long), long>();
-        Func<State, State, long, long> getFlowAmount = null;
-        long CalcFlowAmount(State a, State b, long openValves)
-            => (
+
+        return Memoization.Recursive<State, State, long, long>((a, b, openValves, getFlowAmount) =>
+            (
                 from target in targetValves
                 where (target.Mask & openValves) == 0
                 let flowTime = a.Time - dists[a.Location, target.Index] - 1
                 where flowTime > 0
                 let args = SortArgs(new State(flowTime, target.Index), b)
                 select (flowTime * valves[target.Index].FlowRate) + getFlowAmount(args.a, args.b, openValves | target.Mask)
-             ).DefaultIfEmpty(0).Max();
-        getFlowAmount = (a, b, v) =>
-        {
-            if (!cache.TryGetValue((a, b, v), out var res))
-                res = cache[(a, b, v)] = CalcFlowAmount(a, b, v);
-            return res;
-        };
-
-        return CalcFlowAmount(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt), 0);
+            ).DefaultIfEmpty(0).Max()
+        )(new State(maxMinutes, startPt), new State(withElephant ? maxMinutes : -1, startPt), 0);
     }
 
     protected override long? Part1()
