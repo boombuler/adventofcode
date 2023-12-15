@@ -29,17 +29,24 @@ class Benchmarker : ScreenBase
             return;
 
         var total = new TimeSpan();
+        var yearTotal = new TimeSpan();
         int year = 0;
+        void WriteFooter()
+        {
+            WriteLine($"├─────┴───────────┴───────────┤");
+            WriteLine($"│            Total: {yearTotal:mm\\:ss\\.fff} │");
+            WriteLine($"└─────────────────────────────┘");
+            WriteLine("");
+        }
+
         foreach (var solution in solutions)
         {
             if (solution.Year != year)
             {
                 if (year != 0)
-                {
-                    WriteLine($"└─────┴───────────┴───────────┘");
-                    WriteLine("");
-                }
+                    WriteFooter();
                 year = solution.Year;
+                yearTotal = new TimeSpan();
                 WriteLine($"┌─────────────────────────────┐");
                 WriteLine($"│             {year}            │");
                 WriteLine($"├─────┬───────────┬───────────┤");
@@ -50,6 +57,7 @@ class Benchmarker : ScreenBase
             var sb = new StringBuilder();
             var e1 = await Measure(() => solution.Part1(null));
             total += e1;
+            yearTotal += e1;
             sb.Append("│  ")
                 .AppendFormat("{0,2}", solution.Day)
                 .Append(" │ ")
@@ -59,6 +67,7 @@ class Benchmarker : ScreenBase
             {
                 var e2 = await Measure(() => solution.Part2(null));
                 total += e2;
+                yearTotal += e2;
                 sb.Append(e2.ToString("mm\\:ss\\.fff"));
             }
             else
@@ -67,7 +76,7 @@ class Benchmarker : ScreenBase
             WriteLine(sb.ToString());
         }
 
-        WriteLine($"└─────┴───────────┴───────────┘");
+        WriteFooter();
 
         WriteLine("");
         WriteLine($"        Total Time: {total:mm\\:ss\\.fff}");
