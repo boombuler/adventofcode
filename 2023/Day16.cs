@@ -20,24 +20,10 @@ class Day16 : Solution
 
             switch (map[newPos])
             {
-                case '\\' when cur.Dir == Point.Left:
-                    open.Push((newPos, Point.Up)); break;
-                case '\\' when cur.Dir == Point.Right:
-                    open.Push((newPos, Point.Down)); break;
-                case '\\' when cur.Dir == Point.Up:
-                    open.Push((newPos, Point.Left)); break;
-                case '\\' when cur.Dir == Point.Down:
-                    open.Push((newPos, Point.Right)); break;
-
-                case '/' when cur.Dir == Point.Left:
-                    open.Push((newPos, Point.Down)); break;
-                case '/' when cur.Dir == Point.Right:
-                    open.Push((newPos, Point.Up)); break;
-                case '/' when cur.Dir == Point.Up:
-                    open.Push((newPos, Point.Right)); break;
-                case '/' when cur.Dir == Point.Down:
-                    open.Push((newPos, Point.Left)); break;
-
+                case '\\':
+                    open.Push((newPos, (cur.Dir.Y, cur.Dir.X))); break;
+                case '/':
+                    open.Push((newPos, (-cur.Dir.Y, -cur.Dir.X))); break;
                 case '|' when cur.Dir == Point.Left || cur.Dir == Point.Right:
                     open.Push((newPos, Point.Up));
                     open.Push((newPos, Point.Down));
