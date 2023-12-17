@@ -6,13 +6,11 @@ class Day15 : Solution
 {
     class PathFinder(Dictionary<Point, long> riskMap) : AStar<Point>(Point.Origin)
     {
-        protected override long Distance(Point one, Point another)
-        {
-            var distance = one.ManhattanDistance(another);
-            if (distance == 1)
-                return riskMap[another];
-            return distance;
-        }
+        protected override long GuessDistance(Point from, Point to)
+            => from.ManhattanDistance(to);
+
+        protected override long Distance(Point from, Point to)
+            => riskMap[to];
 
         protected override IEnumerable<Point> NeighboursOf(Point node)
             => node.Neighbours().Where(riskMap.ContainsKey);
