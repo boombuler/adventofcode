@@ -2,7 +2,9 @@
 
 public abstract class AStar<T>
 {
-    protected abstract long Distance(T one, T another);
+    protected abstract long Distance(T from, T to);
+    protected virtual long GuessDistance(T from, T to)
+        => Distance(from, to);
 
     private readonly T fSrc;
 
@@ -10,6 +12,9 @@ public abstract class AStar<T>
         => fSrc = src;
 
     protected abstract IEnumerable<T> NeighboursOf(T node);
+
+    protected virtual bool AreEqual(T one, T another)
+        => Equals(one, another);
 
     public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
     {
@@ -22,7 +27,7 @@ public abstract class AStar<T>
         {
             var current = open.Dequeue();
             var curCost = costs[current];
-            if (Equals(current, dest))
+            if (AreEqual(current, dest))
                 return (curCost, new Lazy<IEnumerable<T>>(() => BuildPath(dest, paths)));
 
             foreach (var next in NeighboursOf(current))
@@ -31,7 +36,7 @@ public abstract class AStar<T>
                 if (!costs.TryGetValue(next, out var oldCost) || newCost < oldCost)
                 {
                     costs[next] = newCost;
-                    var priority = newCost + Distance(next, dest);
+                    var priority = newCost + GuessDistance(next, dest);
                     open.Enqueue(next, priority);
                     paths[next] = current;
                 }
@@ -42,12 +47,13 @@ public abstract class AStar<T>
 
     private IEnumerable<T> BuildPath(T dest, Dictionary<T, T> shortestPath)
     {
+        dest = shortestPath.Keys.First(k => AreEqual(k, dest));
         var s = new Stack<T>();
         do
         {
             s.Push(dest);
             dest = shortestPath[dest];
-        } while (!Equals(dest, fSrc));
+        } while (!AreEqual(dest, fSrc));
         return s;
     }
 }
