@@ -26,8 +26,8 @@ static class StringExt
             .ToDictionary(n => new Point2D<int>(n.x, n.y), n => selector(n.c));
 
     public static StringMap<T> AsMap<T>(this string str, Func<char, T> selector)
-        => new StringMap<T>(str, selector);
+        => new (str, selector);
 
     public static StringMap<char> AsMap(this string str)
-        => new StringMap<char>(str, c => c);
+        => new (str, c => c);
 }

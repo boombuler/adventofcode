@@ -1,6 +1,5 @@
 ﻿namespace AdventOfCode._2022;
 
-
 class Day23 : Solution
 {
     record Move(Point2D<int> MoveDirection, params Point2D<int>[] CheckDirections);

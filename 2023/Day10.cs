@@ -69,7 +69,7 @@ class Day10 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input)
+        static long Solve(string input)
             => ParseMap(input).Loop.Count / 2;
 
         Assert(Solve(Sample("1")), 8);

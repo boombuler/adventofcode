@@ -39,7 +39,7 @@ class Day16 : Solution
         var dists = Distances(valves);
         var startPt = valves.FindIndex(v => v.Name == "AA");
 
-        (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location) ? (a, b) : (b, a);
+        static (State a, State b) SortArgs(State a, State b) => a.Time > b.Time || (a.Time == b.Time && a.Location >= b.Location) ? (a, b) : (b, a);
 
         return Memoization.Recursive<State, State, long, long>((a, b, openValves, getFlowAmount) =>
             (
@@ -59,7 +59,6 @@ class Day16 : Solution
         Assert(Solve(Sample()), 1651);
         return Solve(Input);
     }
-
 
     protected override long? Part2()
     {

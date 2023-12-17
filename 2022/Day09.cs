@@ -20,7 +20,7 @@ class Day09 : Solution
     {
         var visited = new HashSet<Point>();
         var knots = Enumerable.Repeat(Point.Origin, knotCount).ToArray();
-        double Length(Point p) => Math.Sqrt(p.X * p.X + p.Y * p.Y);
+        static double Length(Point p) => Math.Sqrt(p.X * p.X + p.Y * p.Y);
 
         foreach (var mv in ParseMoves(input))
         {

@@ -80,7 +80,7 @@ public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T
     static readonly T[] fSigns = [-T.One, T.Zero, T.One];
     public Point2D<T> Sign()
     {
-        T Sign(T dim) => fSigns[T.Sign(dim) + 1];
+        static T Sign(T dim) => fSigns[T.Sign(dim) + 1];
         return (Sign(X), Sign(Y));
     }
 
@@ -89,7 +89,6 @@ public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T
 
     public Point2D<T> RotateCCW() 
         => (-Y, X);
-
 
     /// <summary>
     /// Maps '<', '>', '^' and 'v' into directions. Any other char returns (0,0)

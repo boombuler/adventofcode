@@ -11,7 +11,6 @@ class Day09 : Solution
         from d in Int.Token()
         select new Instruction(f, t, d);
 
-
     private static IEnumerable<long> PermutateRoutes(string input)
     {
         var instructions = input.Lines().Select(ParseInstruction)

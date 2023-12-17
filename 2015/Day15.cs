@@ -13,7 +13,7 @@ class Day15 : Solution
     }
 
     private static readonly Regex Parse = new (@"\w+: capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)");
-    private long GetBestScore(string data, Func<Score, bool> validate = null)
+    private static long GetBestScore(string data, Func<Score, bool> validate = null)
     {
         var allIngr = data.Lines().Select(i =>
         {

@@ -244,6 +244,7 @@ csharp_style_prefer_tuple_swap = true:suggestion
 csharp_style_prefer_parameter_null_checking = true:suggestion
 csharp_style_prefer_extended_property_pattern = true:suggestion
 csharp_style_prefer_readonly_struct = true:suggestion
+dotnet_diagnostic.SYSLIB1045.severity = none
 [*.{cs,vb}]
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
@@ -280,3 +281,4 @@ dotnet_style_qualification_for_property = false:silent
 dotnet_style_qualification_for_method = false:silent
 dotnet_style_qualification_for_event = false:silent
 dotnet_style_prefer_collection_expression = true:suggestion
+dotnet_diagnostic.CA1859.severity = none
