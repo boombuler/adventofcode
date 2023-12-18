@@ -26,8 +26,12 @@ static class Parser
 
     public static Parser<char> Char(char input)
         => Expect(c => c == input);
+    
     public static Parser<T> Char<T>(char input, T value)
         => Expect(c => c == input).Return(value);
+
+    public static Parser<T> AnyChar<T>(string chars, T[] values)
+        => AnyChar(chars).Select(c => values[chars.IndexOf(c)]);
 
     public static Parser<char> AnyChar(ReadOnlySpan<char> input)
         => Expect(SearchValues.Create(input).Contains);
@@ -74,19 +78,24 @@ static class Parser
         => parser.Select(chars => new string(chars));
 
     public static Parser<char> Letter => Expect(char.IsAsciiLetter);
+    
     public static Parser<char> Digit => Expect(char.IsAsciiDigit);
 
     public static Parser<string> Digits => Digit.Many1().Text();
 
+    public static Parser<char> HexDigit => Expect(char.IsAsciiHexDigit);
+
     public static Parser<long> Long
         => (Char('-').Return(-1).Opt(1))
             .Then(Digits, (sign, digits) => sign * long.Parse(digits));
+
     public static Parser<Point2D<long>> LongPoint2D
         => (Long + ",").Then(Long, (a, b) => new Point2D<long>(a, b));
 
     public static Parser<int> Int
         => (Char('-').Return(-1).Opt(1))
             .Then(Digits, (sign, digits) => sign * int.Parse(digits));
+
     public static Parser<Point2D<int>> IntPoint2D
         => (Int.Token() + ",").Then(Int.Token(), (a, b) => new Point2D<int>(a, b));
 
