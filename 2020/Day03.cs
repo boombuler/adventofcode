@@ -15,26 +15,13 @@ class Day03 : Solution
         (1, 2)
     ];
 
-    public static long Navigate(bool[][] map, Point slope)
-    {
-        long hits = 0;
-        for (var pos = Point.Origin; pos.Y < map.Length; pos += slope)
-        {
-            if (map[pos.Y][pos.X % map[pos.Y].Length])
-                hits++;
-        }
-
-        return hits;
-    }
-
-    private static bool[][] ReadTreeMap(string mappings)
-        => mappings.Lines()
-            .Select(s => s.Select(c => c == '#').ToArray())
-            .ToArray();
+    public static long Navigate(StringMap<bool> map, Point slope)
+        => Point.Origin.Unfold(p => p + slope).TakeWhile(p => p.Y < map.Height)
+            .Count(p => map[(p.X % map.Width, p.Y)]);
 
     private static long CheckSlopes(string mapFile, params Point[] slopes)
     {
-        var map = ReadTreeMap(mapFile);
+        var map = mapFile.AsMap(c => c == '#');
         return slopes.Select(s => Navigate(map, s)).Aggregate((a, b) => a * b);
     }
 
