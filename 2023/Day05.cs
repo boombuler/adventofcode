@@ -4,40 +4,19 @@ using static Parser;
 
 class Day05 : Solution
 {
-    record struct Range(long Start, long Size)
+    record Map((Range<long> SourceRange, long Offset)[] Mappings)
     {
-        public readonly long End => Start + Size;
-
-        public Range? Intersect(Range other, out IEnumerable<Range> unintersected)
+        public Range<long>[] Apply(IEnumerable<Range<long>> ranges)
         {
-            var olStart = Math.Max(Start, other.Start);
-            var olEnd = Math.Min(End, other.End);
-            if (olEnd < olStart)
-            {
-                unintersected = [this];
-                return null;
-            }
-            unintersected = new[] {
-                new Range(Start, olStart - Start),
-                new Range(olEnd, End - olEnd)
-            }.Where(i => i.Size > 0);
-            return new Range(olStart, olEnd - olStart);
-        }
-    }
-
-    record Map((Range SourceRange, long Offset)[] Mappings)
-    {
-        public Range[] Apply(IEnumerable<Range> ranges)
-        {
-            var mapped = new List<Range>();
+            var mapped = new List<Range<long>>();
 
             foreach (var (srcRange, offset) in Mappings)
             {
-                var open = new List<Range>();
+                var open = new List<Range<long>>();
 
                 foreach (var range in ranges)
                 {
-                    if (range.Intersect(srcRange, out var unmatched) is Range i)
+                    if (range.Intersect(srcRange, out var unmatched) is Range<long> i && i.Size > 0)
                         mapped.Add(i with { Start = i.Start + offset });
                     open.AddRange(unmatched);
                 }
@@ -47,7 +26,7 @@ class Day05 : Solution
         }
     }
 
-    private static long FindLowestLocationNumber(string input, Parser<Range[]> seedParser)
+    private static long FindLowestLocationNumber(string input, Parser<Range<long>[]> seedParser)
         => (from seed in "seeds: " + seedParser + "\n"
             from maps in (
                 from _ in Any.Until(NL)
@@ -55,7 +34,7 @@ class Day05 : Solution
                     from d in Long.Token()
                     from s in Long.Token()
                     from l in Long.Token()
-                    select (new Range(s, l), d - s)
+                    select (new Range<long>(s, l), d - s)
                 ).List('\n')
                 select new Map(range)
             ).Many()
@@ -65,7 +44,7 @@ class Day05 : Solution
     protected override long? Part1()
     {
         static long Solve(string input)
-            => FindLowestLocationNumber(input, Long.Token().Select(n => new Range(n, 1)).Many());
+            => FindLowestLocationNumber(input, Long.Token().Select(n => new Range<long>(n, 1)).Many());
 
         Assert(Solve(Sample()), 35);
         return Solve(Input);
@@ -78,7 +57,7 @@ class Day05 : Solution
                  (
                     from s in Long + " "
                     from l in Long
-                    select new Range(s, l)
+                    select new Range<long>(s, l)
                 ).Token().Many()
             );
 
