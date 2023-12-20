@@ -109,8 +109,8 @@ class Day20 : Solution
             var (name, (connStr, _)) = line.Split(" -> ");
             (name, Module mod) = name switch
             {
-                ['%', ..] => (name[1..], new FlipFlop()),
-                ['&', ..] => (name[1..], new Conjunction()),
+                ['%', .. var n] => (n, new FlipFlop()),
+                ['&', .. var n] => (n, new Conjunction()),
                 _ => (name, new Module())
             };
             modules[name] = mod;
