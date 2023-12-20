@@ -7,16 +7,14 @@ class Day06 : Solution
 
     private static int CollectUniqueResults(string input)
         => ReadGroups(input)
-            .Select(grp => grp.SelectMany(s => s).Distinct().Count())
-            .Sum();
+            .Sum(grp => grp.SelectMany(s => s).Distinct().Count());
 
     private static int CollectGroupResults(string input)
         => ReadGroups(input)
-            .Select(grp => grp.SelectMany(s => s)
+            .Sum(grp => grp.SelectMany(s => s)
                 .GroupBy(c => c)
-                .Where(g => g.Count() == grp.Count())
-                .Count()
-            ).Sum();
+                .Count(g => g.Count() == grp.Count())
+            );
 
     protected override long? Part1()
     {
