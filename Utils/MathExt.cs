@@ -16,7 +16,9 @@ class MathExt
         return (a / gcd) * b;
     }
 
-    public static BigInteger Mod(BigInteger a, BigInteger m) => ((a % m) + m) % m;
+    public static T Mod<T>(T a, T m)
+        where T : INumber<T>
+        => ((a % m) + m) % m;
 
     /// <summary>
     /// Solves `ax + by = GCD(a, b)`
