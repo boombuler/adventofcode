@@ -70,4 +70,36 @@ class MathExt
 
     public static long AppendDigit(long num, char digit)
         => num * 10 + (digit - '0');
+
+    /// <summary>
+    /// Creates a function to calculated f(x) from a set of 
+    /// value pairs using newton polynomial interpolation.
+    /// </summary>
+    public static Func<double, double> InterpolateFromSamples(IEnumerable<(double x, double y)> samples)
+    {
+        var input = samples.OrderBy(n => n.x)
+            .Select(p => (x1: p.x, x2: p.x, p.y))
+            .ToArray();
+
+        var b1 = input.First().y;
+        var factors = input.Select(n => n.x1).SkipLast(1).Zip(
+            input.Unfold(en => en.SlidingWindow(2).Select(wnd =>
+            {
+                var c = (wnd[1].y - wnd[0].y) / (wnd[1].x2 - wnd[0].x1);
+                return (wnd[0].x1, wnd[1].x2, c);
+            }).ToArray()).TakeWhile(f => f.Length > 0).Select(f => f.First().y)
+        ).ToArray();
+
+        return (x) =>
+        {
+            double sum = b1;
+            double fact = 1;
+            foreach(var f in factors)
+            {
+                fact *= x - f.First;
+                sum += f.Second * fact;
+            }
+            return sum;
+        };
+    }
 }

@@ -40,17 +40,12 @@ class Day21 : Solution
         var steps = 26501365;
         var dim = Input.Lines().Count();
         var dimHalf = dim / 2;
-        if (steps % dim != dimHalf) 
+        var (x, rem) = Math.DivRem(steps, dim);
+        if (rem != dimHalf) 
             Error("Can not solve this!");
         
-        double x = (steps/dim) - dimHalf;
-        double y0 = Solve(Input, 0*dim + dimHalf);
-        double y1 = Solve(Input, 1*dim + dimHalf);
-        double y2 = Solve(Input, 2*dim + dimHalf);
-        double dy0 = y0;
-        double dy1 = y1 - y0;
-        double dy2 = y2 - y1;
-        double ddy1 = dy2 - dy1;
-        return (long)(dy0 + dy1 * x + x * (x - 1) / 2 * ddy1);
-    }
+        return (long)MathExt.InterpolateFromSamples(
+            Enumerable.Range(0, 3).Select(x => ((double)x, (double)Solve(Input, x * dim + dimHalf)))
+        )(x);
+    }    
 }
