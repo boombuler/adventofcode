@@ -1,11 +1,10 @@
 ﻿namespace AdventOfCode._2023;
 
 using static Parser;
-using Point = Point3D<int>;
 
 class Day22 : Solution
 {
-    record Brick(Point Min, Point Max)
+    record Brick(Point3D<int> Min, Point3D<int> Max)
     {        
         public bool Intersect(Brick other)
             => (Min.X <= other.Max.X && Max.X >= other.Min.X) &&
@@ -18,10 +17,7 @@ class Day22 : Solution
     private static readonly Func<string, Brick[]> BrickParser = (
         from s in IntPoint3D + "~"
         from e in IntPoint3D
-        let z = s.Z < e.Z ? (s.Z, e.Z) : (e.Z, s.Z)
-        let y = s.Y < e.Y ? (s.Y, e.Y) : (e.Y, s.Y)
-        let x = s.X < e.X ? (s.X, e.X) : (e.X, s.X)
-        select new Brick((x.Item1, y.Item1, z.Item1), (x.Item2, y.Item2, z.Item2))
+        select new Brick(s,e)
     ).List('\n');
 
     private static Dictionary<Brick, Brick[]> GetBrickSupports(string input)
