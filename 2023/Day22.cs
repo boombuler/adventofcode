@@ -11,7 +11,7 @@ class Day22 : Solution
                (Min.Y <= other.Max.Y && Max.Y >= other.Min.Y) &&
                (Min.Z <= other.Max.Z && Max.Z >= other.Min.Z);
 
-        public Brick Down() => new ((Min.X, Min.Y, Min.Z-1), (Max.X, Max.Y, Max.Z-1));
+        public Brick Drop() => new ((Min.X, Min.Y, Min.Z-1), (Max.X, Max.Y, Max.Z-1));
     }
 
     private static readonly Func<string, Brick[]> BrickParser = (
@@ -20,69 +20,75 @@ class Day22 : Solution
         select new Brick(s,e)
     ).List('\n');
 
-    private static Dictionary<Brick, Brick[]> GetBrickSupports(string input)
+    private static (int singleBricks, DirectedGraph<Brick> graph) GetBrickSupports(string input)
     {
         var unsettled = BrickParser(input).OrderBy(b => b.Min.Z).ToList();
-        var settledZMax = new Dictionary<int, List<Brick>>();
-
+        var settled = new Dictionary<int, List<Brick>>();
+        var graph = new DirectedGraph<Brick>();
+        
         while (unsettled.Count > 0)
         {
-            var nextPos = new List<Brick>();
+            var next = new List<Brick>();
             foreach (var b in unsettled)
             {
-                var moved = b.Down();
-                if (moved.Min.Z == 0 || (settledZMax.GetValueOrDefault(moved.Min.Z)?.Where(moved.Intersect).Any() ?? false))
-                    settledZMax.GetOrAdd(b.Max.Z, () => new List<Brick>()).Add(b);
+                var dropped = b.Drop();
+                var intersected = (settled.GetValueOrDefault(dropped.Min.Z)?.Where(dropped.Intersect) ?? Enumerable.Empty<Brick>());
+                if (dropped.Min.Z == 0 || intersected.Any())
+                {
+                    settled.GetOrAdd(b.Max.Z, () => []).Add(b);
+                    graph.AddRange(intersected, b);
+                }
                 else
-                    nextPos.Add(moved);
+                    next.Add(dropped);
             }
-            unsettled = nextPos;
+            unsettled = next;
         }
-        var settled = settledZMax.SelectMany(n => n.Value).ToList();
-        return settled.ToDictionary(s => s,
-            s => settled.Except([s]).Where(s.Down().Intersect).ToArray());
+        // Some bricks might not touch any other brick:
+        var unconnected = settled.SelectMany(n => n.Value).Where(n => !graph.Contains(n));
+        return (unconnected.Count(), graph);
     }
 
-    private static long Solve(string input)
+    private static long CountChainReactionFallingBricks(string input)
     {
-        var supports = GetBrickSupports(input);
-        return supports.Keys.Except(supports.Where(g => g.Value.Length == 1).SelectMany(g => g.Value)).Count();
-    }
-
-    private static long Solve2(string input)
-    {
-        var supports = GetBrickSupports(input);
+        var (_, graph) = GetBrickSupports(input);
         
         long ChainReaction(Brick b)
         {
-            HashSet<Brick> falling = [b];
-            bool anyAdded;
-            do
+            var falling = new HashSet<Brick>();
+            var candidates = new HashSet<Brick>();
+            bool LoosenBrick(Brick b)
             {
-                anyAdded = false;
-                foreach(var (bs, sup) in supports)
-                {
-                    if (falling.Contains(bs) || sup.Length == 0 || !sup.All(falling.Contains))
-                        continue;
-                    falling.Add(bs);
-                    anyAdded = true;
-                }
-            } while (anyAdded);
+                falling.Add(b);
+                candidates.Remove(b);
+                return graph.Outgoing[b].Aggregate(false, (a, c) => a | candidates.Add(c));
+            }
+
+            bool anyLoosened = LoosenBrick(b);
+            while(anyLoosened)
+            {
+                anyLoosened = candidates.Where(bs => graph.Incoming[bs].All(falling.Contains)).ToList()
+                    .Aggregate(false, (a, r) => a | LoosenBrick(r));
+            }
             return falling.Count - 1;
         }
 
-        return supports.Keys.Sum(ChainReaction);
+        return graph.Vertices.AsParallel().Sum(ChainReaction);
     }
 
     protected override long? Part1()
     {
+        static long Solve(string input)
+        {
+            var (s, graph) = GetBrickSupports(input);
+            return s+graph.Vertices.Select(v => graph.Outgoing[v]).Count(v => v.All(s => graph.Incoming[s].Count() > 1));
+        }
         Assert(Solve(Sample()), 5);
         return Solve(Input);
     }
 
     protected override long? Part2()
     {
-        Assert(Solve2(Sample()), 7);
-        return Solve2(Input);
+        Assert(CountChainReactionFallingBricks(Sample()), 7);
+        return CountChainReactionFallingBricks(Input);
     }
 }
