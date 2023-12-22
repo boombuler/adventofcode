@@ -94,10 +94,10 @@ class MathExt
         {
             double sum = b1;
             double fact = 1;
-            foreach(var f in factors)
+            foreach(var (xn,bn) in factors)
             {
-                fact *= x - f.First;
-                sum += f.Second * fact;
+                fact *= x - xn;
+                sum += bn * fact;
             }
             return sum;
         };

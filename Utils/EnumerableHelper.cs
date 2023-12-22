@@ -246,4 +246,7 @@ public static class EnumerableHelper
             hc.Add(i);
         return hc.ToHashCode();
     }
+
+    public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key, Func<TV> valueFactory)
+        => dictionary.TryGetValue(key, out var res) ? res : dictionary[key] = valueFactory();
 }

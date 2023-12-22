@@ -98,6 +98,8 @@ static class Parser
 
     public static Parser<Point2D<int>> IntPoint2D
         => (Int.Token() + ",").Then(Int.Token(), (a, b) => new Point2D<int>(a, b));
+    public static Parser<Point3D<int>> IntPoint3D
+        => (IntPoint2D.Token() + ",").Then(Int.Token(), (a, b) => a.WithZ(b));
 
     public static Parser<BigInteger> BigInt
         => from sign in (Char('-').Return(-1).Opt(1))
