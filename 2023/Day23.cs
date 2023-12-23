@@ -65,27 +65,25 @@ class Day23 : Solution
 
         long GetReachableNodes(long pos, long visited)
         {
-            long result = 0;
+            long result = visited;
             var open = new Stack<long>([pos]);
 
             while (open.TryPop(out var p))
             {
                 foreach (var o in graph.Outgoing[p])
                 {
-                    if ((visited & o) == 0 && (result & o) == 0)
-                    {
-                        result |= o;
-                        open.Push(o);
-                    }
+                    if ((result & o) != 0)
+                        continue;
+                    result |= o;
+                    open.Push(o);
                 }   
             }
-            return result;
+            return result & ~visited;
         }
 
         var open = new Stack<(long pos, long path, int cost)>([(start, 0, 0)]);
-        int maxCost = 0;
-
         var seen = new Dictionary<(long, long), int>();
+        int maxCost = 0;
 
         while (open.TryPop(out var cur))
         {
@@ -98,7 +96,7 @@ class Day23 : Solution
             seen[(cur.pos, reachable)] = cur.cost;
 
             foreach (var n in graph.Outgoing[cur.pos].Where(n => (n & cur.path) == 0))
-                open.Push((n, cur.path | n, graph[cur.pos, n] + cur.cost));
+                open.Push((n, cur.path | n, cur.cost + graph[cur.pos, n]));
         }
 
         return maxCost;
