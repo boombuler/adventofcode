@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode._2023;
 
 using Point = Point2D<int>;
-using Graph = DirectedGraph<long, int>;
+using Graph = DirectedGraph<int, int>;
 
 class Day23 : Solution
 {
@@ -25,9 +25,9 @@ class Day23 : Solution
 
         var seen = new HashSet<(Point pos, Point srcVert)>();        
         var open = new Queue<(Point pos, Point srcVert, int steps)>();
-        var vertices = new Dictionary<Point, long>();
+        var vertices = new Dictionary<Point, int>();
 
-        long Bit(Point f) => vertices.GetOrAdd(f, () => 1L << vertices.Count);
+        int Id(Point f) => vertices.GetOrAdd(f, () => vertices.Count);
         
         open.Enqueue((start, start, 0));
         while (open.TryDequeue(out var cur))
@@ -44,7 +44,7 @@ class Day23 : Solution
 
             if (next.Count > 2 || pos == end)
             {
-                graph.Add(Bit(cur.srcVert), Bit(cur.pos), cur.steps);
+                graph.Add(Id(cur.srcVert), Id(cur.pos), cur.steps);
                 (vert, steps) = (pos, 0);
             }
             
@@ -57,35 +57,40 @@ class Day23 : Solution
         return graph;
     }
 
-    private long GetLongestPath(string input, bool ignoreSlopes)
+    private static long GetLongestPath(string input, bool ignoreSlopes)
     {
         var graph = CreateGraphFromInput(input, ignoreSlopes);
         var start = graph.Sources.Single();
         var end = graph.Sinks.Single();
 
-        long GetReachableNodes(in long pos, in long visited)
+        // Array lookups are way faster then dictionaries and since we have a few nodes this will work fine:
+        var outgoing = graph.Vertices.Order().Select(v => graph.Outgoing[v].ToArray()).ToArray();
+        
+        long GetReachableNodes(in int pos, in long visited)
         {
             long result = visited;
-            var open = new Stack<long>(64);
-            open.Push(pos);
+            Span<int> open = stackalloc int[64];
+            int sp = 0;
+            open[sp++] = pos;
 
-            while (open.TryPop(out var p))
+            while (sp > 0)
             {
-                foreach (var o in graph.Outgoing[p])
+                foreach (var o in outgoing[open[--sp]])
                 {
-                    if ((result & o) != 0)
+                    var mask = 1L << o;
+                    if ((result & mask) != 0)
                         continue;
-                    result |= o;
-                    open.Push(o);
+                    result |= mask;
+                    open[sp++] = o;
                 }   
             }
             return result & ~visited;
         }
 
-        Span<(long Pos, long Path, int Cost)> open = stackalloc (long Pos, long Path, int Cost)[64];
+        Span<(int Pos, long Path, int Cost)> open = stackalloc (int, long, int)[64];
         int sp = 0;
         open[sp++] = (start, 0, 0);
-        var seen = new Dictionary<(long, long), int>();
+        var seen = new Dictionary<(int, long), int>();
         int maxCost = 0;
 
         do
@@ -99,8 +104,8 @@ class Day23 : Solution
                 continue;
             seen[(pos, reachable)] = cost;
 
-            foreach (var n in graph.Outgoing[pos].Where(n => (n & path) == 0))
-                open[sp++] = (n, path | n, cost + graph[pos, n]);
+            foreach (var n in outgoing[pos].Where(n => ((1L << n) & path) == 0))
+                open[sp++] = (n, path | (1L << n), cost + graph[pos, n]);
         } while (sp > 0);
 
         return maxCost;
