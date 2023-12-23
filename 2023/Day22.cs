@@ -20,11 +20,11 @@ class Day22 : Solution
         select new Brick(s,e)
     ).List('\n');
 
-    private static (int singleBricks, DirectedGraph<Brick> graph) GetBrickSupports(string input)
+    private static (int singleBricks, DirectedGraph<Brick, Unit> graph) GetBrickSupports(string input)
     {
         var unsettled = BrickParser(input).OrderBy(b => b.Min.Z).ToList();
         var settled = new Dictionary<int, List<Brick>>();
-        var graph = new DirectedGraph<Brick>();
+        var graph = new DirectedGraph<Brick, Unit>();
         
         while (unsettled.Count > 0)
         {
@@ -36,7 +36,7 @@ class Day22 : Solution
                 if (dropped.Min.Z == 0 || intersected.Any())
                 {
                     settled.GetOrAdd(b.Max.Z, () => []).Add(b);
-                    graph.AddRange(intersected, b);
+                    graph.AddRange(intersected, b, Unit.Value);
                 }
                 else
                     next.Add(dropped);

@@ -249,13 +249,4 @@ public static class EnumerableHelper
 
     public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key, Func<TV> valueFactory)
         => dictionary.TryGetValue(key, out var res) ? res : dictionary[key] = valueFactory();
-
-    public static DirectedGraph<T> ToDirectedGraph<T>(this IEnumerable<(T from, T to)> edges)
-    { 
-        var g = new DirectedGraph<T>();
-        foreach (var (from, to) in edges)
-            g.Add(from, to);
-        return g;
-    }
-
 }

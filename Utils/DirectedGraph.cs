@@ -2,42 +2,42 @@
 
 using System.Collections;
 
-public class DirectedGraph<T>
+public class DirectedGraph<TNode, TValue>
 {
-    readonly struct GroupingWrapper(T key, HashSet<T> values) : IGrouping<T, T>
+    readonly struct GroupingWrapper(TNode key, IEnumerable<TNode> values) : IGrouping<TNode, TNode>
     {
-        public T Key => key;
-        public IEnumerator<T> GetEnumerator() => values.GetEnumerator();
+        public TNode Key => key;
+        public IEnumerator<TNode> GetEnumerator() => values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    class LookupWrapper(Dictionary<T, HashSet<T>> dictionary) : ILookup<T, T>
+    class LookupWrapper(Dictionary<TNode, Dictionary<TNode, TValue>> dictionary) : ILookup<TNode, TNode>
     {
-        public IEnumerable<T> this[T key] => dictionary.GetValueOrDefault(key) ?? Enumerable.Empty<T>();
+        public IEnumerable<TNode> this[TNode key] => dictionary.GetValueOrDefault(key)?.Keys ?? Enumerable.Empty<TNode>();
 
         public int Count => dictionary.Values.Sum(t => t.Count);
 
-        public bool Contains(T key) => dictionary.ContainsKey(key);
+        public bool Contains(TNode key) => dictionary.ContainsKey(key);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IEnumerator<IGrouping<T, T>> GetEnumerator()
+        public IEnumerator<IGrouping<TNode, TNode>> GetEnumerator()
         {
             foreach(var kvp in dictionary)
             {
-                yield return new GroupingWrapper(kvp.Key, kvp.Value);
+                yield return new GroupingWrapper(kvp.Key, kvp.Value.Keys);
             }
         }
     }
 
-    private readonly Dictionary<T, HashSet<T>> fIncoming = [];
-    private readonly Dictionary<T, HashSet<T>> fOutgoing = [];
-    private static HashSet<T> NewSet() => [];
+    private readonly Dictionary<TNode, Dictionary<TNode, TValue>> fIncoming = [];
+    private readonly Dictionary<TNode, Dictionary<TNode, TValue>> fOutgoing = [];
+    private static Dictionary<TNode, TValue> NewSet() => [];
 
-    public IEnumerable<T> Sinks => fIncoming.Keys.Where(i => !fOutgoing.ContainsKey(i));
-    public IEnumerable<T> Sources => fOutgoing.Keys.Where(i => !fIncoming.ContainsKey(i));
-    public IEnumerable<T> Vertices => fIncoming.Keys.Union(fOutgoing.Keys); 
+    public IEnumerable<TNode> Sinks => fIncoming.Keys.Where(i => !fOutgoing.ContainsKey(i));
+    public IEnumerable<TNode> Sources => fOutgoing.Keys.Where(i => !fIncoming.ContainsKey(i));
+    public IEnumerable<TNode> Vertices => fIncoming.Keys.Union(fOutgoing.Keys); 
 
-    public ILookup<T, T> Outgoing { get; }
-    public ILookup<T, T> Incoming { get; } 
+    public ILookup<TNode, TNode> Outgoing { get; }
+    public ILookup<TNode, TNode> Incoming { get; } 
 
     public DirectedGraph()
     {
@@ -45,17 +45,20 @@ public class DirectedGraph<T>
         Incoming = new LookupWrapper(fIncoming);
     }
 
-    public void Add(T from, T to)
+    public void Add(TNode from, TNode to, TValue value)
     {
-        fIncoming.GetOrAdd(to, NewSet).Add(from);
-        fOutgoing.GetOrAdd(from, NewSet).Add(to);
+        fIncoming.GetOrAdd(to, NewSet)[from] = value;
+        fOutgoing.GetOrAdd(from, NewSet)[to] = value;
     }
 
-    public void AddRange(IEnumerable<T> from, T to)
-        => from.ForEach(f => Add(f, to));
-    public void AddRange(T from, IEnumerable<T> to)
-        => to.ForEach(t => Add(from, t));
+    public TValue GetEdgeValue(TNode from, TNode to)
+        => fOutgoing[from][to];
 
-    public bool Contains(T vertex)
+    public void AddRange(IEnumerable<TNode> from, TNode to, TValue value)
+        => from.ForEach(f => Add(f, to, value));
+    public void AddRange(TNode from, IEnumerable<TNode> to, TValue value)
+        => to.ForEach(t => Add(from, t, value));
+
+    public bool Contains(TNode vertex)
         => fIncoming.ContainsKey(vertex) || fOutgoing.ContainsKey(vertex);
 }
