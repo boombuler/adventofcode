@@ -63,10 +63,11 @@ class Day23 : Solution
         var start = graph.Sources.Single();
         var end = graph.Sinks.Single();
 
-        long GetReachableNodes(long pos, long visited)
+        long GetReachableNodes(in long pos, in long visited)
         {
             long result = visited;
-            var open = new Stack<long>([pos]);
+            var open = new Stack<long>(64);
+            open.Push(pos);
 
             while (open.TryPop(out var p))
             {
@@ -81,23 +82,26 @@ class Day23 : Solution
             return result & ~visited;
         }
 
-        var open = new Stack<(long pos, long path, int cost)>([(start, 0, 0)]);
+        Span<(long Pos, long Path, int Cost)> open = stackalloc (long Pos, long Path, int Cost)[64];
+        int sp = 0;
+        open[sp++] = (start, 0, 0);
         var seen = new Dictionary<(long, long), int>();
         int maxCost = 0;
 
-        while (open.TryPop(out var cur))
+        do
         {
-            if (cur.pos == end)
-                maxCost = Math.Max(cur.cost, maxCost);
+            var (pos, path, cost) = open[--sp];
+            if (pos == end)
+                maxCost = Math.Max(cost, maxCost);
 
-            var reachable = GetReachableNodes(cur.pos, cur.path);
-            if (seen.GetValueOrDefault((cur.pos, reachable), -1) >= cur.cost)
+            var reachable = GetReachableNodes(pos, path);
+            if (seen.GetValueOrDefault((pos, reachable), -1) >= cost)
                 continue;
-            seen[(cur.pos, reachable)] = cur.cost;
+            seen[(pos, reachable)] = cost;
 
-            foreach (var n in graph.Outgoing[cur.pos].Where(n => (n & cur.path) == 0))
-                open.Push((n, cur.path | n, cur.cost + graph[cur.pos, n]));
-        }
+            foreach (var n in graph.Outgoing[pos].Where(n => (n & path) == 0))
+                open[sp++] = (n, path | n, cost + graph[pos, n]);
+        } while (sp > 0);
 
         return maxCost;
     }
