@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode._2023;
 
 using Point = Point2D<int>;
-using Graph = DirectedGraph<Point2D<int>, int>;
+using Graph = DirectedGraph<long, int>;
 
 class Day23 : Solution
 {
@@ -21,38 +21,31 @@ class Day23 : Solution
         var start = Enumerable.Range(0, map.Width).Select(x => new Point(x, 0)).First(p => map[p] == '.');
         var end = Enumerable.Range(0, map.Width).Select(x => new Point(x, map.Height - 1)).First(p => map[p] == '.');
 
-        var graph = new DirectedGraph<Point, int>();
+        var graph = new Graph();
 
         var seen = new HashSet<(Point pos, Point srcVert)>();        
-        var open = new Queue<(Point pos, Point lastVertex, int steps)>();
+        var open = new Queue<(Point pos, Point srcVert, int steps)>();
+        var vertices = new Dictionary<Point, long>();
 
+        long Bit(Point f) => vertices.GetOrAdd(f, () => 1L << vertices.Count);
+        
         open.Enqueue((start, start, 0));
         while (open.TryDequeue(out var cur))
         {
             var (pos, vert, steps) = cur;
-            if (pos == end)
-            {
-                graph.Add(vert, pos, steps);
-                continue;
-            }
-
+            
             var next = (
-                from n in pos.Neighbours()
-                let tile = map.GetValueOrDefault(n, '#')
-                where tile != '#'
-                let d = n - pos
-                select new
-                {
-                    Pos = n,
-                    Blocked = !ignoreSlopes && IsSlopeBlocked(tile, d)
-                }
+                from Pos in pos.Neighbours()
+                let tile = map.GetValueOrDefault(Pos, '#')
+                where pos != end && tile != '#'
+                let d = Pos - pos
+                select new {Pos,  Blocked = !ignoreSlopes && IsSlopeBlocked(tile, d) }
             ).ToList();
 
-            if (next.Count > 2)
+            if (next.Count > 2 || pos == end)
             {
-                graph.Add(vert, pos, steps);
-                vert = pos;
-                steps = 0;
+                graph.Add(Bit(cur.srcVert), Bit(cur.pos), cur.steps);
+                (vert, steps) = (pos, 0);
             }
             
             foreach(var n in next)
@@ -64,55 +57,48 @@ class Day23 : Solution
         return graph;
     }
 
-    private static HashSet<Point> GetReachableNodes(Graph graph, Point pos, ImmutableHashSet<Point> visited)
-    {
-        HashSet<Point> result = [];
-        var open = new Stack<Point>([pos]);
-
-        while (open.TryPop(out var p))
-        {
-            foreach(var o in graph.Outgoing[p].Where(o => !visited.Contains(o) && result.Add(o)))
-                open.Push(o);
-        }
-        return result;
-    }
-
-    class State(Point pos, HashSet<Point> open)
-    {
-        static readonly IEqualityComparer<HashSet<Point>> HashSetComp = HashSet<Point>.CreateSetComparer();
-        public Point Pos { get; } = pos;
-        public HashSet<Point> Open { get; } = open;
-        public override bool Equals(object obj)
-            => obj is State s && Pos == s.Pos && HashSetComp.Equals(Open, s.Open);
-        public override int GetHashCode()
-            => HashCode.Combine(Pos, HashSetComp.GetHashCode(Open));
-    }
-
-    private static long GetLongestPath(string input, bool ignoreSlopes)
+    private long GetLongestPath(string input, bool ignoreSlopes)
     {
         var graph = CreateGraphFromInput(input, ignoreSlopes);
         var start = graph.Sources.Single();
         var end = graph.Sinks.Single();
 
-        var open = new Queue<(Point pos, ImmutableHashSet<Point> path, int cost)>();
-        open.Enqueue((start, ImmutableHashSet<Point>.Empty, 0));
+        long GetReachableNodes(long pos, long visited)
+        {
+            long result = 0;
+            var open = new Stack<long>([pos]);
+
+            while (open.TryPop(out var p))
+            {
+                foreach (var o in graph.Outgoing[p])
+                {
+                    if ((visited & o) == 0 && (result & o) == 0)
+                    {
+                        result |= o;
+                        open.Push(o);
+                    }
+                }   
+            }
+            return result;
+        }
+
+        var open = new Stack<(long pos, long path, int cost)>([(start, 0, 0)]);
         int maxCost = 0;
 
-        Dictionary<State, int> seen = [];
+        var seen = new Dictionary<(long, long), int>();
 
-        while (open.TryDequeue(out var cur))
+        while (open.TryPop(out var cur))
         {
             if (cur.pos == end)
                 maxCost = Math.Max(cur.cost, maxCost);
 
-            var openNodes = GetReachableNodes(graph, cur.pos, cur.path);
-            var state = new State(cur.pos, openNodes);
-            if (seen.GetValueOrDefault(state, -1) >= cur.cost)
+            var reachable = GetReachableNodes(cur.pos, cur.path);
+            if (seen.GetValueOrDefault((cur.pos, reachable), -1) >= cur.cost)
                 continue;
-            seen[state] = cur.cost;
+            seen[(cur.pos, reachable)] = cur.cost;
 
-            foreach (var n in graph.Outgoing[cur.pos].Where(n => !cur.path.Contains(n)))
-                open.Enqueue((n, cur.path.Add(n), graph[cur.pos, n] + cur.cost));
+            foreach (var n in graph.Outgoing[cur.pos].Where(n => (n & cur.path) == 0))
+                open.Push((n, cur.path | n, graph[cur.pos, n] + cur.cost));
         }
 
         return maxCost;
