@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode._2023;
 
 using Point = Point2D<int>;
+using Graph = DirectedGraph<Point2D<int>, int>;
 
 class Day23 : Solution
 {
@@ -14,22 +15,21 @@ class Day23 : Solution
             _ => false
         };
 
-    private static DirectedGraph<Point, int> MakeGraph(string input, bool ignoreSlopes)
+    private static Graph CreateGraphFromInput(string input, bool ignoreSlopes)
     {
         var map = input.AsMap();
         var start = Enumerable.Range(0, map.Width).Select(x => new Point(x, 0)).First(p => map[p] == '.');
         var end = Enumerable.Range(0, map.Width).Select(x => new Point(x, map.Height - 1)).First(p => map[p] == '.');
+
         var graph = new DirectedGraph<Point, int>();
 
-        var seen = new HashSet<(Point pos, Point srcVert)>();
-        
+        var seen = new HashSet<(Point pos, Point srcVert)>();        
         var open = new Queue<(Point pos, Point lastVertex, int steps)>();
+
         open.Enqueue((start, start, 0));
         while (open.TryDequeue(out var cur))
         {
             var (pos, vert, steps) = cur;
-            if (!seen.Add((pos, vert)))
-                continue;
             if (pos == end)
             {
                 graph.Add(vert, pos, steps);
@@ -55,28 +55,24 @@ class Day23 : Solution
                 steps = 0;
             }
             
-            steps++;
             foreach(var n in next)
             {
-                if (!n.Blocked)
-                    open.Enqueue((n.Pos, vert, steps));
+                if (!n.Blocked && seen.Add((n.Pos, vert)))
+                    open.Enqueue((n.Pos, vert, steps+1));
             }
         }
         return graph;
     }
 
-    private static HashSet<Point> GetReachableNodes(DirectedGraph<Point, int> graph, Point pos, ImmutableHashSet<Point> visited)
+    private static HashSet<Point> GetReachableNodes(Graph graph, Point pos, ImmutableHashSet<Point> visited)
     {
         HashSet<Point> result = [];
         var open = new Stack<Point>([pos]);
 
         while (open.TryPop(out var p))
         {
-            foreach(var o in graph.Outgoing[p])
-            {
-                if (!visited.Contains(o) && result.Add(o))
-                    open.Push(o);
-            }
+            foreach(var o in graph.Outgoing[p].Where(o => !visited.Contains(o) && result.Add(o)))
+                open.Push(o);
         }
         return result;
     }
@@ -94,7 +90,7 @@ class Day23 : Solution
 
     private static long GetLongestPath(string input, bool ignoreSlopes)
     {
-        var graph = MakeGraph(input, ignoreSlopes);
+        var graph = CreateGraphFromInput(input, ignoreSlopes);
         var start = graph.Sources.Single();
         var end = graph.Sinks.Single();
 
@@ -116,7 +112,7 @@ class Day23 : Solution
             seen[state] = cur.cost;
 
             foreach (var n in graph.Outgoing[cur.pos].Where(n => !cur.path.Contains(n)))
-                open.Enqueue((n, cur.path.Add(n), graph.GetEdgeValue(cur.pos, n) + cur.cost));
+                open.Enqueue((n, cur.path.Add(n), graph[cur.pos, n] + cur.cost));
         }
 
         return maxCost;

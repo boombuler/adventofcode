@@ -39,6 +39,8 @@ public class DirectedGraph<TNode, TValue>
     public ILookup<TNode, TNode> Outgoing { get; }
     public ILookup<TNode, TNode> Incoming { get; } 
 
+    public TValue this[TNode from, TNode to] => fOutgoing[from][to];
+
     public DirectedGraph()
     {
         Outgoing = new LookupWrapper(fOutgoing);
@@ -50,9 +52,6 @@ public class DirectedGraph<TNode, TValue>
         fIncoming.GetOrAdd(to, NewSet)[from] = value;
         fOutgoing.GetOrAdd(from, NewSet)[to] = value;
     }
-
-    public TValue GetEdgeValue(TNode from, TNode to)
-        => fOutgoing[from][to];
 
     public void AddRange(IEnumerable<TNode> from, TNode to, TValue value)
         => from.ForEach(f => Add(f, to, value));
