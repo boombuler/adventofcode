@@ -90,7 +90,10 @@ static class Parser
             .Then(Digits, (sign, digits) => sign * long.Parse(digits));
 
     public static Parser<Point2D<long>> LongPoint2D
-        => (Long + ",").Then(Long, (a, b) => new Point2D<long>(a, b));
+        => (Long.Token() + ",").Then(Long.Token(), (a, b) => new Point2D<long>(a, b));
+
+    public static Parser<Point3D<long>> LongPoint3D
+        => (LongPoint2D.Token() + ",").Then(Long.Token(), (a, b) => a.WithZ(b));
 
     public static Parser<int> Int
         => (Char('-').Return(-1).Opt(1))

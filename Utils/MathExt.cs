@@ -4,13 +4,15 @@ using System.Numerics;
 
 class MathExt
 {
-    public static long GCD(long a, long b)
+    public static T GCD<T>(T a, T b) 
+        where T: INumber<T>
     {
-        while (b != 0)
+        while (b != T.Zero)
             (a, b) = (b, a % b);
         return a;
     }
-    public static long LCM(long a, long b)
+    public static T LCM<T>(T a, T b)
+        where T: INumber<T>
     {
         var gcd = GCD(a, b);
         return (a / gcd) * b;
@@ -23,16 +25,17 @@ class MathExt
     /// <summary>
     /// Solves `ax + by = GCD(a, b)`
     /// </summary>
-    public static (BigInteger x, BigInteger y) ExtEuclid(BigInteger a, BigInteger b)
+    public static (T x, T y) ExtEuclid<T>(T a, T b)
+        where T : INumber<T>
     {
-        BigInteger x0 = 1;
-        BigInteger y0 = 0;
-        BigInteger x1 = 0;
-        BigInteger y1 = 1;
-        BigInteger r = a % b;
-        BigInteger xn = 0, yn = 0;
+        T x0 = T.One;
+        T y0 = T.Zero;
+        T x1 = T.Zero;
+        T y1 = T.One;
+        T r = a % b;
+        T xn = T.Zero, yn = T.Zero;
 
-        while (r > 0)
+        while (r > T.Zero)
         {
             var q = a / b;
             xn = x0 - q * x1;
@@ -59,9 +62,10 @@ class MathExt
     /// <returns>
     /// A tuple where (a: x, n: p1.n * p2.n)
     /// </returns>
-    public static (BigInteger a, BigInteger n) ChineseRemainder((BigInteger a, BigInteger n) p1, (BigInteger a, BigInteger n) p2)
+    public static (T a, T n) ChineseRemainder<T>((T a, T n) p1, (T a, T n) p2)
+        where T : INumber<T>
     {
-        (BigInteger m1, BigInteger m2) = ExtEuclid(p1.n, p2.n);
+        (T m1, T m2) = ExtEuclid(p1.n, p2.n);
         var n = p1.n * p2.n;
         var x = (p1.a * m2 * p2.n) % n;
         var y = (p2.a * m1 * p1.n) % n;
