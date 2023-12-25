@@ -249,4 +249,7 @@ public static class EnumerableHelper
 
     public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key, Func<TV> valueFactory)
         => dictionary.TryGetValue(key, out var res) ? res : dictionary[key] = valueFactory();
+
+    public static T RandomElement<T>(this IEnumerable<T> items)
+        => items.ElementAt(Random.Shared.Next(items.Count()));
 }
