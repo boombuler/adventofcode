@@ -49,7 +49,7 @@ class Day24 : Solution
                 V: new BigInteger(hs.Velocity.X + hs.Velocity.Y + hs.Velocity.Z)
             )).ToList();
 
-        for (int velocity = 0; true; velocity++)
+        foreach (int velocity in 0.Unfold(n => n <= 0 ? (-n) + 1 : -n).Prepend(0))
         {
             var (result, _) = hailstones
                 .Select(i => (A: i.P, N: BigInteger.Abs(i.V - velocity)))
@@ -67,6 +67,7 @@ class Day24 : Solution
             if (hailstones.All(i => (result - i.P).Sign == (i.V - velocity).Sign))
                 return (long)result;
         }
+        return 0;
     }
 
     protected override long? Part2()
