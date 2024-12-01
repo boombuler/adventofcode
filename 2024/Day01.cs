@@ -31,7 +31,7 @@ class Day01 : Solution
     {
         long Solve(string input)
             => CompareLists(input, 
-                lst => lst.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count()),
+                lst => lst.CountBy(x => x).ToDictionary(),
                 (left, right) => left.Select(l => l.Key * l.Value * right.GetValueOrDefault(l.Key, 0)));
 
         Assert(Solve(Sample()), 31);
