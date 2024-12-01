@@ -136,7 +136,7 @@ sealed class Parser<T>(Parser<T>.ParseDelegate fn)
     public Parser<T[]> List<U>(Parser<U> separator)
         => this.Then(separator.ThenR(this).Many(), (first, cons) => cons.Prepend(first).ToArray()).Opt([]);
 
-    public Parser<T[]> List(params char[] separators)
+    public Parser<T[]> List(params ReadOnlySpan<char> separators)
         => List(Parser.AnyChar(separators));
 
     public static Parser<T> operator +(string s, Parser<T> p)
