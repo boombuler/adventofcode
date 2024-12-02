@@ -9,7 +9,7 @@ class Day02 : Solution<long?, string>
     }
 
     protected override string Part2()
-        => Input.Lines().Pairs()
+        => Input.Lines().CombinationPairs()
             .Select(i => string.Concat(i.A.Zip(i.B, (char ac, char bc) => ac == bc ? ac.ToString() : string.Empty)))
             .OrderByDescending(s => s.Length)
             .First();

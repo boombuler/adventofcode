@@ -4,7 +4,7 @@ class Day09 : Solution
 {
     private static (int First, int Last) SumNextValues(string input)
         => input.Lines().Select(l => l.Split(' ').Select(int.Parse).ToArray())
-            .Select(data => data.Unfold(d => d.SlidingWindow(2).Select(n => n[1] - n[0]).ToArray())
+            .Select(data => data.Unfold(d => d.Pairwise((a, b) => b - a).ToArray())
                 .Prepend(data)
                 .TakeWhile(d => d.Any(x => x != 0))
                 .Aggregate((f: 0, l: 0, s: 1), (a, d) => (a.f + (a.s * d[0]), a.l + d[^1], -a.s)))

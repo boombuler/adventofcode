@@ -16,7 +16,7 @@ class Day25 : Solution<int?>
         var groups = points.ToDictionary(p => p, p => new HashSet<Coord>() { p });
         var constellations = groups.Values.ToHashSet();
 
-        foreach (var (a, b) in points.Pairs())
+        foreach (var (a, b) in points.CombinationPairs())
         {
             if (!a.InRangeOf(b))
                 continue;

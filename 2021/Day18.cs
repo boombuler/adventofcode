@@ -147,7 +147,7 @@ class Day18 : Solution
     {
         static long LargestMag(string input)
             => input.Lines()
-                .Pairs()
+                .CombinationPairs()
                 .SelectMany(r => new[] { (r.A, r.B), (A: r.B, B: r.A) })
                 .Max(tpl => SFNumber.Add(SFNumber.Parse(tpl.A), SFNumber.Parse(tpl.B)).Magnitude);
         Assert(LargestMag(Sample()), 3993);

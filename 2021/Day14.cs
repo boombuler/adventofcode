@@ -28,7 +28,7 @@ class Day14 : Solution
                 }.Aggregate(Add));
         }
 
-        var (min, max) = template.SlidingWindow(2).Select(wnd => (wnd[0], wnd[1])).Select(production.GetValueOrDefault)
+        var (min, max) = template.Pairwise().Select(production.GetValueOrDefault)
             .Concat(template.Select(CharToDict))
             .Aggregate(Add).Values.MinMax();
 

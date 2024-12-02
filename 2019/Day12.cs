@@ -38,7 +38,7 @@ class Day12 : Solution
 
     private static void StepSystem(List<Moon> moons)
     {
-        foreach (var (m1, m2) in moons.Pairs())
+        foreach (var (m1, m2) in moons.CombinationPairs())
         {
             m1.ApplyGravity(m2);
             m2.ApplyGravity(m1);

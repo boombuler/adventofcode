@@ -17,8 +17,8 @@ class Day18 : Solution
     private static long GetTotalArea(string input, int idx)
         => ParseInput(input)
             .Scan(Origin, (a, i) => a + i[idx].Direction * i[idx].Count)
-            .SlidingWindow(2)
-            .Sum(pts => pts[0].ManhattanDistance(pts[1]) + pts[0].X * pts[1].Y - pts[0].Y * pts[1].X) / 2 + 1;
+            .Pairwise((a, b) => a.ManhattanDistance(b) + a.X * b.Y - a.Y * b.X)
+            .Sum() / 2 + 1;
 
     protected override long? Part1()
     {

@@ -20,7 +20,7 @@ class Day02 : Solution
         var sum = 0L;
         foreach (var line in input.Lines().Select(l => l.Split('\t', ' ').Select(int.Parse).ToArray()))
         {
-            foreach (var (a, b) in line.Pairs())
+            foreach (var (a, b) in line.CombinationPairs())
             {
                 if (a == b) 
                     continue;

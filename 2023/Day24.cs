@@ -33,7 +33,7 @@ class Day24 : Solution
     protected override long? Part1()
     {
         static long Solve(string input, double min, double max)
-            => ParseHailstones(input).Pairs().Select(pair => pair.A.Intersect(pair.B))
+            => ParseHailstones(input).CombinationPairs().Select(pair => pair.A.Intersect(pair.B))
                 .Count(i => i.X >= min && i.X <= max && i.Y >= min && i.Y <= max);
 
         Assert(Solve(Sample(), 7, 27), 2);

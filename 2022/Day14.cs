@@ -11,8 +11,8 @@ class Day14 : Solution
 
         var rocks = (
             from line in input.Lines()
-            from range in line.Split(" -> ").Select(Point.Parse).SlidingWindow(2)
-            from pt in Point.Range(range[0], range[1])
+            from range in line.Split(" -> ").Select(Point.Parse).Pairwise(Point.Range)
+            from pt in range
             select pt
         ).ToList();
         var abys = rocks.Max(p => p.Y);

@@ -10,7 +10,7 @@ static class Parser
 
     public static Parser<char> NL { get; } = Char('\n');
 
-    public static Parser<char> WS { get; } = AnyChar([' ', '\t']);
+    public static Parser<char> WS { get; } = AnyChar(" \t");
 
     public static Parser<string> Word { get; } = Expect(char.IsAsciiLetter).Many1().Text();
 
@@ -33,10 +33,10 @@ static class Parser
     public static Parser<T> AnyChar<T>(string chars, T[] values)
         => AnyChar(chars).Select(c => values[chars.IndexOf(c)]);
 
-    public static Parser<char> AnyChar(ReadOnlySpan<char> input)
+    public static Parser<char> AnyChar(params ReadOnlySpan<char> input)
         => Expect(SearchValues.Create(input).Contains);
 
-    public static Parser<char> CharExcept(params char[] input)
+    public static Parser<char> CharExcept(params ReadOnlySpan<char> input)
     {
         var values = SearchValues.Create(input);
         return Expect(c => !values.Contains(c));

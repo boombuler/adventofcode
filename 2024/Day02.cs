@@ -1,35 +1,32 @@
 ﻿namespace AdventOfCode._2024;
 
-using static Parser;
-
 class Day02 : Solution
 {
-    private bool IsSave(IEnumerable<int> numbers)
-    {
-        var distances = numbers.SlidingWindow(2).Select(n => n[0] - n[1]).ToList();
-        return (distances.DistinctBy(Math.Sign).Count() == 1) &&
-               distances.Select(Math.Abs).All(n => n is 1 or 2 or 3);
-    }
-    
-    private int CountRoutes(string input, Func<List<int>, bool> predicate)
-        => input.Lines()
-            .Select(l => l.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList())
-            .Count(predicate);
+    private int BadIndex(IEnumerable<int> numbers, int? skip = null) 
+        => numbers.Where((_, i) => i != skip)
+            .Pairwise((a, b) => a-b).Select(x => new { Sign = Math.Sign(x), Abs = Math.Abs(x) })
+            .Scan((Sign:(int?)null, Bad: false), (aggr, x) => (x.Sign, (x.Abs is < 1 or > 3) || (x.Sign != (aggr.Sign ?? x.Sign))))
+            .Skip(1)
+            .Select((x, i) => new { x.Bad, Idx = i })
+            .FirstOrDefault(x => x.Bad)?.Idx ?? -1;
+
+    private int CountRoutes(string input, Func<int[], bool> predicate)
+        => input.Lines().Select(Parser.Int.Token().Many().MustParse).Count(predicate);
     
     protected override long? Part1()
     {
-        int Solve(string input) 
-            => CountRoutes(input, IsSave);
-        
+        int Solve(string input) => CountRoutes(input, x => BadIndex(x) < 0);
+
         Assert(Solve(Sample()), 2);
         return Solve(Input);
     }
     
     protected override long? Part2()
-    { 
+    {
         int Solve(string input) 
-            => CountRoutes(input, line => line.Select((_, i) => line.Where((_, j) => j != i)).Append(line).Any(IsSave));
-        
+            => CountRoutes(input, line => BadIndex(line) is int idx && 
+                (idx < 0 || BadIndex(line, skip: idx) < 0 || BadIndex(line, skip: idx + 1) < 0));
+
         Assert(Solve(Sample()), 4);
         return Solve(Input);
     }

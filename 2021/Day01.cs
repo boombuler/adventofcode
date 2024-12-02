@@ -5,7 +5,7 @@ class Day01 : Solution
     private long Solve(int windowSize)
         => Input.Lines().Select(long.Parse)
             .SlidingWindow(windowSize).Select(Enumerable.Sum)
-            .SlidingWindow(2).Count(n => n[1] > n[0]);
+            .Pairwise().Count(n => n.B > n.A);
 
     protected override long? Part1() => Solve(1);
 

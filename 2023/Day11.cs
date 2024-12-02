@@ -14,7 +14,7 @@ class Day11 : Solution
 
         return galaxies.Select(g => (g.X, g.Y) - (factor - 1) *
             new Point2D((long)cols.BinarySearch((int)g.X), (long)rows.BinarySearch((int)g.Y))
-        ).Pairs().Select((ab) => ab.A.ManhattanDistance(ab.B)).Sum();
+        ).CombinationPairs().Select((ab) => ab.A.ManhattanDistance(ab.B)).Sum();
     }
 
     protected override long? Part1()

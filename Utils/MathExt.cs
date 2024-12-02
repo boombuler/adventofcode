@@ -87,10 +87,10 @@ class MathExt
 
         var b1 = input.First().y;
         var factors = input.Select(n => n.x1).SkipLast(1).Zip(
-            input.Unfold(en => en.SlidingWindow(2).Select(wnd =>
+            input.Unfold(en => en.Pairwise((a,b) =>
             {
-                var c = (wnd[1].y - wnd[0].y) / (wnd[1].x2 - wnd[0].x1);
-                return (wnd[0].x1, wnd[1].x2, c);
+                var c = (b.y - a.y) / (b.x2 - a.x1);
+                return (a.x1, b.x2, c);
             }).ToArray()).TakeWhile(f => f.Length > 0).Select(f => f.First().y)
         ).ToArray();
 

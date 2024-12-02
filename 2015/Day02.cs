@@ -7,7 +7,7 @@ class Day02 : Solution
         static long GetPaperSize(string dim)
         {
             var (total, smallest) = dim.Split('x').Select(int.Parse)
-                .Pairs((a, b) => a * b)
+                .CombinationPairs((a, b) => a * b)
                 .Aggregate((Total: 0, Smallest: int.MaxValue), (a, d) => (a.Total + 2 * d, d < a.Smallest ? d : a.Smallest));
             return total + smallest;
         }

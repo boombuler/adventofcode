@@ -8,5 +8,5 @@ class Day05 : Solution
     private IEnumerable<int> Seats => Input.Lines().Select(ToSeatId);
     protected override long? Part1() => Seats.Max();
     protected override long? Part2()
-        => Seats.Order().SlidingWindow(2).First(s => (s[1] - s[0]) == 2)[0] + 1;
+        => Seats.Order().Pairwise().First(s => (s.B - s.A) == 2).A + 1;
 }

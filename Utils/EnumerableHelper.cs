@@ -104,7 +104,7 @@ public static class EnumerableHelper
     /// <summary>
     /// Like <see cref="Combinations{T}(IEnumerable{T}, int)"/> but only for two items.
     /// </summary>
-    public static IEnumerable<(T A, T B)> Pairs<T>(this IEnumerable<T> items)
+    public static IEnumerable<(T A, T B)> CombinationPairs<T>(this IEnumerable<T> items)
     {
         var seenItems = new List<T>();
         foreach (var i in items)
@@ -115,8 +115,8 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<TVal> Pairs<T, TVal>(this IEnumerable<T> items, Func<T, T, TVal> selector)
-        => Pairs(items).Select(n => selector(n.A, n.B));
+    public static IEnumerable<TVal> CombinationPairs<T, TVal>(this IEnumerable<T> items, Func<T, T, TVal> selector)
+        => CombinationPairs(items).Select(n => selector(n.A, n.B));
 
     /// <summary>
     /// returns a sliding window with <paramref name="windowSize"/> items from the <paramref name="items"/>
@@ -147,6 +147,31 @@ public static class EnumerableHelper
             yield return buf = newBuf;
         }
     }
+
+    /// <summary>
+    /// Like SlidingWindow(2) but returns a tuple of the two items
+    /// </summary>
+    public static IEnumerable<TRes> Pairwise<T, TRes>(this IEnumerable<T> items, Func<T, T, TRes> selector)
+    {
+        var it = items.GetEnumerator();
+        if (!it.MoveNext())
+            yield break;
+        T last = it.Current;
+
+        while (it.MoveNext())
+        {
+            T cur = it.Current;
+            yield return selector(last, cur);
+            last = cur;
+        }
+    }
+
+    /// <summary>
+    /// Like SlidingWindow(2) but returns a tuple of the two items
+    /// </summary>
+    public static IEnumerable<(T A, T B)> Pairwise<T>(this IEnumerable<T> items)
+        => Pairwise(items, (a, b) => (a, b));
+
 
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
     {
