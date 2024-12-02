@@ -14,4 +14,13 @@
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
   </ItemGroup>
+
+  <Target Name="SetGitEMail" BeforeTargets="BeforeBuild">
+    <Exec Command="git config user.email" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCommandResult" />
+    </Exec>
+    <ItemGroup>
+      <AssemblyMetadata Include="GitMail" Value="$(GitCommandResult)" />
+    </ItemGroup>
+  </Target>
 </Project>

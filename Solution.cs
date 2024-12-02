@@ -33,53 +33,20 @@ abstract class AsyncSolution<TSolution1, TSolution2>
 
     private readonly AsyncLocal<IOutput> fOutput = new();
 
-    private DateTime PuzzleStartTime => new(Year, 12, Day, 5, 0, 0, DateTimeKind.Utc);
-
-    public AsyncSolution()
+    protected AsyncSolution()
     {
-        fInput = new Lazy<string>(() => LoadInput());
+        fInput = new Lazy<string>(LoadInput);
     }
 
     #region Puzzle Input
 
     private string LoadInput()
-    {
-        const string SESSION_COOKIE_FILE = "Session.user";
-        string relPath = Path.Combine("Input", Year.ToString(), $"{Day:d2}.txt");
-        if (!File.Exists(relPath) && File.Exists(SESSION_COOKIE_FILE) && DateTime.UtcNow >= PuzzleStartTime)
-        {
-            var baseAddress = new Uri("https://adventofcode.com");
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Cookie("session", File.ReadAllText(SESSION_COOKIE_FILE), "/", ".adventofcode.com"));
-
-            using var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
-            using var client = new HttpClient(handler) { BaseAddress = baseAddress };
-
-            var response = client.GetAsync($"/{Year:d4}/day/{Day}/input").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                using var inputData = response.Content.ReadAsStream();
-                if (!Directory.Exists(Path.GetDirectoryName(relPath)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(relPath));
-                using var fs = File.Create(relPath);
-                inputData.CopyTo(fs);
-            }
-            else
-                Error($"Failed to load input: {response.Content.ReadAsStringAsync().Result}");
-        }
-        if (!File.Exists(relPath))
-        {
-            Error("No Input available!");
-            return string.Empty;
-        }
-
-        return File.ReadAllText(relPath).ReplaceLineEndings("\n").TrimEnd('\n');
-    }
+        => AocClient.GetPuzzleInput(Year, Day).Result;
 
     private readonly Lazy<string> fInput;
     protected string Input => fInput.Value;
 
-    public virtual string Sample(string suffix = null)
+    protected virtual string Sample(string suffix = null)
     {
         var asm = GetType().Assembly;
         if (string.IsNullOrEmpty(suffix))
