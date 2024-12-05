@@ -2,26 +2,20 @@
 
 class Day05 : Solution
 {
-    record Rule(int First, int Second);
-    
-    private int Repair(int[] update, Rule[] rules)
-        => update.OrderBy(u => rules
-                .Where(r => update.Contains(r.First))
-                .CountBy(r => r.Second).ToDictionary().GetValueOrDefault(u))
-            .ElementAt(update.Length / 2);
+    private IEnumerable<int> Repair(int[] update, ILookup<int, int> rules)
+        => update.OrderBy(update.SelectMany(u => rules[u]).CountBy(u => u).ToDictionary().GetValueOrDefault);
 
     private Parser<(IEnumerable<int> Valid, IEnumerable<int> Repaired)> InputParser =>
-        from rules in (
+        from ruleList in (
             from first in Parser.Int + "|"
             from second in Parser.Int
-            select new Rule(first, second)).List('\n') + "\n\n"
+            select (first, second)).List('\n') + "\n\n"
+        let rules = ruleList.ToHashSet()
+        let repairLookup = ruleList.ToLookup(r => r.first, r => r.second)
         from updates in Parser.Int.List(',').List('\n')
-        let grp = updates.ToLookup(u => rules
-            .Select(r => (I1: Array.IndexOf(u, r.First), I2: Array.IndexOf(u, r.Second)))
-            .All(x => x.I1 < 0 || x.I2 < 0 || x.I1 < x.I2)
-        )
+        let grp = updates.ToLookup(u => !u.Pairwise((a, b) => (b, a)).Any(rules.Contains))
         select (Valid: grp[true].Select(u => u[u.Length / 2]),
-            Repaired: grp[false].Select(u => Repair(u, rules)));
+            Repaired: grp[false].Select(u => Repair(u, repairLookup).ElementAt(u.Length /2)));
 
     protected override long? Part1()
     {
