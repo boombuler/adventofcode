@@ -153,7 +153,7 @@ public static class EnumerableHelper
     /// </summary>
     public static IEnumerable<TRes> Pairwise<T, TRes>(this IEnumerable<T> items, Func<T, T, TRes> selector)
     {
-        var it = items.GetEnumerator();
+        using var it = items.GetEnumerator();
         if (!it.MoveNext())
             yield break;
         T last = it.Current;
@@ -170,7 +170,19 @@ public static class EnumerableHelper
     /// Like SlidingWindow(2) but returns a tuple of the two items
     /// </summary>
     public static IEnumerable<(T A, T B)> Pairwise<T>(this IEnumerable<T> items)
-        => Pairwise(items, (a, b) => (a, b));
+    {
+        using var it = items.GetEnumerator();
+        if (!it.MoveNext())
+            yield break;
+        T last = it.Current;
+
+        while (it.MoveNext())
+        {
+            T cur = it.Current;
+            yield return (last, cur);
+            last = cur;
+        }
+    }
 
 
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)

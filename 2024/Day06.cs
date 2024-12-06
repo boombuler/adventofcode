@@ -4,21 +4,15 @@ using Point = Point2D<int>;
 
 class Day06 : Solution
 {
-    IEnumerable<(Point Position, Point Direction)> WalkMap(StringMap<char> map)
-    {
-        Point[] directions = [Point.Up, Point.Right, Point.Down, Point.Left];
-        var start = (Position: map.First(n => n.Value == '^').Index, Direction: 0);
-        return start
-            .Unfold(s =>
+    IEnumerable<(Point Position, Point Direction)> WalkMap(StringMap<char> map, Point? start = null)
+        => (Pos: (start ?? map.Find('^')) - Point.Up, Dir: Point.Up)
+            .Unfold(s => 
             {
-                var n = s.Position + directions[s.Direction];
+                var n = s.Pos + s.Dir;
                 if (map.GetValueOrDefault(n) == '#')
-                    return (s.Position, (s.Direction + 1) % directions.Length);
-                return (n, s.Direction);
-            })
-            .Prepend(start).TakeWhile(x => map.Contains(x.Position))
-            .Select(x => (x.Position, directions[x.Direction]));
-    }
+                    return (s.Pos, (-s.Dir.Y, s.Dir.X));
+                return (n, s.Dir);
+            }).TakeWhile(x => map.Contains(x.Pos));
 
     protected override long? Part1() 
     {
@@ -31,23 +25,19 @@ class Day06 : Solution
 
     protected override long? Part2()
     {
-        bool IsLoop(StringMap<char> map)
+        bool IsLoop(StringMap<char> map, Point start)
         {
             var visited = new HashSet<(Point, Point)>();
-            return WalkMap(map).Any(x => !visited.Add(x));
+            return WalkMap(map, start).Pairwise().Where(pair => pair.A.Direction != pair.B.Direction).Any(pair => !visited.Add(pair.B));
         }
 
         int Solve(string input)
         {
             var map = input.AsMap();
-            
+            var start = map.Find('^');
             return (
-                // This could be optimized by checking if placing a wall
-                // at the given position could even create a loop. To create a look
-                // there needs to be a wall in the newly created path.
-                from replace in WalkMap(map).Select(x => x.Position + x.Direction).Distinct()
-                where map.TryGetValue(replace, out var cur) && cur == '.'
-                where IsLoop(new StringMap<char>(map) { [replace] = '#' })
+                from replace in WalkMap(map).Select(x => x.Position).Distinct()
+                where replace != start && IsLoop(new StringMap<char>(map) { [replace] = '#' }, start)
                 select 1
             ).Count();
         }

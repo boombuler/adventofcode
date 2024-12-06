@@ -8,7 +8,7 @@ class Day21 : Solution
     {
         var map = input.AsMap();
 
-        var start = map.First(kvp => kvp.Value == 'S').Index;
+        var start = map.Find('S');
 
         var seen = new HashSet<(Point pos, int steps)>();
         var queue = new Queue<(Point pos, int steps)>();
