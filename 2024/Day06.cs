@@ -1,18 +1,20 @@
 ﻿namespace AdventOfCode._2024;
 
-using Point = Point2D<int>;
+using Pose = (Point2D<int> Position, Point2D<int> Direction);
 
 class Day06 : Solution
 {
-    IEnumerable<(Point Position, Point Direction)> WalkMap(StringMap<char> map, Point? start = null)
-        => (Pos: (start ?? map.Find('^')) - Point.Up, Dir: Point.Up)
+    static Pose Prev(Pose p) => (p.Position - p.Direction, p.Direction);
+
+    IEnumerable<Pose> WalkMap(StringMap<char> map, Pose? start = null)
+        => Prev(start ?? (map.Find('^'), Point2D<int>.Up))
             .Unfold(s => 
             {
-                var n = s.Pos + s.Dir;
+                var n = s.Position + s.Direction;
                 if (map.GetValueOrDefault(n) == '#')
-                    return (s.Pos, (-s.Dir.Y, s.Dir.X));
-                return (n, s.Dir);
-            }).TakeWhile(x => map.Contains(x.Pos));
+                    return (s.Position, (-s.Direction.Y, s.Direction.X));
+                return (n, s.Direction);
+            }).TakeWhile(x => map.Contains(x.Position));
 
     protected override long? Part1() 
     {
@@ -25,19 +27,23 @@ class Day06 : Solution
 
     protected override long? Part2()
     {
-        bool IsLoop(StringMap<char> map, Point start)
+        bool IsLoop(StringMap<char> map, Pose pose)
         {
-            var visited = new HashSet<(Point, Point)>();
-            return WalkMap(map, start).Pairwise().Where(pair => pair.A.Direction != pair.B.Direction).Any(pair => !visited.Add(pair.B));
+            var visited = new HashSet<Pose>();
+            return WalkMap(map, pose)
+                .Pairwise().Where(pair => pair.A.Direction != pair.B.Direction) // Only remember turns
+                .Any(pair => !visited.Add(pair.B));
         }
 
         int Solve(string input)
         {
             var map = input.AsMap();
             var start = map.Find('^');
+
             return (
-                from replace in WalkMap(map).Select(x => x.Position).Distinct()
-                where replace != start && IsLoop(new StringMap<char>(map) { [replace] = '#' }, start)
+                from x in WalkMap(map).DistinctBy(x => x.Position).AsParallel().AsUnordered()
+                let newMap = new StringMap<char>(map) { [x.Position] = '#' }
+                where x.Position != start && IsLoop(newMap, Prev(x))
                 select 1
             ).Count();
         }
