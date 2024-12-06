@@ -32,6 +32,11 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
         }
     }
 
+    public StringMap(StringMap<T> baseMap)
+    {   
+        fValues = (T[,])baseMap.fValues.Clone();
+    }
+
     public T GetValueOrDefault(Point2D<int> idx)
         => GetValueOrDefault(idx, default);
     public T GetValueOrDefault(Point2D<int> idx, T defaultValue)
