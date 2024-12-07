@@ -33,7 +33,8 @@ class Day07 : Solution
             operations = [..operations, MathExt.Concat];
         
         return input.Lines().Select((Long + ": ").Then(Long.Token().Many()).MustParse)
-             .Where(n => CanBeValid(n.Item1, n.Item2, operations)).Sum(n => n.Item1);
+            .AsParallel().AsUnordered()
+            .Where(n => CanBeValid(n.Item1, n.Item2, operations)).Sum(n => n.Item1);
     }
 
     protected override long? Part1()
