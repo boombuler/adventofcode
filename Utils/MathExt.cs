@@ -75,6 +75,18 @@ class MathExt
     public static long AppendDigit(long num, char digit)
         => num * 10 + (digit - '0');
 
+    public static TNumber Concat<TNumber>(TNumber a, TNumber b)
+        where TNumber : INumber<TNumber>
+    {
+        var c = b;
+        var ten = TNumber.CreateTruncating(10);
+        while (c > TNumber.Zero)
+        {
+            a *= ten;
+            c /= ten;
+        }
+        return a + b;
+    }
     /// <summary>
     /// Creates a function to calculated f(x) from a set of 
     /// value pairs using newton polynomial interpolation.
