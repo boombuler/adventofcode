@@ -43,23 +43,18 @@ class Day12 : Solution
 
     protected override long? Part2()
     {
-        long CountCorners(HashSet<Point> region)
-        {
-            long sum = 0;
-            var corners = Enumerable.Range(0, 3).Scan(new { Up, Right },
-                (dirs, _) => new { Up = dirs.Up.RotateCW(), Right = dirs.Right.RotateCW() })
-                .ToArray();
-
-            foreach (var p in region)
+        long CountCorners(HashSet<Point> region) => (
+            from pos in region
+            from corner in pos + [Origin, Right, Down, Right + Down]
+            group (corner - pos) by corner into g
+            let aggr = g.Aggregate((Even: true, Delta: (Right+Down)), (acc, p) => (!acc.Even, acc.Delta-p))
+            select aggr switch
             {
-                bool Contains(Point dir) =>region.Contains(p+dir);
-                // Outer Corners:
-                sum += corners.Count(d => !Contains(d.Up) && !Contains(d.Right));
-                // Inner Corners:
-                sum += corners.Count(d => Contains(d.Up) && Contains(d.Right) && !Contains(d.Up + d.Right));
+                (false, _) => 1, // Odd number of adjacent blocks -> 1 corner
+                (_, (0,0)) => 2, // Special case: Two opposing corners
+                _ => 0
             }
-            return sum;
-        }
+        ).Sum();
 
         long Solve(string input) 
             => GetFencePrice(input, CountCorners);

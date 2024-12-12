@@ -33,6 +33,9 @@ public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T
     public static Point2D<T> operator %(Point2D<T> a, Point2D<T> b)
         => new(a.X % b.X, a.Y % b.Y);
 
+    public static IEnumerable<Point2D<T>> operator + (Point2D<T> a, IEnumerable<Point2D<T>> b) 
+        => b.Select(p => a + p);
+
     public IEnumerable<Point2D<T>> Neighbours(bool withDiagonal = false)
     {
         yield return this + Right;
