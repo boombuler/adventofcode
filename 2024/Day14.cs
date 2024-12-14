@@ -36,13 +36,13 @@ class Day14 : Solution
     {
         var robots = Input.Lines().Select(InputParser.MustParse).ToList();
 
-        long threshold = robots.Count / 3; // At lease 2/3 of robots need to align with some other
         for (int i = 0; true; i++)
-        { 
-            var state = robots.Select(r => (r.Point + (r.Velocity * i)))
-                .Select(p => MathExt.Mod(p, InputMapSize)).ToHashSet();
-            long singles = state.Count(p => !p.Neighbours().Any(state.Contains));
-            if (singles < threshold)
+        {
+            var seen = new HashSet<Point>();
+            var anyRobotStacked = robots
+                .Select(r => MathExt.Mod(r.Point + (r.Velocity * i), InputMapSize))
+                .Any(p => !seen.Add(p));
+            if (!anyRobotStacked)
                 return i;
         }
     }
