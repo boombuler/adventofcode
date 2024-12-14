@@ -5,18 +5,21 @@ using Point = Point2D<long>;
 
 class Day14 : Solution
 {
-    private static readonly Parser<(Point Point, Point Velocity)> InputParser =
+    private readonly Point InputMapSize = (101, 103);
+    private static readonly Parser<(Point Point, Point Velocity)[]> InputParser = (
         from p in "p=" + LongPoint2D
         from v in "v=" + LongPoint2D
-        select (p, v);
-    private readonly Point InputMapSize = (101, 103);
+        select (p, v)
+    ).List(NL);
+
+    private Func<int, IEnumerable<Point>> GetRobotFactory(string input, Point mapSize)
+    {
+        var lst = InputParser.MustParse(input);
+        return (time) => lst.Select(r => MathExt.Mod(r.Point + (r.Velocity * time), mapSize));
+    }
 
     private long GetSafetyFactor(string input, Point mapSize, int seconds = 100)
-    {
-        var mid = mapSize / 2;
-        return input.Lines().Select(InputParser.MustParse)
-            .Select(r => MathExt.Mod(r.Point + (r.Velocity * seconds), mapSize))
-            .Select(p => (p - mid) switch
+        => GetRobotFactory(input, mapSize)(seconds).Select(p => (p - mapSize / 2) switch
             {
                 ( > 0, > 0) => 1,
                 ( > 0, < 0) => 2,
@@ -24,7 +27,6 @@ class Day14 : Solution
                 ( < 0, < 0) => 4,
                 _ => -1
             }).Where(n => n != -1).CountBy(n => n).Aggregate(1, (a, b) => a * b.Value);
-    }
     
     protected override long? Part1() 
     {
@@ -34,15 +36,12 @@ class Day14 : Solution
 
     protected override long? Part2()
     {
-        var robots = Input.Lines().Select(InputParser.MustParse).ToList();
+        var robots = GetRobotFactory(Input, InputMapSize);
 
         for (int i = 0; true; i++)
         {
             var seen = new HashSet<Point>();
-            var anyRobotStacked = robots
-                .Select(r => MathExt.Mod(r.Point + (r.Velocity * i), InputMapSize))
-                .Any(p => !seen.Add(p));
-            if (!anyRobotStacked)
+            if (!robots(i).Any(p => !seen.Add(p)))
                 return i;
         }
     }
