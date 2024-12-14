@@ -38,11 +38,18 @@ class Day14 : Solution
     {
         var robots = GetRobotFactory(Input, InputMapSize);
 
-        for (int i = 0; true; i++)
-        {
-            var seen = new HashSet<Point>();
-            if (!robots(i).Any(p => !seen.Add(p)))
-                return i;
-        }
+        var variances = (
+            from i in Enumerable.Range(0, (int)Math.Max(InputMapSize.X, InputMapSize.Y))
+            let pts = robots(i).ToList()
+            let avg = pts.Sum() / pts.Count
+            select pts.Select(p => p - avg)
+                .Select(p => new Point(p.X * p.X, p.Y * p.Y))
+                .Sum()
+        ).Select((n, i) => new { n.X, n.Y, Index = i }).ToList();
+
+        return MathExt.ChineseRemainder(
+            (variances.MinBy(n => n.X).Index, InputMapSize.X),
+            (variances.MinBy(n => n.Y).Index, InputMapSize.Y)
+        ).a;
     }
 }

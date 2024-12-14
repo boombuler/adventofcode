@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode.Utils;
 
+using System.Numerics;
+
 public static class EnumerableHelper
 {
     public static void RotateRight<T>(this T[] array, int count)
@@ -283,6 +285,9 @@ public static class EnumerableHelper
             hc.Add(i);
         return hc.ToHashCode();
     }
+
+    public static T Sum<T>(this IEnumerable<T> items) where T : IAdditionOperators<T, T, T>
+        => items.Aggregate((a, b) => a + b);
 
     public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key, Func<TV> valueFactory)
         => dictionary.TryGetValue(key, out var res) ? res : dictionary[key] = valueFactory();
