@@ -3,7 +3,10 @@
 using System.Globalization;
 using System.Numerics;
 
-public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>> where T : INumber<T>, INumberBase<T>
+public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>>,
+    IModulusOperators<Point2D<T>, Point2D<T>, Point2D<T>>,
+    IAdditionOperators<Point2D<T>, Point2D<T>, Point2D<T>>
+    where T : INumber<T>, INumberBase<T>
 {
     public static readonly Point2D<T> Origin = (T.Zero, T.Zero);
     public static readonly Point2D<T> Up = (T.Zero, -T.One);

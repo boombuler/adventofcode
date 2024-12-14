@@ -19,7 +19,7 @@ class MathExt
     }
 
     public static T Mod<T>(T a, T m)
-        where T : INumber<T>
+        where T : IModulusOperators<T,T,T>, IAdditionOperators<T, T, T>
         => ((a % m) + m) % m;
 
     /// <summary>
