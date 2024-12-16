@@ -1,41 +1,43 @@
 ﻿namespace AdventOfCode._2024;
 
-using Pose = (Point2D<int> Loc, Point2D<int> Dir);
+using Point = Point2D<int>;
 
 class Day16 : Solution
 {
-    private IEnumerable<(long Score, IEnumerable<Pose> Way)> GetWinningPaths(string input, Func<long, bool> continueWalking)
+    private IEnumerable<(long Score, IEnumerable<Point> Way)> GetWinningPaths(string input, Func<long, bool> continueWalking)
     {
         var map = input.AsMap();
         var start = map.First(n => n.Value == 'S').Index;
 
-        var queue = new PriorityQueue<ImmutableStack<Pose>, long>();
-        queue.Enqueue(ImmutableStack<Pose>.Empty.Push((start, (1, 0))), 0);
+        var queue = new PriorityQueue<(ImmutableStack<Point>, Point), long>();
+        queue.Enqueue((ImmutableStack<Point>.Empty.Push(start), Point.Right), 0);
 
         var maxScore = long.MaxValue;
-        var maxTileScore = new Dictionary<Pose, long>();
-        while (queue.TryDequeue(out var way, out var score))
+        var maxTileScore = new Dictionary<(Point, Point), long>();
+        while (queue.TryDequeue(out var state, out var score))
         {
-            var p = way.Peek();
-            if (!continueWalking(score - maxTileScore.GetValueOrDefault(p, maxScore)))
-                continue;
-            maxTileScore[p] = score;
-
-            void Enqueue(Pose p, long extraCost)
-                => queue.Enqueue(way.Push(p), score + extraCost);
-
-            switch (map[p.Loc + p.Dir])
+            var (way, dir) = state;
+            var pos = way.Peek();
+            
+            if (map[pos] == 'E')
             {
-                case 'E':
-                    maxScore = score+1;
-                    yield return (score+1, way.Push((p.Loc + p.Dir, p.Dir)));
-                    break;
-                case '.':
-                    Enqueue((p.Loc + p.Dir, p.Dir), 1);
-                    break;
+                maxScore = score;
+                yield return (score, way);
+                continue;
             }
-            Enqueue((p.Loc, p.Dir.RotateCW()), 1000);
-            Enqueue((p.Loc, p.Dir.RotateCCW()), 1000);
+
+            if (!continueWalking(score - maxTileScore.GetValueOrDefault((pos, dir), maxScore)))
+                continue;
+            maxTileScore[(pos, dir)] = score;
+            
+            void Enqueue(Point ndir, long extraScore)
+            {
+                if (map[pos + ndir] != '#')
+                    queue.Enqueue((way.Push(pos + ndir), ndir), score + extraScore);
+            }
+            Enqueue(dir, 1);
+            Enqueue(dir.RotateCW(), 1001);
+            Enqueue(dir.RotateCCW(), 1001);
         }
     }
 
@@ -51,7 +53,7 @@ class Day16 : Solution
     {
         long Solve(string input)
             => GetWinningPaths(input, scoreDelta => scoreDelta <= 0)
-                .SelectMany(p => p.Way.Select(wp => wp.Loc)).Distinct().Count();
+                .SelectMany(p => p.Way).Distinct().Count();
         Assert(Solve(Sample()), 45);
         return Solve(Input);
     }
