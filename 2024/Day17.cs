@@ -27,14 +27,14 @@ class Day17 : Solution<string, long>
 
             switch (programm[ip] & 7)
             {
-                case 0: a = a / (int)Math.Pow(2, Combo()); break;
+                case 0: a = a >> (int)Combo(); break;
                 case 1: b = b ^ Literal(); break;
                 case 2: b = Combo() % 8; break;
                 case 3: ip = (a != 0) ? Literal() - 2 : ip; break;
                 case 4: b = b ^ c; break;
                 case 5: yield return (int)(Combo() % 8); break;
-                case 6:  b = a / (int)Math.Pow(2, Combo()); break;
-                case 7:  c = a / (int)Math.Pow(2, Combo()); break;
+                case 6:  b = a >> (int)Combo(); break;
+                case 7:  c = a >> (int)Combo(); break;
             }
             ip += 2;
         }
