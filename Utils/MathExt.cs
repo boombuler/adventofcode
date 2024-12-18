@@ -118,4 +118,19 @@ class MathExt
             return sum;
         };
     }
+
+    public static T Bisect<T>(T min, T max, Func<T, bool> predicate)
+        where T : INumber<T>
+    {
+        var two = T.CreateChecked(2);
+        while (min < max - T.One)
+        {
+            var mid = (max + min) / two;
+            if (predicate(mid))
+                min = mid;
+            else
+                max = mid;
+        }
+        return min;
+    }
 }
