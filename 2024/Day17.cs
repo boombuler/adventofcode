@@ -13,17 +13,16 @@ class Day17 : Solution<string, long>
 
     private IEnumerable<int> Execute(long a, long b, long c, int[] programm)
     {
-        int ip = 0;
-        while (ip < programm.Length)
+        for (int ip = 0; ip < programm.Length; ip+=2)
         {
-            long Combo() => (programm[ip + 1] & 7) switch
+            int Literal() => programm[ip + 1] & 7;
+            long Combo() => Literal() switch
             {
                 4 => a,
                 5 => b,
                 6 => c,
                 int x => x
             };
-            int Literal() => programm[ip + 1] & 7;
 
             switch (programm[ip] & 7)
             {
@@ -36,7 +35,6 @@ class Day17 : Solution<string, long>
                 case 6:  b = a >> (int)Combo(); break;
                 case 7:  c = a >> (int)Combo(); break;
             }
-            ip += 2;
         }
     }
 
@@ -62,16 +60,15 @@ class Day17 : Solution<string, long>
         long min = long.MaxValue;
         while(open.TryPop(out var cur))
         {
-            for (int i = 0; i < 8; i++)
+            for (long a = cur.a; a < cur.a + 8; a++)
             {
-                var a = (cur.a << 3) ^ i;
                 if (Execute(a, b, c, programm).First() != programm[cur.index])
                     continue;
                 
                 if (cur.index == 0)
                     min = Math.Min(a, min);
                 else
-                    open.Push((a, cur.index - 1));
+                    open.Push((a<<3, cur.index - 1));
             }
         }
 
