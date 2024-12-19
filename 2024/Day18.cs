@@ -18,7 +18,7 @@ class Day18 : Solution<long, Point>
         long Solve(string input, Point size, int count)
         {
             var walls = Parser.IntPoint2D.List('\n').MustParse(input).Take(count).ToHashSet();
-            var pf = new PathFinder(new Rect2D<int>(Point.Origin, size) , walls);
+            var pf = new PathFinder(new Rect2D<int>(Point.Origin, size), walls);
             return pf.ShortestPath(size).Cost;
         }
 
@@ -28,7 +28,7 @@ class Day18 : Solution<long, Point>
 
     protected override Point Part2()
     {
-        Point Solve(string input, Point size)
+        Point Solve(string input, Point size, int start)
         {
             var bounds = new Rect2D<int>(Point.Origin, size);
             var walls = Parser.IntPoint2D.List('\n').MustParse(input).ToList();
@@ -36,10 +36,10 @@ class Day18 : Solution<long, Point>
             bool HasValidPath(int idx)
                 => new PathFinder(bounds, walls.Take(idx).ToHashSet()).ShortestPath(size).Cost >= 0;
 
-            return walls[MathExt.Bisect(0, walls.Count-1, HasValidPath)];
+            return walls[MathExt.Bisect(start, walls.Count-1, HasValidPath)];
         }
 
-        Assert(Solve(Sample(), (6, 6)), new Point(6,1));
-        return Solve(Input, (70, 70));
+        Assert(Solve(Sample(), (6, 6), 22), new Point(6,1));
+        return Solve(Input, (70, 70), 1024);
     }
 }
