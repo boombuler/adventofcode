@@ -35,7 +35,8 @@ class ErrorOut : OutputMode
             if (sb.Length == 0)
                 return;
 
-            sb.Append(new string(' ', maxLineLen - sb.Length));
+            if (sb.Length < maxLineLen)
+                sb.Append(new string(' ', maxLineLen - sb.Length));
 
             base.Write(" ║ ");
             base.Write(sb.ToString());
