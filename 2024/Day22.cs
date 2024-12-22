@@ -26,10 +26,10 @@ class Day22 : Solution
         long Solve(string input)
             => Generators(input)
                 .SelectMany(gen =>
-                    gen.Select(n => n % 10).Take(2000).SlidingWindow(5)
-                        .Select(wnd => (Key: (wnd[1] - wnd[0], wnd[2] - wnd[1], wnd[3] - wnd[2], wnd[4] - wnd[3]), Value: wnd[4]))
-                        .DistinctBy(wnd => wnd.Key))
-                .GroupBy(s => s.Key, g => g.Value)
+                    gen.Select(n => (int)(n % 10)).Take(2000)
+                    .Scan((Seq: 0, Value: 0), (last, digit) => (((last.Seq << 5) | (last.Value - digit + 9)) & 0x0FFFFF, digit))
+                    .Skip(4).DistinctBy(wnd => wnd.Seq))
+                .GroupBy(s => s.Seq, g => g.Value)
                 .Max(grp => grp.Sum());
 
         Assert(Solve("1\r\n2\r\n3\r\n2024"), 23);
