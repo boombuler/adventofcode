@@ -14,7 +14,7 @@ static class Parser
 
     public static Parser<string> Word { get; } = Expect(char.IsAsciiLetter).Many1().Text();
 
-    static Parser<char> Expect(Func<char, bool> predicate)
+    public static Parser<char> Expect(Func<char, bool> predicate)
         => new((input) =>
         {
             if (input.EOF)
@@ -41,21 +41,6 @@ static class Parser
         var values = SearchValues.Create(input);
         return Expect(c => !values.Contains(c));
     }
-
-    private static Parser<TValue[]> Sequence<TValue>(Parser<TValue>[] parsers)
-        => new((input) =>
-        {
-            var values = new TValue[parsers.Length];
-            for (int i = 0; i < parsers.Length; i++)
-            {
-                var res = parsers[i].Parse(input);
-                if (!res.HasValue)
-                    return res.Error;
-                values[i] = res.Value;
-                input = res.Input;
-            }
-            return new Result<TValue[]>(values, input);
-        });
 
     public static Parser<string> Str(string s)
         => new(input =>
