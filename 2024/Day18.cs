@@ -39,7 +39,7 @@ class Day18 : Solution<long, Point>
             return walls[MathExt.Bisect(start, walls.Count-1, HasValidPath)];
         }
 
-        Assert(Solve(Sample(), (6, 6), 22), new Point(6,1));
+        Assert(Solve(Sample(), (6, 6), 12), new Point(6,1));
         return Solve(Input, (70, 70), 1024);
     }
 }
