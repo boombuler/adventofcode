@@ -78,6 +78,9 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
     public IEnumerable<IEnumerable<T>> Rows()
         => Enumerable.Range(0, Height)
             .Select(y => Enumerable.Range(0, Width).Select(x => fValues[x, y]));
+    public IEnumerable<IEnumerable<T>> Columns()
+        => Enumerable.Range(0, Width)
+            .Select(x => Enumerable.Range(0, Height).Select(y => fValues[x, y]));
 
     private IEnumerable<(Point2D<int> Index, T Value)> GetIndexedValues()
     {
