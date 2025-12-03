@@ -4,22 +4,27 @@ class Day03 : Solution
 {
     private static IEnumerable<long> Solve(string input, int digits)
     {
-        static long FindLargest(string s, int digits, Func<string, int, long> find)
+        static long FindLargest(ReadOnlySpan<char> s, int digits)
         {
-            if (digits == 1)
-                return s.Max() - '0';
-            else if (s.Length == digits)
-                 return long.Parse(s);
-            else
-            {
-                long a = (s[0]-'0')*((long)Math.Pow(10, digits-1)) + find(s[1..], digits - 1);
-                long b = find(s[1..], digits);
-                return a>b?a:b;
-            }
-        }
-        var mem = Memoization.Recursive<string, int, long>(FindLargest);
+            if (digits == 0)
+                return 0;
 
-        return input.Lines().Select(line => mem(line, digits));
+            int max = 0;
+            int maxIndex = 0;
+            
+            for (int i = 0; i <= (s.Length - digits); i++)
+            {
+                if (s[i] - '0' is int cur && cur > max)
+                {
+                    max = cur;
+                    maxIndex = i;
+                }
+            }
+            long remaining = FindLargest(s.Slice(maxIndex + 1), digits - 1);
+            return (max * (long)Math.Pow(10, digits - 1)) + remaining;
+        }
+
+        return input.Lines().Select(line => FindLargest(line, digits));
     }
 
     protected override long? Part1()
