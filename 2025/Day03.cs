@@ -3,29 +3,15 @@
 class Day03 : Solution
 {
     private static IEnumerable<long> Solve(string input, int digits)
-    {
-        static long FindLargest(ReadOnlySpan<char> s, int digits)
-        {
-            if (digits == 0)
-                return 0;
-
-            int max = 0;
-            int maxIndex = 0;
-            
-            for (int i = 0; i <= (s.Length - digits); i++)
-            {
-                if (s[i] - '0' is int cur && cur > max)
+        => input.Lines().Select(s => 
+            Enumerable.Range(1, digits).Reverse()
+                .Aggregate((sum: 0L, txt: s), (seed, d) =>
                 {
-                    max = cur;
-                    maxIndex = i;
-                }
-            }
-            long remaining = FindLargest(s.Slice(maxIndex + 1), digits - 1);
-            return (max * (long)Math.Pow(10, digits - 1)) + remaining;
-        }
-
-        return input.Lines().Select(line => FindLargest(line, digits));
-    }
+                    var (max, idx) = seed.txt[..^(d - 1)]
+                        .Select((chr, idx) => (chr, idx))
+                        .MaxBy(x => x.chr);
+                    return (seed.sum * 10 + max - '0', seed.txt[(idx + 1)..]);
+                }).sum);
 
     protected override long? Part1()
     {
