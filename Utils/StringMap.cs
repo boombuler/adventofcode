@@ -92,3 +92,10 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
     public IEnumerator<(Point2D<int> Index, T Value)> GetEnumerator() => GetIndexedValues().GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetIndexedValues().GetEnumerator();
 }
+
+static class StringMap
+{
+    public static StringMap<T> Create<T>(string s, Func<char, T> selector)
+        => new StringMap<T>(s, selector);
+    public static StringMap<char> Create(string s) => new StringMap<char>(s, c => c);
+}
