@@ -27,6 +27,22 @@ record struct Range<T>(T Start, T Size) where T: INumber<T>
         return new Range<T>(olStart, olEnd - olStart);
     }
 
+    /// <summary>
+    /// Merges the ranges if they overlap
+    /// </summary>
+    public bool TryMerge(Range<T> other, out Range<T> merged)
+    {
+        if (other.Start > End || other.End < Start)
+        {
+            merged = default;
+            return false;
+        }
+        var newStart = T.Min(Start, other.Start);
+        var newEnd = T.Max(End, other.End);
+        merged = new Range<T>(newStart, newEnd - newStart);
+        return true;
+    }
+
     public readonly bool Contains(T value)
         => value >= Start && value < End;
 }
