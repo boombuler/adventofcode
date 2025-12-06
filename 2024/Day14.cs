@@ -12,13 +12,13 @@ class Day14 : Solution
         select (p, v)
     ).List(NL);
 
-    private Func<int, IEnumerable<Point>> GetRobotFactory(string input, Point mapSize)
+    private static Func<int, IEnumerable<Point>> GetRobotFactory(string input, Point mapSize)
     {
         var lst = InputParser.MustParse(input);
         return (time) => lst.Select(r => MathExt.Mod(r.Point + (r.Velocity * time), mapSize));
     }
 
-    private long GetSafetyFactor(string input, Point mapSize, int seconds = 100)
+    private static long GetSafetyFactor(string input, Point mapSize, int seconds = 100)
         => GetRobotFactory(input, mapSize)(seconds).Select(p => (p - mapSize / 2) switch
             {
                 ( > 0, > 0) => 1,
@@ -48,8 +48,8 @@ class Day14 : Solution
         ).Select((n, i) => new { n.X, n.Y, Index = i }).ToList();
 
         return MathExt.ChineseRemainder(
-            (variances.MinBy(n => n.X).Index, InputMapSize.X),
-            (variances.MinBy(n => n.Y).Index, InputMapSize.Y)
+            (variances.MinBy(n => n.X)!.Index, InputMapSize.X),
+            (variances.MinBy(n => n.Y)!.Index, InputMapSize.Y)
         ).a;
     }
 }

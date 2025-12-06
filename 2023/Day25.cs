@@ -5,15 +5,15 @@ using static Parser;
 class Day25 : Solution
 {
     private static readonly Func<string, (string A, string B)[]> ParseInput = (s) =>
-    (
+    [.. (
         from fr in Word.Token() + ":"
         from toList in Word.Token().Many1()
         select toList.Select(to => (fr, to))
-    ).List('\n').MustParse(s).SelectMany(res => res).ToArray();
+    ).List('\n').MustParse(s).SelectMany(res => res)];
 
-    class Node(string name, IEnumerable<string> edges = null)
+    class Node(string name, IEnumerable<string>? edges = null)
     {
-        public List<string> Edges { get; } = (edges ?? Enumerable.Empty<string>()).ToList();
+        public List<string> Edges { get; } = [.. (edges ?? [])];
 
         public string Name { get; } = name;
 

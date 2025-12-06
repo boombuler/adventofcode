@@ -7,7 +7,7 @@ public class AocClient
 {
     const string SESSION_COOKIE_FILE = "Session.user";
 
-    static HttpClient FHttpClient = CreateHttpClient();
+    static readonly HttpClient FHttpClient = CreateHttpClient();
     
     private static HttpClient CreateHttpClient()
     {
@@ -34,7 +34,7 @@ public class AocClient
         if (response.IsSuccessStatusCode)
         {
             await using var inputData = await response.Content.ReadAsStreamAsync();
-            string directory = Path.GetDirectoryName(cacheFile);
+            string directory = Path.GetDirectoryName(cacheFile) ?? throw new InvalidOperationException();
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             await using var fs = File.Create(cacheFile);

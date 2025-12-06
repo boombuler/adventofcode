@@ -4,14 +4,14 @@ class Day07 : Solution<string, int>
 {
     class Node
     {
-        public static readonly Func<string, Node> Parse = new Regex(@"(?<Name>\w+) \((?<Weight>\d+)\)(\s*->\s*((?<ChildNames>\w+)(,?\s*))+)?", RegexOptions.Compiled).ToFactory<Node>();
+        public static readonly Func<string, Node?> Parse = new Regex(@"(?<Name>\w+) \((?<Weight>\d+)\)(\s*->\s*((?<ChildNames>\w+)(,?\s*))+)?", RegexOptions.Compiled).ToFactory<Node>();
 
         private readonly List<Node> fChildren = [];
 
         public string Name { get; }
         public int Weight { get; }
         public ImmutableArray<string> ChildNames { get; }
-        public Node Parent { get; private set; }
+        public Node? Parent { get; private set; }
 
         private Node(string name, int weight, string[] childNames)
         {
@@ -28,7 +28,7 @@ class Day07 : Solution<string, int>
 
         public int TotalWeight => Weight + fChildren.Sum(c => c.TotalWeight);
 
-        public (Node, int) GetUnbalancedNode()
+        public (Node?, int) GetUnbalancedNode()
         {
             var groups = fChildren.GroupBy(c => c.TotalWeight).OrderBy(g => g.Count()).ToList();
             var targetWeight = groups.Last().Key;
@@ -40,7 +40,7 @@ class Day07 : Solution<string, int>
 
     private static Node GetRoot(string input)
     {
-        var nodes = input.Lines().Select(Node.Parse).ToDictionary(n => n.Name);
+        var nodes = input.Lines().Select(Node.Parse).NonNull().ToDictionary(n => n.Name);
 
         foreach (var parent in nodes.Values)
             foreach (var childName in parent.ChildNames)

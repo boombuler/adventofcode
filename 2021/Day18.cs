@@ -6,15 +6,15 @@ class Day18 : Solution
 {
     class SFNumber
     {
-        private SFNumber fLeft;
-        private SFNumber fRight;
-        public SFNumber Parent { get; private set; }
-        public SFNumber Left
+        private SFNumber? fLeft;
+        private SFNumber? fRight;
+        public SFNumber? Parent { get; private set; }
+        public SFNumber? Left
         {
             get => fLeft;
             set => SetNode(ref fLeft, value);
         }
-        public SFNumber Right
+        public SFNumber? Right
         {
             get => fRight;
             set => SetNode(ref fRight, value);
@@ -22,7 +22,7 @@ class Day18 : Solution
         public int Value { get; set; }
         public bool IsLeaf => Left == null;
 
-        public long Magnitude => IsLeaf ? Value : (3 * Left.Magnitude + 2 * Right.Magnitude);
+        public long Magnitude => IsLeaf ? Value : ((3 * Left?.Magnitude + 2 * Right?.Magnitude) ?? throw new InvalidOperationException());
 
         private SFNumber() { }
 
@@ -49,13 +49,11 @@ class Day18 : Solution
             return stack.Peek();
         }
 
-        private void SetNode(ref SFNumber valueStore, SFNumber newValue)
+        private void SetNode(ref SFNumber? valueStore, SFNumber? newValue)
         {
-            if (valueStore != null)
-                valueStore.Parent = null;
+            valueStore?.Parent = null;
             valueStore = newValue;
-            if (valueStore != null)
-                valueStore.Parent = this;
+            valueStore?.Parent = this;
         }
 
         public SFNumber Reduce()
@@ -65,7 +63,7 @@ class Day18 : Solution
             return this;
         }
 
-        private static SFNumber Neighbour(SFNumber node, Func<SFNumber, SFNumber> wantedSide, Func<SFNumber, SFNumber> otherSide)
+        private static SFNumber? Neighbour(SFNumber node, Func<SFNumber, SFNumber?> wantedSide, Func<SFNumber, SFNumber?> otherSide)
         {
             while (node.Parent != null && otherSide(node.Parent) != node)
                 node = node.Parent;
@@ -73,9 +71,9 @@ class Day18 : Solution
             if (node.Parent == null)
                 return null;
 
-            node = wantedSide(node.Parent);
+            node = wantedSide(node.Parent) ?? throw new InvalidOperationException();
             while (!node.IsLeaf)
-                node = otherSide(node);
+                node = otherSide(node) ?? throw new InvalidOperationException();
             return node;
         }
 
@@ -83,6 +81,8 @@ class Day18 : Solution
         {
             if (IsLeaf)
                 return false;
+            if (Left == null || Right == null)
+                throw new InvalidOperationException();
 
             if (lvl >= 4 && Left.IsLeaf && Right.IsLeaf)
             {
@@ -102,7 +102,7 @@ class Day18 : Solution
         private bool Split()
         {
             if (!IsLeaf)
-                return Left.Split() || Right.Split();
+                return (Left?.Split() ?? false) || (Right?.Split() ?? false);
             if (Value >= 10)
             {
                 var res = ((decimal)Value) / 2;

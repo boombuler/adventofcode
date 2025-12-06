@@ -18,10 +18,8 @@ class Day14 : Solution
 
         static HashBox()
         {
-            fHexLookup = Enumerable.Range(0, 256)
-                .Select(b => b.ToString("x2"))
-                .ToArray();
-            fHexCharLookup = Enumerable.Range(0, 16).Select(i => (byte)(i.ToString("x")[0])).ToArray();
+            fHexLookup = [.. Enumerable.Range(0, 256).Select(b => b.ToString("x2"))];
+            fHexCharLookup = [.. Enumerable.Range(0, 16).Select(i => (byte)(i.ToString("x")[0]))];
         }
 
         private static string DoHash(string value, int rounds)
@@ -47,7 +45,7 @@ class Day14 : Solution
 
         public string Get(int number)
         {
-            if (fHashes.TryGetValue(number, out string hash))
+            if (fHashes.TryGetValue(number, out var hash))
                 return hash;
 
             var newHashes = Enumerable.Range(number, 1_000)

@@ -2,14 +2,14 @@
 
 class Day20 : Solution
 {
-    private long Solve(string input, int cheatTime, int minTimeSaved)
+    private static long Solve(string input, int cheatTime, int minTimeSaved)
     {
         var map = input.AsMap();
         var start = map.Find('S');
 
         var path = (Cur: start, Last: start).Unfold(from =>
-            (from.Cur.Neighbours().FirstOrDefault(n => n != from.Last && map.GetValueOrDefault(n) != '#'), from.Cur)
-        ).Select(n => n.Cur).TakeWhile(n => n != null).Prepend(start).ToList();
+            (from.Cur?.Neighbours().FirstOrDefault(n => n != from.Last && map.GetValueOrDefault(n) != '#'), from.Cur)
+        ).Select(n => n.Cur).TakeWhile(n => n != null).Prepend(start).Select(n => n!).ToList();
 
         int count = 0;
         for (int s = 0; s < path.Count - minTimeSaved; s++)
@@ -33,7 +33,6 @@ class Day20 : Solution
         Assert(Solve(Sample(), 2, 20), 5);
         return Solve(Input, 2, 100);
     }
-
 
     protected override long? Part2()
     {

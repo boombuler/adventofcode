@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Utils;
 
-record AsmOperation<TOpCode>(TOpCode Kind, string X, string Y) where TOpCode : struct
+record AsmOperation<TOpCode>(TOpCode Kind, string? X, string? Y) where TOpCode : struct
 {
     private static readonly char[] Separators = [' ', ','];
     public static AsmOperation<TOpCode> Parse(string line)

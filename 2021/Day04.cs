@@ -40,7 +40,7 @@ class Day04 : Solution
             var result = boards.Select(b => new { Board = b, Score = b.MarkNumber(n) }).Where(n => n.Score.HasValue).ToList();
             foreach (var res in result)
             {
-                yield return res.Score.Value;
+                yield return res.Score!.Value;
                 boards.Remove(res.Board);
             }
         }

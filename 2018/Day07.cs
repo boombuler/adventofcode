@@ -11,8 +11,8 @@ class Day07 : Solution<string, int>
 
         public TaskList(string dependencies)
         {
-            fDependencies = dependencies.Lines().Select(ParseDep).ToList();
-            fOpen = fDependencies.SelectMany(d => new[] { d.Name, d.DependsOn }).Distinct().ToList();
+            fDependencies = [.. dependencies.Lines().Select(ParseDep).NonNull()];
+            fOpen = [.. fDependencies.SelectMany(d => new[] { d.Name, d.DependsOn }).Distinct()];
         }
 
         public bool TryDequeueTask(out char task)
@@ -33,7 +33,7 @@ class Day07 : Solution<string, int>
         }
     }
 
-    private static readonly Func<string, Dependency> ParseDep = new Regex(@"Step (?<DependsOn>\w) must be finished before step (?<Name>\w) can begin\.", RegexOptions.Compiled).ToFactory<Dependency>();
+    private static readonly Func<string, Dependency?> ParseDep = new Regex(@"Step (?<DependsOn>\w) must be finished before step (?<Name>\w) can begin\.", RegexOptions.Compiled).ToFactory<Dependency>();
 
     private static string GetExecutionOrder(string dependencies)
     {

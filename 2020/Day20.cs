@@ -4,7 +4,7 @@ class Day20 : Solution
 {
     class Tile
     {
-        private List<Tile> fRotations;
+        private readonly List<Tile> fRotations;
         public long ID { get; }
         public int Size => Rows.Length;
         public string[] Rows { get; }
@@ -17,42 +17,40 @@ class Day20 : Solution
             : this(id, rows, null)
         {
         }
-        private Tile(long id, string[] rows, List<Tile> rotations)
+        private Tile(long id, string[] rows, List<Tile>? rotations)
         {
             (ID, Rows) = (id, rows);
-            Left = new string(Rows.Select((r) => r[0]).ToArray());
-            Right = new string(Rows.Select((r) => r[Size - 1]).ToArray());
+            Left = new string([.. Rows.Select((r) => r[0])]);
+            Right = new string([.. Rows.Select((r) => r[Size - 1])]);
             if (rotations != null)
             {
                 fRotations = rotations;
                 fRotations.Add(this);
             }
             else
-                BuildRotations();
+            {
+                fRotations = [this];
+                Rotate().Rotate().Rotate().VFlip().Rotate().Rotate().Rotate();
+            }
         }
 
         private Tile VFlip()
-            => new(ID, Rows.Reverse().ToArray(), fRotations);
+            => new(ID, [.. Rows.Reverse()], fRotations);
 
         private Tile Rotate()
         {
             var size = Size;
             var newRows = Enumerable.Range(0, size).Select(y =>
-                new string(Enumerable.Range(0, size).Select(x => Rows[x][size - 1 - y]).ToArray())
+                new string([.. Enumerable.Range(0, size).Select(x => Rows[x][size - 1 - y])])
             ).ToArray();
             return new Tile(ID, newRows, fRotations);
         }
         public IEnumerable<Tile> GetRotations() => fRotations;
-        private void BuildRotations()
-        {
-            fRotations = [this];
-            Rotate().Rotate().Rotate().VFlip().Rotate().Rotate().Rotate();
-        }
 
         public Tile WithoutBorder()
         {
             var len = Size - 2;
-            return new Tile(ID, Rows.Skip(1).Take(len).Select(r => r.Substring(1, len)).ToArray());
+            return new Tile(ID, [.. Rows.Skip(1).Take(len).Select(r => r.Substring(1, len))]);
         }
     }
 
@@ -68,18 +66,18 @@ class Day20 : Solution
         }
     }
 
-    private Tile[][] Solve(string input)
+    private static Tile?[][] Solve(string input)
     {
         var items = ReadTiles(input).ToList();
         var size = (int)Math.Sqrt(items.Count);
-        Tile[][] grid = Enumerable.Range(0, size).Select(_ => new Tile[size]).ToArray();
+        Tile?[][] grid = [.. Enumerable.Range(0, size).Select(_ => new Tile[size])];
 
         bool FindSolutions(int idx)
         {
             int row = idx / size;
             int col = idx % size;
-            var topEdge = row > 0 ? grid[row - 1][col].Bottom : null;
-            var leftEdge = col > 0 ? grid[row][col - 1].Right : null;
+            var topEdge = row > 0 ? grid[row - 1][col]?.Bottom : null;
+            var leftEdge = col > 0 ? grid[row][col - 1]?.Right : null;
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -106,20 +104,18 @@ class Day20 : Solution
             return false;
         }
         if (!FindSolutions(0))
-        {
-            Error("No solution -.-");
-            return null;
-        }
+            throw new InvalidOperationException("No solution");
+
         return grid;
     }
 
-    private long GetCornersValue(string inputFile)
+    private static long GetCornersValue(string inputFile)
     {
         var grid = Solve(inputFile);
-        return grid.First().First().ID *
-            grid.First().Last().ID *
-            grid.Last().First().ID *
-            grid.Last().Last().ID;
+        return (grid.First().First()?.ID *
+            grid.First().Last()?.ID *
+            grid.Last().First()?.ID *
+            grid.Last().Last()?.ID) ?? 0;
     }
 
     private long CountMonsterPixels(Tile image)
@@ -162,7 +158,7 @@ class Day20 : Solution
         // Solve input and merge to single tile.
         var result = Solve(inputFile).SelectMany(tileRow =>
         {
-            var tiles = tileRow.Select(tr => tr.WithoutBorder()).ToList();
+            var tiles = tileRow.NonNull().Select(tr => tr.WithoutBorder()).ToList();
             return Enumerable.Range(0, tiles[0].Size)
                 .Select(i => tiles.Select(t => t.Rows[i]).Aggregate(string.Concat));
         }).ToArray();

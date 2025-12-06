@@ -26,7 +26,7 @@ class Day22 : Solution
                 if (recursive && CheckEndlessLoop())
                     return (true, p1);
 
-                (var v1, var v2) = (p1.First.Value, p2.First.Value);
+                (var v1, var v2) = (p1.First!.Value, p2.First!.Value);
                 p1.RemoveFirst(); 
                 p2.RemoveFirst();
 

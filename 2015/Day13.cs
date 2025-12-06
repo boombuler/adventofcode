@@ -10,7 +10,7 @@ class Day13 : Solution
         {
             var m = ParseRule.Match(line);
             if (!m.Success)
-                throw new Exception();
+                throw new InvalidInputException();
 
             long amount = long.Parse(m.Groups["amount"].Value);
             if (m.Groups["gol"].Value == "lose")

@@ -4,7 +4,7 @@ class Day24 : Solution
 {
     record Connector(int A, int B)
     {
-        public static readonly Func<string, Connector> Parse = new Regex(@"(?<A>\d+)/(?<B>\d+)").ToFactory<Connector>();
+        public static readonly Func<string, Connector?> Parse = new Regex(@"(?<A>\d+)/(?<B>\d+)").ToFactory<Connector>();
     }
 
     record Bridge
@@ -26,7 +26,7 @@ class Day24 : Solution
 
     private static IEnumerable<Bridge> BuildBridges(string input)
     {
-        var connections = input.Lines().Select(Connector.Parse)
+        var connections = input.Lines().Select(Connector.Parse).NonNull()
             .SelectMany(c => new[] { (c.A, c), (c.B, c) })
             .ToLookup(x => x.Item1, x => x.c);
 

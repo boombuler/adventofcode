@@ -19,7 +19,7 @@ class Day19 : Solution
             return a(s, i).Union(b(s, i)).Distinct();
         };
 
-    private long CheckRule(string input, string overrides = null)
+    private long CheckRule(string input, string? overrides = null)
     {
         var ruleTexts = input.Lines().TakeWhile(l => !string.IsNullOrEmpty(l))
             .Select(l => l.Split(':', 2))
@@ -32,7 +32,7 @@ class Day19 : Solution
 
         RuleTest BuildRule(int no)
         {
-            if (ruleMatch.TryGetValue(no, out RuleTest res))
+            if (ruleMatch.TryGetValue(no, out var res))
                 return res;
 
             var text = ruleTexts[no];

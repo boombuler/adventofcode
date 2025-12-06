@@ -7,7 +7,7 @@ class Day24 : Solution
 {
     class Group
     {
-        public static readonly Func<string, Group> Parse = new Regex(@"(?<units>\d+) units each with (?<hp>\d+) hit points (\(((; )?((immune to ((, )?(?<immune>\w+))+)|(weak to ((, )?(?<weak>\w+))+)))+\) )?with an attack that does (?<damage>\d+) (?<damageType>\w+) damage at initiative (?<initiative>\d+)").ToFactory<Group>();
+        public static readonly Func<string, Group?> Parse = new Regex(@"(?<units>\d+) units each with (?<hp>\d+) hit points (\(((; )?((immune to ((, )?(?<immune>\w+))+)|(weak to ((, )?(?<weak>\w+))+)))+\) )?with an attack that does (?<damage>\d+) (?<damageType>\w+) damage at initiative (?<initiative>\d+)").ToFactory<Group>();
         public int Units { get; private set; }
         public int HP { get; private set; }
         public FrozenSet<string> Weaknesses { get; }
@@ -49,7 +49,7 @@ class Day24 : Solution
 
         public void BoostBy(int amount) => Damage += amount;
 
-        public Group SelectTarget(IEnumerable<Group> groups)
+        public Group? SelectTarget(IEnumerable<Group> groups)
         {
             var (_, max) = groups.MinMaxBy(g => (GetDamageAmount(g), g.EffectivePower, g.Initiative));
             if (GetDamageAmount(max) > 0)
@@ -70,7 +70,7 @@ class Day24 : Solution
                 team = l.TrimEnd(':');
             else
             {
-                var g = Group.Parse(l);
+                var g = Group.Parse(l) ?? throw new InvalidInputException();
                 g.ImmuneSystem = team == "Immune System";
                 yield return g;
             }

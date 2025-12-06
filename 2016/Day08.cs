@@ -12,13 +12,13 @@ class Day08 : Solution<long?, string>
         var screen = new bool[screenHeight, screenWidth];
         foreach (var cmd in commands.Lines())
         {
-            if (ParseRect.TryMatch(cmd, out Rect rect))
+            if (ParseRect.TryMatch(cmd, out Rect? rect))
             {
                 for (int x = 0; x < rect.Width; x++)
                     for (int y = 0; y < rect.Height; y++)
                         screen[y, x] = true;
             }
-            else if (ParseRotate.TryMatch(cmd, out Rotate rot))
+            else if (ParseRotate.TryMatch(cmd, out Rotate? rot))
             {
                 for (int o = 0; o < rot.Offset; o++)
                 {

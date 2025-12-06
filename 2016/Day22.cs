@@ -3,12 +3,12 @@
 class Day22 : Solution
 {
     record Node(int X, int Y, int Used, int Avail, int Size, int UsePerc);
-    private static readonly Func<string, Node> NodeFactory
+    private static readonly Func<string, Node?> NodeFactory
         = new Regex(@"/dev/grid/node-x(?<X>\d+)-y(?<Y>\d+)\s*(?<Size>\d+)T\s*(?<Used>\d+)T\s*(?<Avail>\d+)T\s*(?<UsePerc>\d+)%", RegexOptions.Compiled).ToFactory<Node>();
 
     private static int GetViablePairCount(string df)
     {
-        var nodes = df.Lines().Skip(2).Select(NodeFactory).ToList();
+        var nodes = df.Lines().Skip(2).Select(NodeFactory).NonNull().ToList();
         return nodes.Where(na => na.Used > 0)
             .Sum(na => nodes.Where(nb => nb != na && nb.Avail >= na.Used).Count());
     }
@@ -17,12 +17,12 @@ class Day22 : Solution
 
     private int FindShortestPath(string df, bool debug = false)
     {
-        var nodes = df.Lines().Skip(2).Select(NodeFactory).ToList();
+        var nodes = df.Lines().Skip(2).Select(NodeFactory).NonNull().ToList();
         var minSize = nodes.Min(n => n.Size);
         var maxX = nodes.Max(n => n.X);
 
-        Node wallStart = null;
-        Node empty = null;
+        Node? wallStart = null;
+        Node? empty = null;
 
         foreach (var grp in nodes.GroupBy(n => n.Y).OrderBy(g => g.Key))
         {
@@ -47,6 +47,8 @@ class Day22 : Solution
             if (debug)
                 Debug(s);
         }
+        if (empty == null || wallStart == null)
+            throw new InvalidOperationException("Could not find empty node or wall start.");
 
         return (empty.X - (wallStart.X - 1)) // Move left of wall
             + empty.Y                        // Move to top row

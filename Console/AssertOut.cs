@@ -27,7 +27,7 @@ class AssertOut : OutputMode
                 base.Write(" ");
                 base.Write(errorTxt);
             }
-            base.WriteLine(null);
+            base.WriteLine(string.Empty);
         }
     }
 }

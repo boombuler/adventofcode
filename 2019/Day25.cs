@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode._2019;
 
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 
 class Day25 : Solution
 {
@@ -17,7 +18,7 @@ class Day25 : Solution
     private static IEnumerable<Room> ParseRooms(IEnumerable<string> Input)
     {
         var inp = Input.GetEnumerator();
-        string buffer = null;
+        string? buffer = null;
         string NextLine()
         {
             if (buffer != null)
@@ -30,7 +31,7 @@ class Day25 : Solution
                 /* do nothing */;
             return inp.Current;
         }
-        bool ListItem(out string s)
+        bool ListItem([NotNullWhen(true)]out string? s)
         {
             if (inp.MoveNext() && !string.IsNullOrEmpty(inp.Current))
             {
@@ -58,12 +59,12 @@ class Day25 : Solution
             {
                 if (next == "Doors here lead:")
                 {
-                    while (ListItem(out string s))
-                        doors |= (Door)Enum.Parse(typeof(Door), s, true);
+                    while (ListItem(out var s))
+                        doors |= Enum.Parse<Door>(s, true);
                 }
                 else if (next == "Items here:")
                 {
-                    while (ListItem(out string s))
+                    while (ListItem(out var s))
                         items = items.Add(s);
                 }
                 else
@@ -95,11 +96,11 @@ class Day25 : Solution
 
         var allItems = new HashSet<string>();
 
-        (ImmutableList<string> gatherItems, ImmutableList<string> goToCheckPoint) Explore(Door src, ImmutableList<string> gatherItems, ImmutableList<string> wp)
+        (ImmutableList<string>? gatherItems, ImmutableList<string>? goToCheckPoint) Explore(Door src, ImmutableList<string> gatherItems, ImmutableList<string> wp)
         {
             var room = ParseRooms(vm.RunASCIICommands(gatherItems).Select(n => n.Result)).Last();
-            ImmutableList<string> itemInstructions = null;
-            ImmutableList<string> wpInstructions = null;
+            ImmutableList<string>? itemInstructions = null;
+            ImmutableList<string>? wpInstructions = null;
             if (room.Name == CHECKPOINT)
             {
                 var measure = Enum.GetValues<Door>().Single(d => d != src && room.Doors.HasFlag(d));
@@ -133,6 +134,8 @@ class Day25 : Solution
             return (itemInstructions, wpInstructions);
         }
         var (gather, checkpt) = Explore(0, [], []);
+        if (gather == null || checkpt == null)
+            throw new InvalidOperationException("Failed to explore map");
         var savePt = vm.RunASCIICommands(gather.Concat(checkpt.Take(checkpt.Count - 1))).Select(n => n.State).Last();
 
         var testCommand = checkpt.Last();

@@ -4,12 +4,12 @@ class Day20 : Solution
 {
     class PulseQueue
     {
-        private readonly Queue<(Module from, Module to, bool value)> fPendingSignals = new();
+        private readonly Queue<(Module? from, Module? to, bool value)> fPendingSignals = new();
         public long LowCount { get; private set; }
         public long HighCount { get; private set; }
         public long ButtonPresses { get; private set; }
 
-        public void Send(Module from, Module to, bool value)
+        public void Send(Module? from, Module? to, bool value)
         {
             if (value)
                 HighCount++;
@@ -23,7 +23,7 @@ class Day20 : Solution
             ButtonPresses++;
             Send(null, to, false);
             while(fPendingSignals.TryDequeue(out var cur))
-                cur.to.Pulse(this, cur.from, cur.value);
+                cur.to?.Pulse(this, cur.from, cur.value);
         }
     }
 
@@ -41,7 +41,7 @@ class Day20 : Solution
         {
         }
 
-        public virtual void Pulse(PulseQueue queue, Module sender, bool hi)
+        public virtual void Pulse(PulseQueue queue, Module? sender, bool hi)
         {
             foreach (var mod in fOutgoing)
                 queue.Send(this, mod, hi);
@@ -51,7 +51,7 @@ class Day20 : Solution
     class FlipFlop : Module
     {
         private bool fValue = false;
-        public override void Pulse(PulseQueue queue, Module sender, bool hi)
+        public override void Pulse(PulseQueue queue, Module? sender, bool hi)
         {
             if (!hi)
             {
@@ -67,7 +67,7 @@ class Day20 : Solution
 
         protected override void ConnectedFrom(Module module) => Incoming.Add(module, false);
 
-        public override void Pulse(PulseQueue queue, Module sender, bool hi)
+        public override void Pulse(PulseQueue queue, Module? sender, bool hi)
         {
             if (sender != null)
                 Incoming[sender] = hi;
@@ -79,15 +79,17 @@ class Day20 : Solution
     class RxModule : Module
     {
         private readonly Dictionary<Module, long> fDividers = [];
-        private Conjunction fParent = null;
+        private Conjunction? fParent = null;
 
         public long? Result { get; private set; }
 
         protected override void ConnectedFrom(Module module) 
             => fParent = (module as Conjunction) ?? throw new InvalidOperationException("Parent has to be a Conjunction");
 
-        public override void Pulse(PulseQueue queue, Module sender, bool hi)
+        public override void Pulse(PulseQueue queue, Module? sender, bool hi)
         {
+            if (fParent == null)
+                throw new InvalidOperationException();
             var high = fParent.Incoming.Where(kvp => kvp.Value).Select(kvp => kvp.Key);
             foreach (var hm in high)
             {
@@ -100,7 +102,7 @@ class Day20 : Solution
         }
     }
 
-    private static (Module Broadcaster, RxModule Rx) BuildNetwork(string input)
+    private static (Module Broadcaster, RxModule? Rx) BuildNetwork(string input)
     {
         var modules = new Dictionary<string, Module>();
         var connections = new List<(Module, string)>();
@@ -148,6 +150,8 @@ class Day20 : Solution
     protected override long? Part2()
     {
         var (bc, rx) = BuildNetwork(Input);
+        if (rx == null)
+            throw new InvalidOperationException();
         var queue = new PulseQueue();
         while (!rx.Result.HasValue)
             queue.PushButton(bc);

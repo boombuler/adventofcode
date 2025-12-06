@@ -6,7 +6,7 @@ sealed class Parser<T>(Parser<T>.ParseDelegate fn)
     public Result<T> Parse(Input input)
         => fn(input);
 
-    public Parser<T> Opt(T fallback = default)
+    public Parser<T> Opt(T fallback)
         => new((input) =>
         {
             var res = fn(input);

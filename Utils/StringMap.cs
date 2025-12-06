@@ -2,8 +2,6 @@
 
 using System.Collections;
 
-#nullable enable
-
 class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
 {
     private readonly T[,] fValues;
@@ -93,11 +91,4 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
 
     public IEnumerator<(Point2D<int> Index, T Value)> GetEnumerator() => GetIndexedValues().GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetIndexedValues().GetEnumerator();
-}
-
-static class StringMap
-{
-    public static StringMap<T> Create<T>(string s, Func<char, T> selector)
-        => new(s, selector);
-    public static StringMap<char> Create(string s) => new(s, c => c);
 }

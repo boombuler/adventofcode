@@ -4,7 +4,7 @@ class Day25 : Solution<int?>
 {
     public record Coord(int X, int Y, int Z, int T)
     {
-        public static readonly Func<string, Coord> Parse = new Regex(@"(?<X>-?\d+),(?<Y>-?\d+),(?<Z>-?\d+),(?<T>-?\d+)").ToFactory<Coord>();
+        public static readonly Func<string, Coord?> Parse = new Regex(@"(?<X>-?\d+),(?<Y>-?\d+),(?<Z>-?\d+),(?<T>-?\d+)").ToFactory<Coord>();
 
         public bool InRangeOf(Coord other)
             => (Math.Abs(other.X - X) + Math.Abs(other.Y - Y) + Math.Abs(other.Z - Z) + Math.Abs(other.T - T)) <= 3;
@@ -12,7 +12,7 @@ class Day25 : Solution<int?>
 
     private static int CountConstellation(string input)
     {
-        var points = input.Lines().Select(Coord.Parse).ToList();
+        var points = input.Lines().Select(Coord.Parse).NonNull().ToList();
         var groups = points.ToDictionary(p => p, p => new HashSet<Coord>() { p });
         var constellations = groups.Values.ToHashSet();
 

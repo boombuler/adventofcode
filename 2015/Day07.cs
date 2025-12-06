@@ -6,17 +6,19 @@ class Day07 : Solution
     {
         Intermediate, AND, OR, NOT, LSHIFT, RSHIFT
     }
-    record Instruction(string Arg0, string Wire, string Arg1 = null, Operation Op = Operation.Intermediate)
+    record Instruction(string Arg0, string Wire, string? Arg1 = null, Operation Op = Operation.Intermediate)
     {
-        public static Func<string, Instruction> Parse = new Regex(@"(((?<Arg1>(\d+|\w+))\s)?(?<Op>NOT|RSHIFT|LSHIFT|OR|AND)\s)?(?<Arg0>\d+|\w+)\s->\s(?<Wire>\w+)").ToFactory<Instruction>();
+        public static Func<string, Instruction?> Parse = new Regex(@"(((?<Arg1>(\d+|\w+))\s)?(?<Op>NOT|RSHIFT|LSHIFT|OR|AND)\s)?(?<Arg0>\d+|\w+)\s->\s(?<Wire>\w+)").ToFactory<Instruction>();
     }
 
     private static ushort TestWire(string instructions, string wire, (string wire, ushort value)? wireOverride = null)
     {
         var wireNet = new Dictionary<string, Lazy<ushort>>();
 
-        Func<ushort> ValueOf(string v)
+        Func<ushort> ValueOf(string? v)
         {
+            if (v == null) 
+                return () => throw new InvalidInputException();
             if (ushort.TryParse(v, out ushort val))
                 return () => val;
             return () => wireNet[v].Value;
@@ -25,6 +27,8 @@ class Day07 : Solution
 
         foreach (var instruction in instructions.Lines().Select(Instruction.Parse))
         {
+            if (instruction == null)
+                throw new InvalidInputException();
             var arg0 = ValueOf(instruction.Arg0);
             var arg1 = ValueOf(instruction.Arg1);
             wireNet[instruction.Wire] = new Lazy<ushort>(instruction.Op switch {

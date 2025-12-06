@@ -30,14 +30,14 @@ partial class Day21 : Solution
 
     class ExpressionMonkey : IMonkey
     {
-        public IMonkey Left { get; set; }
-        public IMonkey Right { get; set; }
-        public MonkeyExpression Expression { get; init; }
+        public IMonkey? Left { get; set; }
+        public IMonkey? Right { get; set; }
+        public required MonkeyExpression Expression { get; init; }
         
         public long CalcValue()
         {
-            var l = Left.CalcValue();
-            var r = Right.CalcValue();
+            var l = Left?.CalcValue() ?? throw new InvalidOperationException();
+            var r = Right?.CalcValue() ?? throw new InvalidOperationException();
             return Expression.Operation switch
             {
                 '+' => l + r,
@@ -47,12 +47,18 @@ partial class Day21 : Solution
                 _ => throw new NotImplementedException()
             };
         }
-        
+
         public bool RequiresHumanInput()
-            => Left.RequiresHumanInput() || Right.RequiresHumanInput();
+        {
+            if (Left == null || Right == null)
+                throw new InvalidOperationException();
+            return Left.RequiresHumanInput() || Right.RequiresHumanInput();
+        }
 
         public long SolveForHuman(long result)
         {
+            if (Left == null || Right == null)
+                throw new InvalidOperationException();
             var humanLeft = Left.RequiresHumanInput();
             if (Expression.Name == ROOT)
                 return humanLeft ? Left.SolveForHuman(Right.CalcValue()) : Right.SolveForHuman(Left.CalcValue());
@@ -87,9 +93,9 @@ partial class Day21 : Solution
         
         foreach (var line in input.Lines())
         {
-            if (ValueMonkey.GetParser().TryMatch(line, out ValueMonkey vm))
+            if (ValueMonkey.GetParser().TryMatch(line, out ValueMonkey? vm))
                 result[vm.Name] = vm;
-            else if (MonkeyExpression.GetParser().TryMatch(line, out MonkeyExpression me))
+            else if (MonkeyExpression.GetParser().TryMatch(line, out MonkeyExpression? me))
                 result[me.Name] = new ExpressionMonkey() { Expression = me };
         }
         foreach(var em in result.Values.OfType<ExpressionMonkey>())

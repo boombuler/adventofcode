@@ -36,7 +36,7 @@ class Day20 : Solution
 
                     var otherLetterPos = pos - (waypoint - pos);
                     var otherLetter = GetCh(otherLetterPos);
-                    var name = pos.CompareTo(otherLetterPos) < 0 ? new string(new char[] { ch, otherLetter }) : new string(new char[] { otherLetter, ch });
+                    var name = pos.CompareTo(otherLetterPos) < 0 ? new string([ch, otherLetter]) : new string([otherLetter, ch]);
                     var (targetRing, otherRing) = (pos.X <= 1 || pos.Y <= 1 || pos.X >= width || pos.Y >= height) ? (outerPortals, innerPortals) : (innerPortals, outerPortals);
                     targetRing[name] = waypoint;
                     portPos[waypoint] = (name, otherRing);
@@ -46,7 +46,7 @@ class Day20 : Solution
 
         return (portPos.ToFrozenDictionary(
                 kvp => kvp.Key,
-                kvp => new Portal(kvp.Value.Name, kvp.Value.Other.GetValueOrDefault(kvp.Value.Name), kvp.Value.Other == innerPortals ? -1 : 1)
+                kvp => new Portal(kvp.Value.Name, kvp.Value.Other.GetValueOrDefault(kvp.Value.Name) ?? Point2D.Origin, kvp.Value.Other == innerPortals ? -1 : 1)
             ), walkable.ToFrozenSet());
     }
 

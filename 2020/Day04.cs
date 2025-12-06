@@ -92,7 +92,7 @@ class Day04 : Solution
     {
         foreach (var validationRule in ValidationRules)
         {
-            if (!passport.TryGetValue(validationRule.Key, out string value))
+            if (!passport.TryGetValue(validationRule.Key, out var value))
                 return false;
             if (!validationRule.Value(value))
                 return false;

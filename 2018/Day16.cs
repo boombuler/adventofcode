@@ -4,7 +4,7 @@ class Day16 : Solution
 {
     record SampleRow(int OpCode, int A, int B, int C, int[] Before, int[] After)
     {
-        public static Func<string, SampleRow> Parse = new Regex(@"Before:\s*\[((, )?(?<Before>\d+))+\]\n(?<OpCode>\d+) (?<A>\d+) (?<B>\d+) (?<C>\d+)\nAfter:\s*\[((, )?(?<After>\d+))+\]", RegexOptions.Compiled | RegexOptions.Multiline).ToFactory<SampleRow>();
+        public static Func<string, SampleRow?> Parse = new Regex(@"Before:\s*\[((, )?(?<Before>\d+))+\]\n(?<OpCode>\d+) (?<A>\d+) (?<B>\d+) (?<C>\d+)\nAfter:\s*\[((, )?(?<After>\d+))+\]", RegexOptions.Compiled | RegexOptions.Multiline).ToFactory<SampleRow>();
 
         public bool Matches(OpCodeImpl impl)
             => After.SequenceEqual(impl(A, B, C, Before));
@@ -22,8 +22,8 @@ class Day16 : Solution
         return res;
     }
 
-    private static OpCodeImpl BinOpR(Func<int, int, int> calc) => (int a, int b, int c, int[] registers) => Set(registers, c, calc(registers[a], registers[b]));
-    private static OpCodeImpl BinOpI(Func<int, int, int> calc) => (int a, int b, int c, int[] registers) => Set(registers, c, calc(registers[a], b));
+    private static OpCodeImpl BinOpR(Func<int, int, int> calc) => (a, b, c, registers) => Set(registers, c, calc(registers[a], registers[b]));
+    private static OpCodeImpl BinOpI(Func<int, int, int> calc) => (a, b, c, registers) => Set(registers, c, calc(registers[a], b));
 
     private static OpCodeImpl Addr => BinOpR((a, b) => a + b);
     private static OpCodeImpl Addi => BinOpI((a, b) => a + b);
@@ -47,7 +47,7 @@ class Day16 : Solution
     ];
 
     private static List<SampleRow> ParseSamples(string input)
-        => input.Split("\n\n").Select(SampleRow.Parse).Where(s => s != null).ToList();
+        => [.. input.Split("\n\n").Select(SampleRow.Parse).NonNull()];
 
     private OpCodeImpl[] RestoreOpCodeTable(string input)
     {

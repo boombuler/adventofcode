@@ -5,12 +5,12 @@ using System.Numerics;
 class Day15 : Solution
 {
     record Disc(int No, int Positions, int Offset);
-    private static readonly Func<string, Disc> ParseDisc = new Regex(@"Disc #(?<No>\d+) has (?<Positions>\d+) positions; at time=0, it is at position (?<Offset>\d+)\.", RegexOptions.Compiled)
+    private static readonly Func<string, Disc?> ParseDisc = new Regex(@"Disc #(?<No>\d+) has (?<Positions>\d+) positions; at time=0, it is at position (?<Offset>\d+)\.", RegexOptions.Compiled)
         .ToFactory<Disc>();
 
     public static long GetButtonPressTime(string discDescriptions)
     {
-        var discs = discDescriptions.Lines().Select(ParseDisc);
+        var discs = discDescriptions.Lines().Select(ParseDisc).NonNull();
         return (long)discs
             .Select(d => (a: -(BigInteger)d.Offset - d.No, n: (BigInteger)d.Positions))
             .Aggregate(MathExt.ChineseRemainder).a;

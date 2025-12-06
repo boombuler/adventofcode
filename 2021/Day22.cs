@@ -6,7 +6,7 @@ internal class Day22 : Solution
     {
         public long Size => (Max.X - Min.X + 1) * (Max.Y - Min.Y + 1) * (Max.Z - Min.Z + 1);
 
-        public Region Intersect(Region other)
+        public Region? Intersect(Region other)
         {
             if (Min.X > other.Max.X || Max.X < other.Min.X ||
                 Min.Y > other.Max.Y || Max.Y < other.Min.Y ||
@@ -35,7 +35,12 @@ internal class Day22 : Solution
         var instrs = input.Lines().Select(ParseInstruction);
 
         if (WithBB)
-            instrs = instrs.Select(i => i with { Region = bbox.Intersect(i.Region) }).Where(i => i.Region != null);
+        {
+            instrs = from i in instrs
+                let r = bbox.Intersect(i.Region)
+                where r != null
+                select i with { Region = r };
+        }
 
         var instructions = new List<Instruction>();
 

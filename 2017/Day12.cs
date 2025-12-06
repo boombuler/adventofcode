@@ -4,12 +4,12 @@ class Day12 : Solution
 {
     record Pipe(int ID, int[] Children)
     {
-        public static readonly Func<string, Pipe> Parse = new Regex(@"(?<ID>\d+) <-> ((, )?(?<Children>\d+))+").ToFactory<Pipe>();
+        public static readonly Func<string, Pipe?> Parse = new Regex(@"(?<ID>\d+) <-> ((, )?(?<Children>\d+))+").ToFactory<Pipe>();
     }
 
     private static IEnumerable<IEnumerable<int>> BuildGroups(string input)
     {
-        var pipes = input.Lines().Select(Pipe.Parse).ToDictionary(p => p.ID);
+        var pipes = input.Lines().Select(Pipe.Parse).NonNull().ToDictionary(p => p.ID);
         var group = new HashSet<int>();
         var open = new Queue<int>();
         while (pipes.Count > 0)

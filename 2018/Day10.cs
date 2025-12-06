@@ -11,11 +11,11 @@ class Day10 : Solution<string, int>
             => (Position, Velocity) = ((PosX, PosY), (VelX, VelY));
         public Star Move() => this with { Position = Position + Velocity };
     }
-    private static readonly Func<string, Star> ParseStar = new Regex(@"position=<\s*(?<PosX>-?\d+),\s*(?<PosY>-?\d+)> velocity=<\s*(?<VelX>-?\d+),\s*(?<VelY>-?\d+)>").ToFactory<Star>();
+    private static readonly Func<string, Star?> ParseStar = new Regex(@"position=<\s*(?<PosX>-?\d+),\s*(?<PosY>-?\d+)> velocity=<\s*(?<VelX>-?\d+),\s*(?<VelY>-?\d+)>").ToFactory<Star>();
 
     private static (string Text, int Second) Align(string stars)
     {
-        var curStars = stars.Lines().Select(ParseStar).ToArray();
+        var curStars = stars.Lines().Select(ParseStar).NonNull().ToArray();
         var next = new Star[curStars.Length];
         int seconds = 1;
         while (true)

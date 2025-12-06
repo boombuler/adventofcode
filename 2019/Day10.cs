@@ -30,7 +30,7 @@ class Day10 : Solution
 
     private static IEnumerable<Point> ShootingOrder(string input)
     {
-        var asteroids = input.Lines().SelectMany((l, y) => l.Select((c, x) => c == '#' ? new Point(x, y) : null)).Where(a => a != null).ToList();
+        var asteroids = input.Lines().SelectMany((l, y) => l.Select((c, x) => c == '#' ? new Point(x, y) : null)).NonNull().ToList();
         var (_, center) = asteroids.MinMaxBy(a => GetVisibleAsteroids(a, asteroids));
         var targets = asteroids
             .Where(a => a != center)

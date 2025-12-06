@@ -7,7 +7,7 @@ class Day25 : Solution
     record StateMachine(string InitialState, int Rounds, State[] States);
     record State(string Name, Operation[] Operations);
     record Operation(int Condition, int Value, Direction Direction, string NextState);
-    private static readonly Func<string, Operation> ParseOperation = new Regex(@"If the current value is (?<Condition>\d+):\n\s*- Write the value (?<Value>\d+)\.\n\s*- Move one slot to the (?<Direction>left|right)\.\n\s*- Continue with state (?<NextState>\w+)\.", RegexOptions.Compiled).ToFactory<Operation>();
+    private static readonly Func<string, Operation?> ParseOperation = new Regex(@"If the current value is (?<Condition>\d+):\n\s*- Write the value (?<Value>\d+)\.\n\s*- Move one slot to the (?<Direction>left|right)\.\n\s*- Continue with state (?<NextState>\w+)\.", RegexOptions.Compiled).ToFactory<Operation>();
     private static readonly Regex ParseInitialState = new(@"Begin in state (?<InitialState>\w+)\.", RegexOptions.Compiled);
     private static readonly Regex ParseRounds = new(@"Perform a diagnostic checksum after (?<Rounds>\d+) steps\.", RegexOptions.Compiled);
     private static readonly Regex ParseStateName = new(@"In state (?<Name>\w+):", RegexOptions.Compiled);
@@ -20,8 +20,8 @@ class Day25 : Solution
         foreach (var stateDescrpt in parts.Skip(1))
         {
             var name = ParseStateName.Match(stateDescrpt.Lines().First()).Groups["Name"].Value;
-            var ops = stateDescrpt.Lines().Skip(1).Chunk(4).Select(grp => string.Join("\n", grp)).Select(ParseOperation);
-            states.Add(new State(name, ops.ToArray()));
+            var ops = stateDescrpt.Lines().Skip(1).Chunk(4).Select(grp => string.Join("\n", grp)).Select(ParseOperation).NonNull();
+            states.Add(new State(name, [.. ops]));
         }
         return new StateMachine(initialState, rounds, [.. states]);
     }

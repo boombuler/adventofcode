@@ -22,7 +22,7 @@ static class ElfCompiler
     }
 
     public record OpCodeLine(string OpCode, int A, int B, int C);
-    private static readonly Func<string, OpCodeLine> OpCodeLineFactory = new Regex(@"(?<OpCode>\w{4}) (?<A>\d+) (?<B>\d+) (?<C>\d+)").ToFactory<OpCodeLine>();
+    private static readonly Func<string, OpCodeLine?> OpCodeLineFactory = new Regex(@"(?<OpCode>\w{4}) (?<A>\d+) (?<B>\d+) (?<C>\d+)").ToFactory<OpCodeLine>();
 
     private static string OptimizeCode(string code)
     {
@@ -53,7 +53,7 @@ addi 0 0 0");
     {
         var (ipDef, other) = code.Lines();
         var rIP = ipDef.Last() - '0';
-        return (rIP, other.Select(OpCodeLineFactory).ToArray());
+        return (rIP, [.. other.Select(OpCodeLineFactory).NonNull()]);
     }
 
     public static Action<IRegisters> CompileCode(string code)
@@ -61,7 +61,7 @@ addi 0 0 0");
         code = OptimizeCode(code);
         var (ipDef, other) = code.Lines();
         var (rIP, opCodesDefs) = Parse(code);
-        var dm = new DynamicMethod("RunCode", null, new Type[] { typeof(IRegisters) });
+        var dm = new DynamicMethod("RunCode", null, [typeof(IRegisters)]);
         var il = dm.GetILGenerator();
 
         il.DeclareLocal(typeof(int));
@@ -69,7 +69,7 @@ addi 0 0 0");
         var labels = opCodesDefs.Select(o => il.DefineLabel()).ToArray();
         var exit = il.DefineLabel();
 
-        var getRegMember = typeof(IRegisters).GetMethod("get_Item");
+        var getRegMember = typeof(IRegisters).GetMethod("get_Item") ?? throw new InvalidOperationException();
         void LdReg(int rNo)
         {
             il.Emit(OpCodes.Ldarg_0);
@@ -77,7 +77,7 @@ addi 0 0 0");
             il.Emit(OpCodes.Callvirt, getRegMember);
         }
 
-        var setRegMember = typeof(IRegisters).GetMethod("set_Item");
+        var setRegMember = typeof(IRegisters).GetMethod("set_Item") ?? throw new InvalidOperationException();
         void StoReg(int rNo)
         {
             il.Emit(OpCodes.Stloc_0);

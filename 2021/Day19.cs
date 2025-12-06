@@ -8,7 +8,7 @@ class Day19 : Solution
     class Cluster(IEnumerable<Point> beacons)
     {
         public ImmutableArray<ImmutableArray<Point>> Orientations { get; }
-            = GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray).ToImmutableArray();
+            = [.. GetOrientations().Select(beacons.Select).Select(ImmutableArray.ToImmutableArray)];
 
         private static IEnumerable<Func<Point, Point>> GetOrientations()
         {
@@ -43,7 +43,7 @@ class Day19 : Solution
         return result;
     }
 
-    private static Scanner Align(Cluster cluster, Scanner scanner)
+    private static Scanner? Align(Cluster cluster, Scanner scanner)
     {
         const int MIN_OVERLAP = 12;
         foreach (var oriented in cluster.Orientations)
@@ -53,7 +53,7 @@ class Day19 : Solution
                 .Select(grp => grp.Key).FirstOrDefault();
 
             if (offset != null)
-                return new Scanner(oriented.Select(p => p + offset).ToImmutableArray(), offset);
+                return new Scanner([.. oriented.Select(p => p + offset)], offset);
         }
         return null;
     }

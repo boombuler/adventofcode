@@ -72,7 +72,7 @@ class Mat4<T> where T : INumber<T>
         m1[3, 0] * m2[0, 3] + m1[3, 1] * m2[1, 3] + m1[3, 2] * m2[2, 3] + m1[3, 3] * m2[3, 3]
     );
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is Mat4<T> other)
             return other.M.SequenceEqual(M);

@@ -36,7 +36,7 @@ internal class Validator : ScreenBase
     class Output : IOutput
     {
         public bool Failed { get; private set; }
-        void IOutput.Assertion(string name, bool result, string errorTxt)
+        void IOutput.Assertion(string? name, bool result, string errorTxt)
             => Failed |= !result;
 
         void IOutput.Debug(object data) { }

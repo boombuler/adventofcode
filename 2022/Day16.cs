@@ -7,7 +7,7 @@ class Day16 : Solution
 {
     record Valve(string Name, int FlowRate, string[] Tunnels)
     {
-        public static readonly Func<string, Valve> Factory =
+        public static readonly Func<string, Valve?> Factory =
             new Regex(@"Valve (?<Name>\w+) has flow rate=(?<FlowRate>\d+); tunnels? leads? to valves? ((, )?(?<Tunnels>\w+))*").ToFactory<Valve>();
     }
 
@@ -34,7 +34,7 @@ class Day16 : Solution
 
     public long GetTotalFlowAmount(string input, int maxMinutes, bool withElephant)
     {
-        var valves = input.Lines().Select(Valve.Factory).ToList();
+        var valves = input.Lines().Select(Valve.Factory).NonNull().ToList();
         var targetValves = valves.Select((v, i) => (v.FlowRate, i)).Where(v => v.FlowRate > 0).Select(v => new { Index = v.i, Mask = 1L << v.i }).ToArray();
         var dists = Distances(valves);
         var startPt = valves.FindIndex(v => v.Name == "AA");

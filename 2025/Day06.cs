@@ -2,10 +2,10 @@
 
 class Day06 : Solution
 {
-    private long SolveMathSheet(string input, Func<Point2D<int>, int> groupSelector)
+    private static long SolveMathSheet(string input, Func<Point2D<int>, int> groupSelector)
     {
         var match = new Regex("^(?<numbers>.*)\n(?<op>[+*] +)+$", RegexOptions.Singleline).Match(input);
-        var numberMap = new StringMap<int>(match.Groups["numbers"].Value, c => c == ' ' ? -1 : c - '0');
+        var numberMap = match.Groups["numbers"].Value.AsMap(c => c == ' ' ? -1 : c - '0');
 
         return match.Groups["op"].Captures.Scan((i: 0, Result: 0L), (l, op) => (l.i + op.Length, 
         (
@@ -21,7 +21,7 @@ class Day06 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) => SolveMathSheet(input, pt => pt.Y);
+        static long Solve(string input) => SolveMathSheet(input, pt => pt.Y);
 
         Assert(Solve(Sample()), 4277556);
         return Solve(Input);
@@ -29,7 +29,7 @@ class Day06 : Solution
 
     protected override long? Part2()
     {
-        long Solve(string input) => SolveMathSheet(input, pt => pt.X);
+        static long Solve(string input) => SolveMathSheet(input, pt => pt.X);
 
         Assert(Solve(Sample()), 3263827);
         return Solve(Input);

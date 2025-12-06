@@ -1,27 +1,28 @@
 ﻿namespace AdventOfCode.Utils;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 public static class RegexHelper
 {
-    public static bool TryMatch<T>(this Regex self, string value, out T match)
+    public static bool TryMatch<T>(this Regex self, string value, [NotNullWhen(true)] out T? match)
     {
         bool res;
         (res, match) = self.ToFactoryImpl<T>()(value);
         return res;
     }
 
-    public static Func<string, T> ToFactory<T>(this Regex self)
+    public static Func<string, T?> ToFactory<T>(this Regex self)
     {
-        Func<string, (bool, T)> f = self.ToFactoryImpl<T>();
+        Func<string, (bool, T?)> f = self.ToFactoryImpl<T>();
         return (s) => f(s).Item2;
     }
 
-    private static Func<Match, (bool, object)> CreateBinder(string groupName, Type targetType)
+    private static Func<Match, (bool, object?)> CreateBinder(string groupName, Type targetType)
     {
 
-        var elementType = targetType.IsArray ? targetType.GetElementType() : targetType;
+        var elementType = targetType.IsArray ? targetType.GetElementType()! : targetType;
 
         Func<string, object> convert = (s) => Convert.ChangeType(s, elementType);
         if (elementType.IsEnum)
@@ -50,7 +51,7 @@ public static class RegexHelper
         };
     }
 
-    private static Action<T, Match> CreatePropertyFieldBinder<T>(string name)
+    private static Action<T, Match>? CreatePropertyFieldBinder<T>(string name)
     {
         const BindingFlags FLAGS = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
         var fld = typeof(T).GetField(name, FLAGS);
@@ -58,9 +59,9 @@ public static class RegexHelper
         if (fld == null && prp == null)
             return null;
 
-        var binder = CreateBinder(name, fld?.FieldType ?? prp.PropertyType);
+        var binder = CreateBinder(name, fld?.FieldType ?? prp?.PropertyType ?? throw new InvalidOperationException());
 
-        return (T target, Match m) =>
+        return (target, m) =>
         {
             (var ok, var value) = binder(m);
             if (ok)
@@ -73,7 +74,7 @@ public static class RegexHelper
         };
     }
 
-    private static bool TryCreateConstructorFactory<T>(Regex regex, out Func<string, (bool, T)> factory)
+    private static bool TryCreateConstructorFactory<T>(Regex regex,  [NotNullWhen(true)] out Func<string, (bool, T?)>? factory)
     {
         var fromMatch = CreateMatchFactory<T>(regex);
         if (fromMatch == null)
@@ -86,13 +87,13 @@ public static class RegexHelper
         {
             var match = regex.Match(s);
             if (!match.Success)
-                return (false, default(T));
+                return (false, default);
             return (true, fromMatch(match));
         };
         return true;
     }
 
-    public static Func<Match, T> CreateMatchFactory<T>(this Regex regex)
+    public static Func<Match, T?>? CreateMatchFactory<T>(this Regex regex)
     {
         var groupNames = regex.GetGroupNames().Where(gn => !int.TryParse(gn, out int tmp)).Order().ToList();
         var constructor =
@@ -107,14 +108,14 @@ public static class RegexHelper
         if (constructor == null)
             return null;
 
-        Func<Match, object> BinderOrDefault(ParameterInfo arg)
+        Func<Match, object?> BinderOrDefault(ParameterInfo arg)
         {
             var name = groupNames.First(gn => StringComparer.OrdinalIgnoreCase.Equals(gn, arg.Name));
             var binder = CreateBinder(name, arg.ParameterType);
             return (match) => binder(match).Item2;
         }
 
-        Func<Match, object>[] arguments = constructor.GetParameters().Select(BinderOrDefault).ToArray();
+        Func<Match, object?>[] arguments = [.. constructor.GetParameters().Select(BinderOrDefault)];
 
         return (match) =>
         {
@@ -123,7 +124,7 @@ public static class RegexHelper
         };
     }
 
-    private static Func<string, (bool, T)> ToFactoryImpl<T>(this Regex self)
+    private static Func<string, (bool, T?)> ToFactoryImpl<T>(this Regex self)
     {
         if (TryCreateConstructorFactory<T>(self, out var factory))
             return factory;
@@ -132,15 +133,15 @@ public static class RegexHelper
         if (setters.Count == 0)
             throw new InvalidOperationException();
 
-        return (string s) =>
+        return s =>
         {
             var m = self.Match(s);
             if (!m.Success)
-                return (false, default(T));
+                return (false, default);
 
-            var result = Activator.CreateInstance<T>();
+            T result = Activator.CreateInstance<T>()!;
             foreach (var set in setters)
-                set(result, m);
+                set?.Invoke(result, m);
             return (true, result);
         };
     }

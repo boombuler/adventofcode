@@ -9,7 +9,7 @@ class Day05 : Solution
         public Point P1 { get; } = (X1, Y1);
         public Point P2 { get; } = (X2, Y2);
 
-        public static readonly Func<string, Line> Parse = new Regex(@"(?<X1>\-?\d+),(?<Y1>\-?\d+) -> (?<X2>\-?\d+),(?<Y2>\-?\d+)").ToFactory<Line>();
+        public static readonly Func<string, Line?> Parse = new Regex(@"(?<X1>\-?\d+),(?<Y1>\-?\d+) -> (?<X2>\-?\d+),(?<Y2>\-?\d+)").ToFactory<Line>();
         public IEnumerable<Point> Range()
         {
             var off = new Point(Math.Sign(P2.X - P1.X), Math.Sign(P2.Y - P1.Y));
@@ -20,7 +20,7 @@ class Day05 : Solution
     }
 
     private long CountOverlapping(Func<Line, bool> predicate)
-        => Input.Lines().Select(Line.Parse)
+        => Input.Lines().Select(Line.Parse).NonNull()
             .Where(predicate)
             .SelectMany(l => l.Range())
             .GroupBy(p => p)

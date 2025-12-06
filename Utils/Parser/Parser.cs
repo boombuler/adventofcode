@@ -106,11 +106,17 @@ static class Parser
         return new Parser<T>((input) =>
         {
             var match = regex.Match(input.Remaining);
-            if (!match.Success)
+            if (match == null || !match.Success)
                 return "Failed to match regex";
 
             input = input.Seek(match.Length);
-            return new Result<T>(factory(match), input);
+            return new Result<T>(factory(match)!, input);
         });
+    }
+
+    extension<T>(Parser<T> parser) 
+        where T : notnull
+    {
+        public Parser<T> Opt() => parser.Opt(default!);
     }
 }

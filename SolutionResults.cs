@@ -9,7 +9,7 @@ class SolutionResults
     private static string FileName(ISolution solution)
         => Path.GetFullPath(Path.Combine(RESULT_DIR, solution.Year.ToString(), $"{solution.Day:d2}.txt"));
 
-    public (string Part1, string Part2) GetResults(ISolution solution)
+    public (string? Part1, string? Part2) GetResults(ISolution solution)
     {
         string path = FileName(solution);
         if (!File.Exists(path))
@@ -30,7 +30,7 @@ class SolutionResults
             return;
 
         var path = FileName(solution);
-        Directory.CreateDirectory(Path.GetDirectoryName(path));
+        Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new InvalidOperationException());
         File.WriteAllText(path, part1 + "\n" + part2);
     }
 }

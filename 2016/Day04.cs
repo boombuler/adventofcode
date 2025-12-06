@@ -8,9 +8,7 @@ class Day04 : Solution
 
         public string DecodeName()
             => new(
-            Name.Trim('-').Select(c => ALPHABET.IndexOf(c))
-                .Select(i => i == -1 ? ' ' : ALPHABET[(i + Id) % ALPHABET.Length])
-                .ToArray());
+            [.. Name.Trim('-').Select(c => ALPHABET.IndexOf(c)).Select(i => i == -1 ? ' ' : ALPHABET[(i + Id) % ALPHABET.Length])]);
 
         public bool ValidCheckSum()
         {
@@ -18,20 +16,20 @@ class Day04 : Solution
                 .OrderByDescending(c => c.Count);
             var minCount = letters.Skip(4).First().Count;
 
-            var cs = new string(letters
+            var cs = new string([.. letters
                 .TakeWhile(g => g.Count >= minCount)
                 .OrderByDescending(g => g.Count).ThenBy(g => g.Key)
                 .Select(g => g.Key)
-                .Take(5).ToArray()
+                .Take(5)]
             );
             return cs == CheckSum;
         }
     }
 
-    private static readonly Func<string, Room> RoomFactory = new Regex(@"(?<Name>(\w+\-)+)(?<Id>\d+)\[(?<CheckSum>\w{5})\]", RegexOptions.Compiled).ToFactory<Room>();
+    private static readonly Func<string, Room?> RoomFactory = new Regex(@"(?<Name>(\w+\-)+)(?<Id>\d+)\[(?<CheckSum>\w{5})\]", RegexOptions.Compiled).ToFactory<Room>();
 
     private static long SumValidRoomIDs(string rooms)
-        => rooms.Lines().Select(RoomFactory).Where(r => r.ValidCheckSum()).Select(r => r.Id).Sum();
+        => rooms.Lines().Select(RoomFactory).NonNull().Where(r => r.ValidCheckSum()).Select(r => r.Id).Sum();
 
     protected override long? Part1()
     {
@@ -44,7 +42,7 @@ class Day04 : Solution
         Assert(new Room("qzmt-zixmtkozy-ivhz", 343).DecodeName(), "very encrypted name");
 
         return Input.Lines()
-            .Select(RoomFactory)
+            .Select(RoomFactory).NonNull()
             .Where(r => r.ValidCheckSum())
             .Where(r => r.DecodeName() == "northpole object storage")
             .First().Id;

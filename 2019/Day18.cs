@@ -15,7 +15,7 @@ class Day18 : Solution
         private readonly Dictionary<(char, char), (long, string)?> fPaths = [];
         public IEnumerable<char> Keys => fPOI.Keys.Where(char.IsLower);
 
-        public Map(string map, Point door = null)
+        public Map(string map, Point? door = null)
         {
             fWalkableTiles = ToTiles(map)
                 .Where(t => t.Char is not WALL and not DOOR)

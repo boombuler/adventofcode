@@ -120,12 +120,12 @@ public record IntCodeVM(long PC, long RelativeBaseOffset, ImmutableSortedDiction
         }
     }
 
-    public IEnumerable<(string Result, IntCodeVM State)> RunASCIICommands(IEnumerable<string> commands = null)
+    public IEnumerable<(string Result, IntCodeVM State)> RunASCIICommands(IEnumerable<string>? commands = null)
     {
         var queue = new Queue<long>();
         var sbLine = new StringBuilder();
         long? d;
-        var cmds = (commands ?? Enumerable.Empty<string>()).GetEnumerator();
+        var cmds = (commands ?? []).GetEnumerator();
         var vm = this;
         const int EOL = 10;
         while (!vm.Halted)

@@ -24,13 +24,13 @@ class Day10 : Solution
         return (null, state.Aggregate(0L, (sum, idx) => sum * 5 + (idx + 1)));
     }
 
-    long CorruptionScore(string input) => input.Lines().Select(CheckLine).Where(r => r.Corruption.HasValue).Sum(r => r.Corruption.Value);
+    long CorruptionScore(string input) => input.Lines().Select(CheckLine).Where(r => r.Corruption.HasValue).Sum(r => r.Corruption!.Value);
 
     long CompletionScore(string input)
     {
         var completionLines = input.Lines().Select(CheckLine)
             .Where(r => r.AutoComplete.HasValue)
-            .Select(r => r.AutoComplete.Value)
+            .Select(r => r.AutoComplete!.Value)
             .Order()
             .ToList();
         return completionLines[completionLines.Count / 2];

@@ -2,7 +2,7 @@
 
 using System.Collections;
 
-public class DirectedGraph<TNode, TValue>
+public class DirectedGraph<TNode, TValue> where TNode : notnull
 {
     readonly struct GroupingWrapper(TNode key, IEnumerable<TNode> values) : IGrouping<TNode, TNode>
     {

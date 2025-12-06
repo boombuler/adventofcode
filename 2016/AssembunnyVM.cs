@@ -57,8 +57,8 @@ class AssembunnyVM
     public AssembunnyVM(string code)
     {
         var args = OptimizeMultiplication(code).Lines().Select(GetArgs).ToList();
-        fNormalOperations = args.Select(CompileOp).ToArray();
-        fToggledOperations = args.Select(CompileToggledOp).ToArray();
+        fNormalOperations = [.. args.Select(CompileOp)];
+        fToggledOperations = [.. args.Select(CompileToggledOp)];
     }
 
     public long Run(long a = 0, long b = 0, long c = 0, long d = 0)
@@ -88,13 +88,13 @@ class AssembunnyVM
     }
 
     private static object[] GetArgs(string s)
-    => s.Split(' ').Select<string, object>((s, i) => (s, i) switch
+    => [.. s.Split(' ').Select<string, object>((s, i) => (s, i) switch
     {
         (_, 0) => s,
         (string a, _) when long.TryParse(a, out long arg) => arg,
         (string a, _) when a.Length == 1 => new Register(a[0] - 'a'),
         _ => throw new InvalidOperationException()
-    }).ToArray();
+    })];
 
     private void Toggle(int offset)
     {

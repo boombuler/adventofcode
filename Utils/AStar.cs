@@ -1,15 +1,10 @@
 ﻿namespace AdventOfCode.Utils;
 
-public abstract class AStar<T>
+public abstract class AStar<T>(T src) where T : notnull
 {
     protected abstract long Distance(T from, T to);
     protected virtual long GuessDistance(T from, T to)
         => Distance(from, to);
-
-    private readonly T fSrc;
-
-    protected AStar(T src)
-        => fSrc = src;
 
     protected abstract IEnumerable<T> NeighboursOf(T node);
 
@@ -19,9 +14,9 @@ public abstract class AStar<T>
     public (long Cost, Lazy<IEnumerable<T>> Path) ShortestPath(T dest)
     {
         var open = new PriorityQueue<T, long>();
-        open.Enqueue(fSrc, 0);
-        var costs = new Dictionary<T, long>() { [fSrc] = 0 };
-        var paths = new Dictionary<T, T> { [fSrc] = fSrc };
+        open.Enqueue(src, 0);
+        var costs = new Dictionary<T, long>() { [src] = 0 };
+        var paths = new Dictionary<T, T> { [src] = src };
 
         while (open.Count > 0)
         {
@@ -53,7 +48,7 @@ public abstract class AStar<T>
         {
             s.Push(dest);
             dest = shortestPath[dest];
-        } while (!AreEqual(dest, fSrc));
+        } while (!AreEqual(dest, src));
         return s;
     }
 }

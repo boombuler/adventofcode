@@ -38,7 +38,7 @@ class Day23 : Solution
 
     class NanoBot
     {
-        public static readonly Func<string, NanoBot> Parse = new Regex(@"pos=\<(?<x>-?\d+),(?<y>-?\d+),(?<z>-?\d+)\>, r=(?<r>\d+)").ToFactory<NanoBot>();
+        public static readonly Func<string, NanoBot?> Parse = new Regex(@"pos=\<(?<x>-?\d+),(?<y>-?\d+),(?<z>-?\d+)\>, r=(?<r>\d+)").ToFactory<NanoBot>();
         public Point Location { get; }
         public long Radius { get; }
         public NanoBot(long x, long y, long z, long r)
@@ -57,14 +57,14 @@ class Day23 : Solution
 
     public static int CountInRangeOfStrongestSignal(string nanoBots)
     {
-        var bots = nanoBots.Lines().Select(NanoBot.Parse).ToList();
+        var bots = nanoBots.Lines().Select(NanoBot.Parse).NonNull().ToList();
         var (_, maxBot) = bots.MinMaxBy(b => b.Radius);
         return bots.Select(b => b.Location).Count(maxBot.Reaches);
     }
 
     public static long DistanceToBestSpot(string nanoBots)
     {
-        var bots = nanoBots.Lines().Select(NanoBot.Parse).ToArray();
+        var bots = nanoBots.Lines().Select(NanoBot.Parse).NonNull().ToArray();
 
         var (minX, maxX) = bots.MinMax(b => b.Location.X);
         var (minY, maxY) = bots.MinMax(b => b.Location.Y);
@@ -88,7 +88,7 @@ class Day23 : Solution
                 return cur.BBox.DistanceToOrigin;
 
             foreach (var box in cur.BBox.Divide())
-                Push(box, cur.Bots.Where(b => b.Intersects(box)).ToArray());
+                Push(box, [.. cur.Bots.Where(b => b.Intersects(box))]);
         }
 
         return -1;

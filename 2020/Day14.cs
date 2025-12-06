@@ -12,12 +12,12 @@ class Day14 : Solution
         var m = string.Empty;
         foreach (var cmd in codes.Lines())
         {
-            if (MASK.TryMatch(cmd, out MaskMatch match))
+            if (MASK.TryMatch(cmd, out MaskMatch? match))
             {
                 m = match.Mask;
-                m = new string(m.Reverse().ToArray());
+                m = new string([.. m.Reverse()]);
             }
-            else if (SET_VAL.TryMatch(cmd, out SetValMatch setVal))
+            else if (SET_VAL.TryMatch(cmd, out SetValMatch? setVal))
             {
                 yield return (m, setVal.Addr, setVal.Value);
             }

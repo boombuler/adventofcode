@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode.Utils;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 public static class TextReaderHelper
@@ -26,7 +27,7 @@ public static class TextReaderHelper
         return sb.Length > 0;
     }
 
-    public static bool TryReadLine(this TextReader tr, out string line)
+    public static bool TryReadLine(this TextReader tr, [NotNullWhen(true)] out string? line)
     {
         line = tr.ReadLine();
         return (line != null);

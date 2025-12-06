@@ -11,7 +11,7 @@ class Day11 : Solution
         public long[] StartingItems { get; } = StartingItems;
         public long Test { get; } = Test;
 
-        public static readonly Func<string, Monkey> Factory =
+        public static readonly Func<string, Monkey?> Factory =
             new Regex(@"Monkey (?<ID>\d+):\W*Starting items:(\W*(?<StartingItems>\d+),?)*\W*Operation: new = (?<Operant1>old|\d+) (?<Op>[\+\*]) (?<Operant2>old|\d+)\W*Test: divisible by (?<Test>\d+)\W*If true: throw to monkey (?<TrueTarget>\d+)\W*If false: throw to monkey (?<FalseTarget>\d+)", RegexOptions.Compiled|RegexOptions.Multiline).ToFactory<Monkey>();
 
         public (int TargetId, long NewLevel) Throw(long level, Func<long, long> relief)
@@ -29,7 +29,7 @@ class Day11 : Solution
 
     private static long ObserveMonkeys(string input, int rounds, Func<IEnumerable<Monkey>, Func<long, long>> getRelief)
     {
-        var monkeys = input.Split("\n\n").Select(Monkey.Factory).ToArray();
+        var monkeys = input.Split("\n\n").Select(Monkey.Factory).NonNull().ToArray();
         var items = monkeys.Select(m => new Queue<long>(m.StartingItems)).ToArray();
         long[] activity = new long[monkeys.Length];
         var relief = getRelief(monkeys);

@@ -28,8 +28,8 @@ class Day14 : Solution
         while (true)
         {
             var next = new Point(CaveWidth / 2, -1)
-                .Unfold(p => directions.Select(d => d + p).FirstOrDefault(d => !cave[Index(d)]))
-                .TakeWhile(n => n != null)
+                .Unfold<Point?>(p => directions.Select(d => d + p!).FirstOrDefault(d => !cave[Index(d)]))
+                .TakeWhile(n => n != null).Select(n => n!)
                 .Last();
             sand++;
 

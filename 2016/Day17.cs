@@ -2,7 +2,7 @@
 
 using System.Security.Cryptography;
 using Point = Point2D<int>;
-class Day17 : Solution<string, long?>
+class Day17 : Solution<string?, long?>
 {
     private static readonly Point Target = new(3, 3);
     private static readonly Point Start = new(0, 0);
@@ -55,7 +55,7 @@ class Day17 : Solution<string, long?>
         var open = new Queue<State>();
         open.Enqueue(new State(seed));
 
-        while (open.TryDequeue(out State state))
+        while (open.TryDequeue(out var state))
         {
             if (state.Won)
                 yield return state.Directions;
@@ -65,13 +65,13 @@ class Day17 : Solution<string, long?>
         }
     }
 
-    private static string FindShortestPath(string seed)
+    private static string? FindShortestPath(string seed)
         => FindAllPaths(seed).FirstOrDefault();
 
     private static long FindLongestPathLength(string seed)
         => (FindAllPaths(seed).OrderByDescending(p => p.Length).FirstOrDefault() ?? string.Empty).Length;
 
-    protected override string Part1()
+    protected override string? Part1()
     {
         Assert(FindShortestPath("hijkl"), null);
         Assert(FindShortestPath("ihgpwlah"), "DDRRRD");

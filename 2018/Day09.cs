@@ -3,13 +3,13 @@
 class Day09 : Solution
 {
     record Args(long PlayerCount, long MaxMarble);
-    private static readonly Func<string, Args> ParseArgs = new Regex(@"(?<PlayerCount>\d+) players; last marble is worth (?<MaxMarble>\d+) points").ToFactory<Args>();
+    private static readonly Func<string, Args?> ParseArgs = new Regex(@"(?<PlayerCount>\d+) players; last marble is worth (?<MaxMarble>\d+) points").ToFactory<Args>();
 
     private static long GetWinningScore(string args, long factor = 1)
     {
-        var a = ParseArgs(args);
+        var a = ParseArgs(args) ?? throw new InvalidInputException();
         var circle = new LinkedList<long>([0]);
-        var current = circle.First;
+        var current = circle.First!;
         long[] scores = new long[a.PlayerCount];
         long max = a.MaxMarble * factor;
         for (long i = 1; i <= max; i++)
@@ -17,13 +17,13 @@ class Day09 : Solution
             if (i % 23 == 0)
             {
                 for (int seek = 0; seek < 6; seek++)
-                    current = current.Previous ?? circle.Last;
-                scores[(i - 1) % a.PlayerCount] += i + (current.Previous ?? circle.Last).Value;
-                circle.Remove(current.Previous ?? circle.Last);
+                    current = current.Previous ?? circle.Last!;
+                scores[(i - 1) % a.PlayerCount] += i + (current.Previous ?? circle.Last!).Value;
+                circle.Remove(current.Previous ?? circle.Last!);
             }
             else
             {
-                current = current.Next ?? circle.First;
+                current = current.Next ?? circle.First!;
                 current = circle.AddAfter(current, i);
             }
         }

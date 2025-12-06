@@ -29,7 +29,7 @@ class Day15 : Solution
                 riskMap[k + offset] = (of.X + of.Y + v - 1) % 9 + 1;
         }
 
-        return new PathFinder(riskMap).ShortestPath(riskMap.Keys.Max()).Cost;
+        return new PathFinder(riskMap).ShortestPath(riskMap.Keys.Max() ?? Point.Origin).Cost;
     }
 
     protected override long? Part1()

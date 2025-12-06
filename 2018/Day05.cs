@@ -7,7 +7,7 @@ class Day05 : Solution
         var molecule = new LinkedList<char>(mol);
 
         var node = molecule.First;
-        while (node.Next != null)
+        while (node?.Next != null)
         {
             if (char.ToUpperInvariant(node.Value) == char.ToUpperInvariant(node.Next.Value) &&
                 char.IsUpper(node.Value) != char.IsUpper(node.Next.Value))

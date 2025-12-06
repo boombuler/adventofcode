@@ -77,7 +77,7 @@ class Mat3<T> where T : INumber<T>
         return sb.ToString();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is Mat3<T> other)
             return other.M.SequenceEqual(M);

@@ -6,8 +6,8 @@ class Day06 : Solution
 {
     static Pose Prev(Pose p) => (p.Position - p.Direction, p.Direction);
 
-    IEnumerable<Pose> WalkMap(StringMap<char> map, Pose? start = null)
-        => Prev(start ?? (map.Find('^'), Point2D<int>.Up))
+    static IEnumerable<Pose> WalkMap(StringMap<char> map, Pose? start = null)
+        => Prev(start ?? (map.Find('^') ?? throw new InvalidInputException(), Point2D<int>.Up))
             .Unfold(s => 
             {
                 var n = s.Position + s.Direction;
@@ -18,7 +18,7 @@ class Day06 : Solution
 
     protected override long? Part1() 
     {
-        long Solve(string input)
+        static long Solve(string input)
             => WalkMap(input.AsMap()).DistinctBy(x => x.Position).Count();
 
         Assert(Solve(Sample()), 41);
@@ -27,7 +27,7 @@ class Day06 : Solution
 
     protected override long? Part2()
     {
-        bool IsLoop(StringMap<char> map, Pose pose)
+        static bool IsLoop(StringMap<char> map, Pose pose)
         {
             var visited = new HashSet<Pose>();
             return WalkMap(map, pose)
@@ -35,7 +35,7 @@ class Day06 : Solution
                 .Any(pair => !visited.Add(pair.B));
         }
 
-        int Solve(string input)
+        static int Solve(string input)
         {
             var map = input.AsMap();
             var start = map.Find('^');

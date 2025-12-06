@@ -7,7 +7,7 @@ class Day12 : Solution
 {
     class Moon
     {
-        public static readonly Func<string, Moon> Parse = new Regex(@"\<x=(?<X>-?\d+), y=(?<Y>-?\d+), z=(?<Z>-?\d+)\>", RegexOptions.Compiled).ToFactory<Moon>();
+        public static readonly Func<string, Moon?> Parse = new Regex(@"\<x=(?<X>-?\d+), y=(?<Y>-?\d+), z=(?<Z>-?\d+)\>", RegexOptions.Compiled).ToFactory<Moon>();
         public Point3D Position { get; private set; }
         public Point3D Velocity { get; private set; }
         public long PotentialEnergy => AbsSum(Position);
@@ -49,7 +49,7 @@ class Day12 : Solution
 
     private static long SimulateSystem(string input, int steps)
     {
-        var moons = input.Lines().Select(Moon.Parse).ToList();
+        var moons = input.Lines().Select(Moon.Parse).NonNull().ToList();
         for (int i = 0; i < steps; i++)
             StepSystem(moons);
         return moons.Sum(m => m.TotalEnergy);
@@ -57,7 +57,7 @@ class Day12 : Solution
 
     private static long GetLoopCount(string input)
     {
-        var moons = input.Lines().Select(Moon.Parse).ToList();
+        var moons = input.Lines().Select(Moon.Parse).NonNull().ToList();
         var directions = new List<Func<bool>>()
             {
                 () => moons.All(m => m.Velocity.X == 0),

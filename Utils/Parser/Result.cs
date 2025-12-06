@@ -2,8 +2,8 @@
 
 ref struct Result<TResult>
 {
-    private readonly TResult fResult;
-    private readonly string fError;
+    private readonly TResult? fResult;
+    private readonly string? fError;
     private readonly bool fSuccess;
 
     public Input Input { get; private set; }
@@ -26,15 +26,15 @@ ref struct Result<TResult>
     public readonly Result<TValue> Map<TValue>(Func<TResult, TValue> map)
     {
         if (fSuccess)
-            return new Result<TValue>(map(fResult), Input);
-        return Result<TValue>.Failed(fError);
+            return new Result<TValue>(map(fResult!), Input);
+        return Result<TValue>.Failed(fError!);
     }
 
     public readonly bool HasValue => fSuccess;
 
-    public readonly TResult Value => fSuccess ? fResult : throw new InvalidOperationException(fError);
+    public readonly TResult Value => fSuccess ? fResult! : throw new InvalidOperationException(fError);
 
-    public readonly string Error => !fSuccess ? fError : throw new InvalidOperationException();
+    public readonly string Error => !fSuccess ? fError! : throw new InvalidOperationException();
 
     public static implicit operator Result<TResult>(string error)
         => Failed(error);

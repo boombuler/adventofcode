@@ -7,7 +7,7 @@ class Day16 : Solution
         public bool Valid(long v) => (v >= Min1 && v <= Max1) || (v >= Min2 && v <= Max2);
     }
 
-    private static readonly Func<string, Rule> ParseRule =
+    private static readonly Func<string, Rule?> ParseRule =
         new Regex(@"(?<Name>[ \w]+): (?<Min1>\d+)-(?<Max1>\d+) or (?<Min2>\d+)-(?<Max2>\d+)").ToFactory<Rule>();
 
     private static IEnumerable<Rule> GetRules(string input)

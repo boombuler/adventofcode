@@ -21,15 +21,15 @@ class SolutionExecutor : ScreenBase, IOutput
             WriteLn<DefaultOut>($" ====================");
             WriteLn<DefaultOut>($" = Year {solution.Year:d4} Day {solution.Day:d2} =");
             WriteLn<DefaultOut>($" ====================");
-            WriteLn<DefaultOut>(null);
+            WriteLn<DefaultOut>(string.Empty);
 
             WriteLn<DefaultOut>("-- Part 1 --");
             var p1 = await solution.Part1(this);
             WriteLn<DefaultOut>(string.Format("              Solution : {0}", p1));
-            WriteLn<DefaultOut>(null);
-            WriteLn<DefaultOut>(null);
+            WriteLn<DefaultOut>(string.Empty);
+            WriteLn<DefaultOut>(string.Empty);
 
-            string p2 = null;
+            string? p2 = null;
             if (solution.Day < 25)
             {
                 fAssertionCounter = 1;
@@ -40,19 +40,19 @@ class SolutionExecutor : ScreenBase, IOutput
                     WriteLn<DefaultOut>(string.Format("              Solution : {0}", p2));
                 WriteLn<DefaultOut>(string.Empty);
             }
-            fResults.UpdateResults(solution, p1, p2);
+            fResults.UpdateResults(solution, p1, p2 ?? string.Empty);
         }
         catch (Exception e)
         {
             WriteLn<ErrorOut>(e.Message);
-            WriteLn<ErrorOut>(e.StackTrace);
+            WriteLn<ErrorOut>(e.StackTrace ?? string.Empty);
             ExitConsoleMode();
         }
     }
 
     #region IOutput
 
-    void IOutput.Assertion(string name, bool result, string errorTxt)
+    void IOutput.Assertion(string? name, bool result, string errorTxt)
     {
         if (string.IsNullOrEmpty(name))
             name = Convert.ToString(fAssertionCounter++);

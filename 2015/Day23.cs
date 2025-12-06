@@ -20,7 +20,7 @@ class Day23 : Solution
 
         private static Func<VM, VM> Compile(string operation)
         {
-            static Func<VM, VM> Jump(int offset, Func<VM, bool> condition = null) 
+            static Func<VM, VM> Jump(int offset, Func<VM, bool>? condition = null) 
                 => s => (condition?.Invoke(s) ?? true) ? s with { PC = s.PC - 1 + offset } : s;
 
             return operation.Replace(",", string.Empty).Split(' ') switch
@@ -36,7 +36,7 @@ class Day23 : Solution
                 ["jie", "b", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.B % 2 == 0),
                 ["jio", "a", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.A == 1),
                 ["jio", "b", var off] when int.TryParse(off, out int offset) => Jump(offset, s => s.B == 1),
-                _ => throw new NotImplementedException()
+                _ => throw new InvalidInputException()
             };
         }
     }

@@ -5,7 +5,7 @@ class Day17 : Solution
     enum Orientation { x, y };
     record ClayBlock(int Offset, Orientation Orientation, int RangeFrom, int RangeTo)
     {
-        public static readonly Func<string, ClayBlock> Parse = new Regex(@"\w=(?<Offset>\d+), (?<Orientation>\w)=(?<RangeFrom>\d+)\.\.(?<RangeTo>\d+)").ToFactory<ClayBlock>();
+        public static readonly Func<string, ClayBlock?> Parse = new Regex(@"\w=(?<Offset>\d+), (?<Orientation>\w)=(?<RangeFrom>\d+)\.\.(?<RangeTo>\d+)").ToFactory<ClayBlock>();
 
         public IEnumerable<Point2D<int>> GetPoints()
         {
@@ -23,7 +23,7 @@ class Day17 : Solution
 
     private static long CountWaterTiles(string input, bool includeFlowing)
     {
-        var clay = input.Lines().Select(ClayBlock.Parse).SelectMany(c => c.GetPoints()).ToHashSet();
+        var clay = input.Lines().Select(ClayBlock.Parse).NonNull().SelectMany(c => c.GetPoints()).ToHashSet();
 
         var flowStates = new Dictionary<Point2D<int>, bool>();
         var (minY, maxY) = clay.MinMax(p => p.Y);

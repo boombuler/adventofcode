@@ -4,7 +4,7 @@ using Clique = ImmutableHashSet<string>;
 
 class Day23 : Solution<long?, string>
 {
-    private IEnumerable<Clique> FindMaxCliques(string input)
+    private static IEnumerable<Clique> FindMaxCliques(string input)
     {
         var connections = input.Lines()
             .SelectMany(l => new (string, string)[] { (l[0..2], l[3..5]), (l[3..5], l[0..2]) })
@@ -18,7 +18,7 @@ class Day23 : Solution<long?, string>
             var (current, candidates, exclude) = cur;
             if (candidates.IsEmpty && exclude.IsEmpty)
                 yield return current;
-            var pivot = candidates.MaxBy(v => connectionCounts[v]);
+            var pivot = candidates.MaxBy(v => connectionCounts[v]) ?? string.Empty;
             foreach (var v in candidates.Except(connections[pivot]))
             {
                 open.Push((current.Add(v), candidates.Intersect(connections[v]), exclude.Intersect(connections[v])));
@@ -30,7 +30,7 @@ class Day23 : Solution<long?, string>
 
     protected override long? Part1()
     {
-        long Solve(string input) 
+        static long Solve(string input) 
             => FindMaxCliques(input).SelectMany(c => c.Combinations(3))
                 .Select(c => string.Join(",", c.Order())).Distinct()
                 .Count(new Regex("^t|,t", RegexOptions.Compiled).IsMatch);
@@ -41,8 +41,8 @@ class Day23 : Solution<long?, string>
 
     protected override string Part2()
     {
-        string Solve(string input) 
-            => string.Join(",", FindMaxCliques(input).MaxBy(n => n.Count).Order());
+        static string Solve(string input) 
+            => string.Join(",", FindMaxCliques(input).MaxBy(n => n.Count)!.Order());
 
         Assert(Solve(Sample()), "co,de,ka,ta");
         return Solve(Input);

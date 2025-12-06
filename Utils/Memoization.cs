@@ -14,15 +14,15 @@ static class Memoization
         return (a, b, c) => fn((a, b, c));
     }
 
-    public static Func<A, R> Recursive<A, R>(Func<A, Func<A, R>, R> memorizableFn)
+    public static Func<A, R> Recursive<A, R>(Func<A, Func<A, R>, R> memorizableFn) where A: notnull
     {
-        Func<A, R> fn = null;
+        Func<A, R>? fn = null;
         var cache = new Dictionary<A, R>();
         fn = (a) =>
         {
             if (cache.TryGetValue(a, out var val))
                 return val;
-            return cache[a] = memorizableFn(a, fn);
+            return cache[a] = memorizableFn(a, fn!);
         };
         return fn;
     }

@@ -4,6 +4,9 @@ using System.Numerics;
 
 public static class EnumerableHelper
 {
+    public static IEnumerable<T> NonNull<T>(this IEnumerable<T?> items) where T : notnull
+        => items.Where(i => i is not null).Select(i => i!);
+
     public static void RotateRight<T>(this T[] array, int count)
     {
         if (array.Length == 0)
@@ -65,7 +68,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator, Func<TSeed, bool> @continue = null)
+    public static IEnumerable<T> Unfold<TSeed, T>(this TSeed seed, Func<TSeed, (T Value, TSeed NextSeed)> generator, Func<TSeed, bool>? @continue = null)
     {
         while (true)
         {
@@ -186,7 +189,6 @@ public static class EnumerableHelper
         }
     }
 
-
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
     {
         foreach (var itm in items)
@@ -222,9 +224,9 @@ public static class EnumerableHelper
     public static (T min, T max) MinMax<T>(this IEnumerable<T> items) where T : IComparable<T>
         => MinMax(items, x => x);
 
-    public static (T min, T max) MinMax<TItem, T>(this IEnumerable<TItem> items, Func<TItem, T> selector) where T : IComparable<T>
+    public static (T min, T max) MinMax<TItem, T>(this IEnumerable<TItem> items, Func<TItem, T> selector) where T : notnull, IComparable<T>
     {
-        T min = default, max = default;
+        T min = default!, max = default!;
         bool init = true;
         foreach (var itm in items.Select(selector))
         {
@@ -245,14 +247,15 @@ public static class EnumerableHelper
         return (min, max);
     }
 
-    public static (T min, T max) MinMaxBy<T, TVal>(this IEnumerable<T> items, Func<T, TVal> selector, IComparer<TVal> comparer = null)
+    public static (T min, T max) MinMaxBy<T, TVal>(this IEnumerable<T> items, Func<T, TVal> selector, IComparer<TVal>? comparer = null)
+        where T : notnull
     {
         comparer ??= Comparer<TVal>.Default;
 
-        T maxItm = default;
-        TVal maxVal = default;
-        T minItm = default;
-        TVal minVal = default;
+        T maxItm = default!;
+        TVal maxVal = default!;
+        T minItm = default!;
+        TVal minVal = default!;
         bool first = true;
 
         foreach (var itm in items)

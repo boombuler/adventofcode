@@ -30,7 +30,7 @@ class Day17 : Solution
         private readonly int fJetIndex = jetIndex;
         private readonly ImmutableHashSet<Point> fPoints = points;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is CacheKey ck &&
                 fShapeIndex == ck.fShapeIndex &&
                 fJetIndex == ck.fJetIndex &&
@@ -90,7 +90,7 @@ class Day17 : Solution
             {
                 var delta = new Point(0, max - PatternLines);
                 blockedOffset += delta;
-                blocked = blocked.Select(b => b - delta).Where(p => p.Y >= 0).ToImmutableHashSet();
+                blocked = [.. blocked.Select(b => b - delta).Where(p => p.Y >= 0)];
             }
 
             var key = new CacheKey(shapeIndex, j, blocked);

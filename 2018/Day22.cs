@@ -56,7 +56,7 @@ class Day22 : Solution
         private readonly long fDepth = Depth;
         private readonly Point fTarget = (X, Y);
         private readonly Dictionary<Point, int> fErosionLevels = [];
-        public static readonly Func<string, Cave> Parse = new Regex(@"depth: (?<Depth>\d+)\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
+        public static readonly Func<string, Cave?> Parse = new Regex(@"depth: (?<Depth>\d+)\ntarget: (?<X>\d+),(?<Y>\d+)", RegexOptions.Multiline).ToFactory<Cave>();
 
         private long GetGeologicIndex(Point pt)
         {
@@ -88,19 +88,19 @@ class Day22 : Solution
 
     protected override long? Part1()
     {
-        var c = Cave.Parse(Sample());
+        var c = Cave.Parse(Sample()) ?? throw new InvalidInputException();
         Assert(c.GetRegionType((0, 0)), RegionType.Rocky);
         Assert(c.GetRegionType((1, 0)), RegionType.Wet);
         Assert(c.GetRegionType((0, 1)), RegionType.Rocky);
         Assert(c.GetRegionType((1, 1)), RegionType.Narrow);
         Assert(c.GetRegionType((10, 10)), RegionType.Rocky);
         Assert(c.GetRiskLevel(), 114);
-        return Cave.Parse(Input).GetRiskLevel();
+        return Cave.Parse(Input)?.GetRiskLevel() ?? throw new InvalidInputException();
     }
 
     protected override long? Part2()
     {
-        Assert(Cave.Parse(Sample()).GetRescueTime(), 45);
-        return Cave.Parse(Input).GetRescueTime();
+        Assert(Cave.Parse(Sample())?.GetRescueTime() ?? throw new InvalidInputException(), 45);
+        return Cave.Parse(Input)?.GetRescueTime() ?? throw new InvalidInputException();
     }
 }

@@ -17,7 +17,7 @@ class Day09 : Solution
             if (preamble.Count > preambleSize)
                 preamble.RemoveLast();
         }
-        throw new Exception("Only valid data");
+        throw new InvalidInputException("Puzzle contains only valid data");
     }
 
     private static long FindWeakness(string input, int preambleSize)
@@ -39,7 +39,7 @@ class Day09 : Solution
                     break;
             }
         }
-        throw new Exception("Only valid data");
+        throw new InvalidInputException("Puzzle contains only valid data");
     }
 
     protected override long? Part1()

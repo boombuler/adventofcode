@@ -6,12 +6,12 @@ class Day20 : Solution
     private class Particle(int id, string line)
     {
         public int ID { get; } = id;
-        public Point Position { get; private set; } = ParsePosition(line);
-        public Point Velocity { get; private set; } = ParseVelocity(line);
-        public Point Acceleration { get; } = ParseAcceleration(line);
-        private static readonly Func<string, Point> ParsePosition = new Regex(@"p=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
-        private static readonly Func<string, Point> ParseVelocity = new Regex(@"v=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
-        private static readonly Func<string, Point> ParseAcceleration = new Regex(@"a=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
+        public Point Position { get; private set; } = ParsePosition(line) ?? throw new InvalidInputException();
+        public Point Velocity { get; private set; } = ParseVelocity(line) ?? throw new InvalidInputException();
+        public Point Acceleration { get; } = ParseAcceleration(line) ?? throw new InvalidInputException();
+        private static readonly Func<string, Point?> ParsePosition = new Regex(@"p=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
+        private static readonly Func<string, Point?> ParseVelocity = new Regex(@"v=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
+        private static readonly Func<string, Point?> ParseAcceleration = new Regex(@"a=<(?<x>-?\d+),\s?(?<y>-?\d+),\s?(?<z>-?\d+)>", RegexOptions.Compiled).ToFactory<Point>();
 
         public void Tick()
         {
@@ -20,7 +20,7 @@ class Day20 : Solution
         }
     }
 
-    private List<Particle> GetParticles() => Input.Lines().Select((p, i) => new Particle(i, p)).ToList();
+    private List<Particle> GetParticles() => [.. Input.Lines().Select((p, i) => new Particle(i, p))];
 
     protected override long? Part1()
     {
@@ -39,7 +39,7 @@ class Day20 : Solution
         for (int round = 0; round < 500; round++)
         {
             particles.AsParallel().ForAll(p => p.Tick());
-            particles = particles.GroupBy(p => p.Position).Where(grp => grp.Count() == 1).Select(g => g.First()).ToList();
+            particles = [.. particles.GroupBy(p => p.Position).Where(grp => grp.Count() == 1).Select(g => g.First())];
         }
         return particles.Count;
     }

@@ -5,12 +5,12 @@ class Day23 : Solution
     private const int CUPS_TO_PICKUP = 3;
 
     private static LinkedListNode<T> NextCup<T>(LinkedListNode<T> linkedListNode)
-        => linkedListNode.Next ?? linkedListNode.List.First;
+        => linkedListNode.Next ?? linkedListNode.List?.First ?? throw new InvalidOperationException("List must not be empty");
 
     private static LinkedListNode<int> MoveCups(LinkedList<int> cups, int moves)
     {
         var lookup = new Dictionary<int, LinkedListNode<int>>();
-        var currentCup = cups.First;
+        var currentCup = cups.First ?? throw new InvalidOperationException("List must not be empty");
         do
         {
             lookup[currentCup.Value] = currentCup;

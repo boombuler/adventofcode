@@ -78,9 +78,9 @@ class Day13 : Solution<Point>
                 '/' => CurveSlash,
                 _ => MoveStraight
             }),
-            Carts: positions
+            Carts: [.. positions
                 .Select(p => new Cart(p.Position, (Direction)Array.IndexOf(cartDirections, p.Char), TurnDirection.Left))
-                .Where(c => c.Direction != Direction.Invalid).ToImmutableList()
+                .Where(c => c.Direction != Direction.Invalid)]
         );
     }
 

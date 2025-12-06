@@ -34,7 +34,7 @@ class Day19 : Solution
         private readonly Amounts fGeodeBotCost;
         private readonly Amounts fMaxRates;
 
-        public static readonly Func<string, Blueprint> Factory
+        public static readonly Func<string, Blueprint?> Factory
             = new Regex(@"Blueprint (?<Id>\d+):\W+Each ore robot costs (?<OreRobotOre>\d+) ore.\W+Each clay robot costs (?<ClayRobotOre>\d+) ore.\W+Each obsidian robot costs (?<ObsidianRobotOre>\d+) ore and (?<ObsidianRobotClay>\d+) clay.\W+Each geode robot costs (?<GeodeRobotOre>\d+) ore and (?<GeodeRobotObsidian>\d+) obsidian\.", RegexOptions.Multiline).ToFactory<Blueprint>();
 
         public Blueprint(int Id, int OreRobotOre, int ClayRobotOre, int ObsidianRobotOre, int ObsidianRobotClay, int GeodeRobotOre, int GeodeRobotObsidian)
@@ -128,7 +128,7 @@ class Day19 : Solution
     protected override long? Part1()
     {
         static long SumQualityLevels(string input)
-            => input.Lines().Select(Blueprint.Factory).Sum(bp => bp.ID * bp.GetMaxGeodes(24));
+            => input.Lines().Select(Blueprint.Factory).NonNull().Sum(bp => bp.ID * bp.GetMaxGeodes(24));
         Assert(SumQualityLevels(Sample()), 33);
         return SumQualityLevels(Input);
     }
@@ -136,7 +136,7 @@ class Day19 : Solution
     protected override long? Part2()
     {
         static long GetMaxGeodeCount(string input)
-            => input.Lines().Select(Blueprint.Factory).Where(bp => bp.ID <= 3).Select(bp => bp.GetMaxGeodes(32)).Aggregate((a,b) => a*b);
+            => input.Lines().Select(Blueprint.Factory).NonNull().Where(bp => bp.ID <= 3).Select(bp => bp.GetMaxGeodes(32)).Aggregate((a,b) => a*b);
         Assert(GetMaxGeodeCount(Sample()), 3472);
         return GetMaxGeodeCount(Input);
     }

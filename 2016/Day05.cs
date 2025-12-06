@@ -44,10 +44,10 @@ class Day05 : Solution<string>
                 pwd[pos] = val.ToString("x")[0];
 
                 if (pwd.All(c => c.HasValue))
-                    return new string([.. pwd.Select(c => c.Value)]);
+                    return new string([.. pwd.Select(c => c!.Value)]);
             }
         }
-        throw new InvalidDataException("No valid solution");
+        throw new InvalidInputException("No valid solution");
     }
 
     protected override string Part1()

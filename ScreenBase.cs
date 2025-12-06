@@ -4,7 +4,7 @@ using AdventOfCode.Console;
 
 class ScreenBase
 {
-    private OutputMode fTextMode = null;
+    private OutputMode? fTextMode = null;
 
     #region Console
 

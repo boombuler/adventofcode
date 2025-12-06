@@ -66,8 +66,11 @@ public record Point2D<T>(T X, T Y) : IComparable<Point2D<T>>,
                 yield return new(x, y);
     }
 
-    public int CompareTo(Point2D<T> other)
+    public int CompareTo(Point2D<T>? other)
     {
+        if (other == null)
+            return 1;
+
         var dy = Y - other.Y;
         if (dy == T.Zero)
             return T.Sign(X - other.X);

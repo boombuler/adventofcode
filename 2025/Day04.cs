@@ -1,11 +1,10 @@
 ﻿namespace AdventOfCode._2025;
 
-
 class Day04 : Solution
 {
     private static IEnumerable<int> CountRemovedPaperRolls(string input)
     {
-        var rolls = StringMap.Create(input).Where(x => x.Value == '@').Select(x => x.Index).ToImmutableHashSet();
+        var rolls = input.AsMap().Where(x => x.Value == '@').Select(x => x.Index).ToImmutableHashSet();
         return rolls
             .Unfold(map => map.Except(map.Where(x => x.Neighbours(true).Count(map.Contains) < 4)))
             .Prepend(rolls)

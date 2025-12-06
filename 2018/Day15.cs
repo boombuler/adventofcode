@@ -45,7 +45,7 @@ class Day15 : Solution
                 fByEntity[ent] = value;
             }
         }
-        public Entity this[Point pos] => fByPosition.TryGetValue(pos, out var res) ? res : null;
+        public Entity? this[Point pos] => fByPosition.TryGetValue(pos, out var res) ? res : null;
         public IEnumerable<Entity> Entities => fByEntity.Keys;
         public IEnumerable<Point> BlockedPositions => fByPosition.Keys;
         public bool Occupied(Point pt) => fByPosition.ContainsKey(pt);

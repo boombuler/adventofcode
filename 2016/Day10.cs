@@ -7,21 +7,21 @@ class Day10 : Solution
         public long? HoldValue { get; set; } 
     }
 
-    private static readonly Func<string, Bot> ParseBot =
+    private static readonly Func<string, Bot?> ParseBot =
         new Regex(@"(?<Name>bot \d+) gives low to (?<Low>(bot|output) \d+) and high to (?<High>(bot|output) \d+)", RegexOptions.Compiled).ToFactory<Bot>();
 
-    class GiveChip { public string Target; public long Value; }
-    private static readonly Func<string, GiveChip> ParseCommand =
+    class GiveChip { public required string Target; public long Value; }
+    private static readonly Func<string, GiveChip?> ParseCommand =
         new Regex(@"value (?<Value>\d+) goes to (?<Target>(bot|output) \d+)", RegexOptions.Compiled).ToFactory<GiveChip>();
 
     private static (long min, long max) MinMax(long a, long b) => a > b ? (b, a) : (a, b);
 
     private static long FindBotComparing(string input, long checkLow, long checkHigh)
     {
-        string comperator = null;
+        string comperator = string.Empty;
         RunBotnet(input, (bots, name, chip) =>
         {
-            if (!bots.TryGetValue(name, out Bot bot) || !bot.HoldValue.HasValue)
+            if (!bots.TryGetValue(name, out var bot) || !bot.HoldValue.HasValue)
                 return true;
             (var lo, var hi) = MinMax(bot.HoldValue.Value, chip);
             if (lo == checkLow && hi == checkHigh)
@@ -48,20 +48,22 @@ class Day10 : Solution
 
     private static void RunBotnet(string input, Func<Dictionary<string, Bot>, string, long, bool> continueExection)
     {
-        var bots = input.Lines().Select(ParseBot).Where(b => b != null).ToDictionary(b => b.Name);
+        var bots = input.Lines().Select(ParseBot).NonNull().ToDictionary(b => b.Name);
         var commands = input.Lines().Select(ParseCommand).Where(c => c != null);
         var pending = new Queue<GiveChip>();
 
         foreach (var cmd in commands)
         {
+            if (cmd == null)
+                continue;
             pending.Enqueue(cmd);
-            while (pending.TryDequeue(out GiveChip iv))
+            while (pending.TryDequeue(out var iv))
             {
-                bots.TryGetValue(iv.Target, out Bot bot);
+                bots.TryGetValue(iv.Target, out var bot);
                 if (!continueExection(bots, iv.Target, iv.Value))
                     return;
 
-                if (iv.Target.StartsWith("output"))
+                if (iv.Target.StartsWith("output") || bot == null)
                     continue;
 
                 if (!bot.HoldValue.HasValue)

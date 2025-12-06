@@ -4,7 +4,7 @@ class Day05 : Solution<string>
 {
     record Command(int Count, int From, int To)
     {
-        public static Func<string, Command> Factory 
+        public static Func<string, Command?> Factory 
             = new Regex(@"move (?<Count>\d+) from (?<From>\d+) to (?<To>\d+)").ToFactory<Command>();
     }
 
@@ -18,13 +18,13 @@ class Day05 : Solution<string>
             .Reverse()
             .ForEach(n => n.Stack.Push(n.Char));
 
-        foreach (var command in input.Lines().SkipWhile(l => !string.IsNullOrEmpty(l)).Skip(1).Select(Command.Factory))
+        foreach (var command in input.Lines().SkipWhile(l => !string.IsNullOrEmpty(l)).Skip(1).Select(Command.Factory).NonNull())
         {
             stackBehavior(Enumerable.Range(0, command.Count).Select(_ => stacks[command.From - 1].Pop()))
                 .ForEach(stacks[command.To - 1].Push);
         }
 
-        return new string(stacks.Select(s => s.Pop()).ToArray());
+        return new string([.. stacks.Select(s => s.Pop())]);
     }
 
     protected override string Part1()

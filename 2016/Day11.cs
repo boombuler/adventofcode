@@ -48,7 +48,7 @@ class Day11 : Solution
 
     class State
     {
-        private static readonly IEnumerable<State> NONE = Enumerable.Empty<State>();
+        private static readonly IEnumerable<State> NONE = [];
         private readonly ImmutableArray<Items> Floors;
         private readonly int ElevatorPos;
         public int NumberOfMoves { get; }
@@ -73,7 +73,7 @@ class Day11 : Solution
             return true;
         }
 
-        private State Move(int dir, int chips, int generators)
+        private State? Move(int dir, int chips, int generators)
         {
             var curFloor = Floors[ElevatorPos];
             curFloor = new Items(curFloor.Chips & ~chips, curFloor.Generators & ~generators);
@@ -155,7 +155,7 @@ class Day11 : Solution
             return result;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is State other)
                 return ElevatorPos == other.ElevatorPos && Floors.SequenceEqual(other.Floors);

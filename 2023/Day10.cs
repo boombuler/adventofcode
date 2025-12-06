@@ -25,7 +25,7 @@ class Day10 : Solution
     private static (HashSet<Point2D<int>> Loop, StringMap<char> Map) ParseMap(string input)
     {
         var map = input.AsMap();
-        var pos = map.Find('S');
+        var pos = map.Find('S') ?? throw new InvalidInputException();
         var possibleStartDirections = (
             from d in new Point2D<int>[] { Up, Down, Left, Right }
             let n = map.GetValueOrDefault(pos + d, '.')
@@ -39,8 +39,8 @@ class Day10 : Solution
         var loop = new HashSet<Point2D<int>>();
         while (loop.Add(pos))
         {
-            pos += dir;
-            dir = Connections.GetValueOrDefault((map[pos], dir));
+            pos += dir ?? Origin;
+            dir = Connections.GetValueOrDefault((map[pos], dir ?? Origin));
         }
         return (loop, map);
     }

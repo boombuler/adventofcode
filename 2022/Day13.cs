@@ -11,16 +11,19 @@ class Day13 : Solution
 
         public Packet(int value) 
             : this(value, []) { }
-        public Packet(ImmutableList<Packet> children) 
-            : this(null, children) { }
+        public Packet(ImmutableList<Packet?> children) 
+            : this(null, [..children.NonNull()]) { }
         private Packet(int? value, ImmutableList<Packet> children)
         { 
             Value = value;
             Children = children;
         }
         
-        public int CompareTo(Packet node)
+        public int CompareTo(Packet? node)
         {
+            if (node == null)
+                return 1;
+
             if (Value.HasValue && node.Value.HasValue)
                 return this.Value.Value - node.Value.Value;
 
@@ -34,12 +37,12 @@ class Day13 : Solution
    
         public static Packet Parse(string text)
         {
-            Packet ReadNum(StringReader sr)
+            Packet? ReadNum(StringReader sr)
                 => sr.TryReadWhile(char.IsDigit, out var n) ? new Packet(int.Parse(n)) : null;
 
             Packet ReadList(StringReader sr)
             {
-                var items = ImmutableList<Packet>.Empty;
+                var items = ImmutableList<Packet?>.Empty;
                 sr.Read();// Skip leading [
                 while (true)
                 {

@@ -2,7 +2,7 @@
 
 class Day14 : Solution
 {
-    private ImmutableDictionary<char, long> Add(ImmutableDictionary<char, long> a, ImmutableDictionary<char, long> b)
+    private ImmutableDictionary<char, long>? Add(ImmutableDictionary<char, long>? a, ImmutableDictionary<char, long>? b)
     {
         if (a == null || b == null)
             return a ?? b;
@@ -18,7 +18,7 @@ class Day14 : Solution
 
         static ImmutableDictionary<char, long> CharToDict(char c) => ImmutableDictionary<char, long>.Empty.SetItem(c, 1);
 
-        var production = new Dictionary<(char, char), ImmutableDictionary<char, long>>();
+        var production = new Dictionary<(char, char), ImmutableDictionary<char, long>?>();
         for (int i = 0; i < rounds; i++)
         {
             production = rules.ToDictionary(kvp => kvp.Key, kvp => new[]{
@@ -30,7 +30,7 @@ class Day14 : Solution
 
         var (min, max) = template.Pairwise().Select(production.GetValueOrDefault)
             .Concat(template.Select(CharToDict))
-            .Aggregate(Add).Values.MinMax();
+            .Aggregate(Add)!.Values.MinMax();
 
         return max - min;
     }

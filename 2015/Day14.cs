@@ -5,7 +5,7 @@ class Day14 : Solution
     record Reindeer(string Name, int Speed, int FlyTime, int RestTime)
     {
         // Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.
-        public static Func<string, Reindeer> Parse =
+        public static Func<string, Reindeer?> Parse =
             new Regex(@"(?<Name>\w+) can fly (?<Speed>\d+) km/s for (?<FlyTime>\d+) seconds, but then must rest for (?<RestTime>\d+) seconds\.").ToFactory<Reindeer>();
 
         public int Score { get; set; }
@@ -20,7 +20,7 @@ class Day14 : Solution
     }
 
     private static long WinningDistance(string reindeerTxt, int seconds)
-        => reindeerTxt.Lines().Select(Reindeer.Parse).Select(rd => rd.DistanceAfter(seconds)).Max();
+        => reindeerTxt.Lines().Select(Reindeer.Parse).NonNull().Select(rd => rd.DistanceAfter(seconds)).Max();
 
     protected override long? Part1()
     {
@@ -31,7 +31,7 @@ class Day14 : Solution
 
     private static long Race(string reindeerTxt, int rounds)
     {
-        var reindeers = reindeerTxt.Lines().Select(Reindeer.Parse).ToList();
+        var reindeers = reindeerTxt.Lines().Select(Reindeer.Parse).NonNull().ToList();
 
         for (int i = 1; i <= rounds; i++)
         {

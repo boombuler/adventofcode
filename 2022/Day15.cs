@@ -8,7 +8,7 @@ class Day15 : Solution
 
     record Sensor(Point Location, Point Beacon)
     {
-        public Range ScanOnLine(long y)
+        public Range? ScanOnLine(long y)
         {
             var dx = Location.ManhattanDistance(Beacon) - Math.Abs(Location.Y - y);
             return (dx < 0) ? null : new Range(Location.X - dx, Location.X + dx);
@@ -24,7 +24,7 @@ class Day15 : Solution
            );
 
     private static IEnumerable<Range> Ranges(IEnumerable<Sensor> Sensors, int y)
-        => Sensors.Select(s => s.ScanOnLine(y)).Where(r => r != null).OrderBy(r => r.Min)
+        => Sensors.Select(s => s.ScanOnLine(y)).NonNull().OrderBy(r => r.Min)
             .Aggregate(ImmutableStack<Range>.Empty,
                 (s, r) => s.IsEmpty || (s.Peek().Max < r.Min) ? s.Push(r) :
                     s.Pop().Push(new Range(s.Peek().Min, Math.Max(s.Peek().Max, r.Max))));
