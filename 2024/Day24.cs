@@ -25,7 +25,7 @@ class Day24 : Solution<long?, string>
         from gates in GateParser.List('\n')
         select (states.ToDictionary(), gates.ToImmutableDictionary());
 
-    private long Evaluate(Dictionary<string, bool> state, ImmutableDictionary<string, Gate> gates)
+    private static long Evaluate(Dictionary<string, bool> state, ImmutableDictionary<string, Gate> gates)
     {
         var open = gates.ToDictionary();
         while (open.Count > 0)
@@ -41,6 +41,7 @@ class Day24 : Solution<long?, string>
                     GateType.AND => state[gate.A] && state[gate.B],
                     GateType.OR => state[gate.A] || state[gate.B],
                     GateType.XOR => state[gate.A] ^ state[gate.B],
+                    _ => throw new InvalidOperationException(),
                 };
                 open.Remove(c);
             }
@@ -54,7 +55,7 @@ class Day24 : Solution<long?, string>
 
     protected override long? Part1()
     {
-        long Solve(string input)
+        static long Solve(string input)
         {
             var (state, gates) = InputParser.MustParse(input);
             return Evaluate(state, gates);
@@ -134,6 +135,6 @@ class Day24 : Solution<long?, string>
             }
         }
 
-        return string.Join(",", RepairWires(0, gates, ImmutableHashSet<string>.Empty).First(n => n.Count <= 8).Order());
+        return string.Join(",", RepairWires(0, gates, []).First(n => n.Count <= 8).Order());
     }
 }

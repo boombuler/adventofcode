@@ -2,8 +2,6 @@
 
 class Day11 : Solution
 {
-    private static string Sample = "125 17";
-
     private long Solve(string input, int times = 25)
     {
         var simulate = 
@@ -23,7 +21,7 @@ class Day11 : Solution
 
     protected override long? Part1()
     {
-        Assert(Solve(Sample), 55312);
+        Assert(Solve(Sample()), 55312);
         return Solve(Input);
     }
 

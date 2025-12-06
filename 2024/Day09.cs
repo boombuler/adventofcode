@@ -2,8 +2,6 @@
 
 class Day09 : Solution
 {
-    private readonly string Sample = "2333133121414131402";
-
     class File(long Id)
     {
         public long Index { get; set; }
@@ -18,7 +16,7 @@ class Day09 : Solution
     
     delegate IEnumerable<File> CreateFiles(int id, int idx, int size);
 
-    private (List<File> Files, LinkedList<(long Index, long Size)> Space) LoadDiskStructure(string input, CreateFiles createFiles)
+    private static (List<File> Files, LinkedList<(long Index, long Size)> Space) LoadDiskStructure(string input, CreateFiles createFiles)
     {
         if (input.Length % 2 == 1)
             input += "0";
@@ -41,7 +39,7 @@ class Day09 : Solution
         return (files, new LinkedList<(long Index, long Size)>(unallocated));
     }
 
-    private long Defrag(string input, CreateFiles createFiles)
+    private static long Defrag(string input, CreateFiles createFiles)
     {
         var (files, unallocated) = LoadDiskStructure(input, createFiles);
 
@@ -66,18 +64,18 @@ class Day09 : Solution
 
     protected override long? Part1()
     {
-        long Solve(string input) 
+        static long Solve(string input) 
             => Defrag(input, (id, idx, size) => Enumerable.Range(0, size).Select((s,i) => new File(id) { Index = i+idx, Size = 1}));
 
-        Assert(Solve(Sample), 1928);
+        Assert(Solve(Sample()), 1928);
         return Solve(Input);
     }
     protected override long? Part2()
     {
-        long Solve(string input)
+        static long Solve(string input)
             => Defrag(input, (id, idx, size) => [new File(id) { Index = idx, Size = size }]);
 
-        Assert(Solve(Sample), 2858);
+        Assert(Solve(Sample()), 2858);
         return Solve(Input);
     }
 }

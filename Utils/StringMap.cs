@@ -2,6 +2,8 @@
 
 using System.Collections;
 
+#nullable enable
+
 class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
 {
     private readonly T[,] fValues;
@@ -41,10 +43,10 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
         Width = baseMap.Width;
     }
 
-    public T GetValueOrDefault(Point2D<int> idx)
+    public T? GetValueOrDefault(Point2D<int> idx)
         => GetValueOrDefault(idx, default);
 
-    public T GetValueOrDefault(Point2D<int> idx, T defaultValue)
+    public T? GetValueOrDefault(Point2D<int> idx, T? defaultValue)
     {
         if (Contains(idx))
             return this[idx];
@@ -64,7 +66,7 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
         return null;
     }
 
-    public bool TryGetValue(Point2D<int> idx, out T value)
+    public bool TryGetValue(Point2D<int> idx, out T? value)
     {
         if (Contains(idx))
         {
@@ -96,6 +98,6 @@ class StringMap<T> : IEnumerable<(Point2D<int> Index, T Value)>
 static class StringMap
 {
     public static StringMap<T> Create<T>(string s, Func<char, T> selector)
-        => new StringMap<T>(s, selector);
-    public static StringMap<char> Create(string s) => new StringMap<char>(s, c => c);
+        => new(s, selector);
+    public static StringMap<char> Create(string s) => new(s, c => c);
 }
