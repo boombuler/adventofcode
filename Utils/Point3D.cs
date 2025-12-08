@@ -21,9 +21,6 @@ public record Point3D<T>(T X, T Y, T Z) where T : INumber<T>, INumberBase<T>
     public static Point3D<T> operator *(T a, Point3D<T> b)
         => b * a;
 
-    public Point3D<TResult> As<TResult>() where TResult : INumber<TResult>, INumberBase<TResult>
-        => new Point3D<TResult>(TResult.CreateChecked(X), TResult.CreateChecked(Y), TResult.CreateChecked(Z));
-
     public T ManhattanDistance(Point3D<T> other)
         => T.Abs(other.X - X) + T.Abs(other.Y - Y) + T.Abs(other.Z - Z);
 

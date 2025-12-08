@@ -1,14 +1,18 @@
 ﻿namespace AdventOfCode._2025;
 
-using JunktionBox = Point3D<int>;
+using JunktionBox = Point3D<long>;
 
 class Day08 : Solution
 {
     private static IEnumerable<(JunktionBox A, JunktionBox B, List<List<JunktionBox>> Networks)> MergeNetworks(string input)
     {
-        double Distance((JunktionBox a, JunktionBox b) p) => p.a.As<double>().StraightLineDistance(p.b.As<double>());
+        long Distance((JunktionBox a, JunktionBox b) p)
+        {
+            var d = p.a - p.b;
+            return d.X * d.X + d.Y * d.Y + d.Z * d.Z;
+        }
 
-        var boxes = input.Lines().Select(Parser.IntPoint3D.MustParse).ToArray();
+        var boxes = input.Lines().Select(Parser.LongPoint3D.MustParse).ToArray();
 
         var networkLookup = boxes.ToDictionary(b => b, b => new List<JunktionBox>() { b });
         var remainingNetworks = networkLookup.Values.ToList();
