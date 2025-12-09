@@ -8,6 +8,12 @@ public record Rect2D<T>(Point2D<T> TopLeft, Point2D<T> BottomRight)
     public T Width => BottomRight.X - TopLeft.X + T.One;
     public T Height => BottomRight.Y - TopLeft.Y + T.One;
 
+    public T Area => Width * Height;
+    public T Left => TopLeft.X;
+    public T Right => BottomRight.X;
+    public T Top => TopLeft.Y;
+    public T Bottom => BottomRight.Y;
+
     public bool Contains(Point2D<T> pt)
         => pt.X >= TopLeft.X && pt.X <= BottomRight.X && pt.Y >= TopLeft.Y && pt.Y <= BottomRight.Y;
 
