@@ -133,4 +133,77 @@ class MathExt
         }
         return min;
     }
+
+    
+    public static void GaussElimination<T>(T[][] coeffs, T[] constants) where T : INumber<T>
+    {
+        if (constants.Length != coeffs.Length)
+            throw new ArgumentException("Number of equations must match number of constants.");
+
+        int rows = coeffs.Length;
+        int cols = coeffs[0].Length;
+
+        int pivotRow = 0;
+        for (int col = 0; col < cols && pivotRow < rows; col++)
+        {
+            int pivot = -1;
+            for (int row = pivotRow; row < rows; row++)
+            {
+                if (coeffs[row][col] != T.Zero)
+                {
+                    pivot = row;
+                    break;
+                }
+            }
+
+            if (pivot == -1) 
+                continue;
+
+            if (pivot != pivotRow)
+            {
+                (coeffs[pivot], coeffs[pivotRow]) = (coeffs[pivotRow], coeffs[pivot]);
+                (constants[pivot], constants[pivotRow]) = (constants[pivotRow], constants[pivot]);
+            }
+
+            for (int row = pivotRow + 1; row < rows; row++)
+            {
+                if (coeffs[row][col] != T.Zero)
+                {
+                    T factor = coeffs[row][col] / coeffs[pivotRow][col];
+                    for (int c = 0; c < cols; c++)
+                        coeffs[row][c] -= factor * coeffs[pivotRow][c];
+                    constants[row] -= factor * constants[pivotRow];
+                }
+            }
+
+            pivotRow++;
+        }
+
+        for (int row = rows - 1; row >= 0; row--)
+        {
+            int pivotCol = -1;
+            for (int col = 0; col < cols; col++)
+            {
+                if (coeffs[row][col] != T.Zero)
+                {
+                    pivotCol = col;
+                    break;
+                }
+            }
+
+            if (pivotCol == -1)
+                continue;
+
+            for (int r = 0; r < row; r++)
+            {
+                if (coeffs[r][pivotCol] != T.Zero)
+                {
+                    T factor = coeffs[r][pivotCol] / coeffs[row][pivotCol];
+                    for (int c = 0; c < cols; c++)
+                        coeffs[r][c] -= factor * coeffs[row][c];
+                    constants[r] -= factor * constants[row];
+                }
+            }
+        }
+    }
 }
